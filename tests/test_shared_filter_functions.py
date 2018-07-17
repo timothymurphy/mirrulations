@@ -8,7 +8,7 @@ def generate_data(job_id, type, data, version):
     dict = {}
 
     dict["job_id"] = job_id
-    dict["type"] = type
+    dict["job_type"] = type
     dict["data"] = data
     dict["version"] = version
 
@@ -94,7 +94,7 @@ def test_get_job_attributes():
     job = sff.get_job('1', r, 'queue')
     job = json.loads(job)
     assert job['job_id'] == '1'
-    assert job["type"] == "doc"
+    assert job["job_type"] == "doc"
     assert job["data"] == []
     assert job["version"] == 'v1'
 

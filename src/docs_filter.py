@@ -1,8 +1,6 @@
+import random
 import json
-import redis
-import re
-
-import redis_manager as fr
+import shared_filter_functions as ssf
 
 
 """
@@ -11,17 +9,15 @@ This program does the validation and assimilation of data for the documents jobs
 
 
 # Validation Functions
-def file_length_checker(file_name):
+def file_length_checker(json_data):
     """
     Checks the length of the file returned
-    :param file_name: path of the file to be checked
+    :param json_data: path of the file to be checked
     :return:
     """
-    result = open(file_name, "r")
     file_count = 0
     attachment_count = 0
-    info = json.load(result)
-    for workfile in info["data"]:
+    for workfile in json_data["data"]:
         for line in workfile:
             file_count += 1
             attachment_count += line["count"]
@@ -33,69 +29,50 @@ def file_length_checker(file_name):
     return True
 
 
-def documents_checker(path):
-    """
-    Checks the names of the files returned from the documents jobs
-    :param path: location of the results files from the job
-    :return:
-    """
-
-    result = open(path, "r")
-    info = json.load(result)
-    job_id = info["job_id"]
-    job_type = info["job_type"] == "documents"
-
-    return job_exists(job_id) and job_type
-
-
-def job_exists(job_id):
-    """
-    Returns whether or not a job_id is in the "In progress" queue TODO
-    :param job_id:
-    :return:
-    """
-
-    list = fr.get(fr, "progress")
-
-    return job_id in list
-
-
-def renew_job(job_id):
-    """
-    TODO
-    :param job_id:
-    :return:
-    """
-    pass
-
-
 # Assimilation Functions
-def documents_job(path):
+def documents_job(json_data, Redis_Manager):
     """
     TODO
-    This reads the file given at path
-    Makes a list of all document ids
-    Builds a job from the document ids
-    :param path: location of the file which contains the document ids
+    :param json_data:
+    :param Redis_Manager:
     :return:
     """
-    result = open(path, "r")
-    info = json.load(result)
-    for workfile in info["data"]:
-        fr.rpush(fr, "queued", workfile)
+    for workfile in json_data["data"]:
+        job_id = str(random.randint(0,1000000000))
+        job = create_job(workfile, job_id)
+        ssf.add_job(job, Redis_Manager, "queued")
+
+
+def create_job(workfile, job_id):
+    """
+    TODO
+    :param workfile:
+    :param job_id:
+    :return:
+    """
+    dict = {"job_id": job_id, "job_type": "documents", "data": workfile, "version": "1.0"}
+    return json.dumps(dict)
+
 
 
 # Final Function
-def process_docs(data):
+def process_docs(json_data, Redis_Manager):
+    """
+    TODO
+    :param json_data:
+    :param Redis_Manager:
+    :return:
+    """
 
-    if file_length_checker(data) and documents_checker(data):
-        documents_job(data)
+    if ssf.job_exists(json_data["job_id"], Redis_Manager, "progress") is False:
+        pass
 
     else:
-        result = open(data, "r")
-        info = json.load(result)
-        job_id = info["job_id"]
-        renew_job(job_id)
+        if file_length_checker(json_data) and json_data["job_type"] == "documents":
+            documents_job(json_data, Redis_Manager)
+
+        else:
+            ssf.renew_job(json_data, Redis_Manager)
 
 
 
