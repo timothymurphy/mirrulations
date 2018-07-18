@@ -1,7 +1,6 @@
 import random
 import json
-import shared_filter_functions as ssf
-
+import shared_filter_functions as sff
 
 """
 This program does the validation and assimilation of data for the documents jobs
@@ -32,47 +31,49 @@ def file_length_checker(json_data):
 # Assimilation Functions
 def documents_job(json_data, Redis_Manager):
     """
-    TODO
-    :param json_data:
-    :param Redis_Manager:
+    Processes documents file and add ids to each document within
+    :param json_data: the json data for the jobs
+    :param Redis_Manager: database manager
     :return:
     """
     for workfile in json_data["data"]:
         job_id = str(random.randint(0,1000000000))
         job = create_job(workfile, job_id)
-        ssf.add_job(job, Redis_Manager, "queued")
+        sff.add_job(job, Redis_Manager, "queued")
 
 
 def create_job(workfile, job_id):
     """
-    TODO
-    :param workfile:
-    :param job_id:
+    Creates a job for the server to provide to clients
+    :param workfile: the job to be created and eventually completed
+    :param job_id: the id for the job
     :return:
     """
     dict = {"job_id": job_id, "job_type": "documents", "data": workfile, "version": "1.0"}
     return json.dumps(dict)
 
 
-
 # Final Function
-def process_docs(json_data, Redis_Manager):
+def process_docs(tup, Redis_Manager):
     """
-    TODO
-    :param json_data:
-    :param Redis_Manager:
+    Main docs function, called by the server to compile list of document jobs
+    :param json_data: the json data for the jobs
+    :param Redis_Manager: database manager
     :return:
     """
 
-    if ssf.job_exists(json_data["job_id"], Redis_Manager, "progress") is False:
+    json_data = tup[0]
+
+    if sff.job_exists(json_data["job_id"], Redis_Manager, "progress") is False:
         pass
 
     else:
         if file_length_checker(json_data) and json_data["job_type"] == "documents":
             documents_job(json_data, Redis_Manager)
+            sff.remove_job(json_data["job_id"], Redis_Manager, "progress")
 
         else:
-            ssf.renew_job(json_data, Redis_Manager)
+            sff.renew_job(json_data, Redis_Manager)
 
 
 

@@ -1,10 +1,6 @@
 import pytest
-import requests_mock
-import tempfile
 import json
 import fakeredis
-import os
-import re
 
 import docs_filter as dsf
 import shared_filter_functions as sff
@@ -21,24 +17,6 @@ def generate_json_data(file_name):
 def setUp():
     # Setup fake redis for testing.
     return fakeredis.FakeStrictRedis()
-
-
-@pytest.fixture
-def mock_req():
-    with requests_mock.Mocker() as m:
-        yield m
-
-
-@pytest.fixture()
-def workfile_tempdir():
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        yield tmpdirname
-
-
-@pytest.fixture()
-def savefile_tempdir():
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        yield tmpdirname
 
 
 # Validation Tests
