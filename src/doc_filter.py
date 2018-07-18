@@ -214,4 +214,5 @@ def process_doc(json_data, compressed_file, Redis_Manager):
         else:
             for file in file_list:
                 local_save(PATHstr + "/" + file, "~/regulations-data/")
-            sff.remove_job(json_data["job_id"], Redis_Manager, "progress")
+            key = sff.get_key_hash(json_data["job_id"], Redis_Manager, "progress")
+            sff.remove_job_progress(key, Redis_Manager, "progress")
