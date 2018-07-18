@@ -70,7 +70,7 @@ def process_docs(tup, Redis_Manager):
     else:
         if file_length_checker(json_data) and json_data["job_type"] == "documents":
             documents_job(json_data, Redis_Manager)
-            sff.remove_job(json_data["job_id"], Redis_Manager, "progress")
+            sff.remove_job_progress(json_data["job_id"], Redis_Manager, "progress")
 
         else:
             sff.renew_job(json_data, Redis_Manager)

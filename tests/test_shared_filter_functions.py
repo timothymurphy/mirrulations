@@ -154,7 +154,7 @@ def test_get_key():
     job = (generate_data('10', 'docs', [], 'v1'))
     current_time = str(time.time())
     sff.add_job_progress(job, r, 'progress', current_time)
-    key = sff.get_key('10', r, "progress")
+    key = sff.get_key_hash('10', r, "progress")
     assert key == current_time
     r.flushall()
 
@@ -170,7 +170,7 @@ def test_get_key_multiple_jobs():
     sff.add_job_progress(job1, r, 'progress', time1)
     sff.add_job_progress(job2, r, 'progress', time2)
     sff.add_job_progress(job3, r, 'progress', time3)
-    key = sff.get_key('12', r, "progress")
+    key = sff.get_key_hash('12', r, "progress")
     assert key == time3
     r.flushall()
 

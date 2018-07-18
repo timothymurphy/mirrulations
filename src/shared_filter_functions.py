@@ -107,7 +107,7 @@ def get_job_progress(key, Redis_Manager, queue):
         return data
 
 
-def get_key(job_id, Redis_Manager, queue):
+def get_key_hash(job_id, Redis_Manager, queue):
     key_list = Redis_Manager.hgetall(queue)
     for key in key_list:
         x = get_job_progress(key, Redis_Manager, queue)
@@ -120,6 +120,7 @@ def get_key(job_id, Redis_Manager, queue):
 def remove_job_progress(key, Redis_Manager, queue):
     Redis_Manager.hdel(queue, key)
 
+
 # Combined Functions
 def renew_job(job_id, Redis_Manager):
     """
@@ -131,7 +132,7 @@ def renew_job(job_id, Redis_Manager):
     progress = "progress"
     queue = "queue"
 
-    key = get_key(job_id, Redis_Manager, progress)
+    key = get_key_hash(job_id, Redis_Manager, progress)
     job = get_job_progress(key, Redis_Manager, progress)
     job_id = json.loads(job)
     job_id = job_id['job_id']
