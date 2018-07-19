@@ -6,3 +6,4 @@ pytest
 requests-mock
 mock
 fakeredis
+appJar
