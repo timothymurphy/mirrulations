@@ -1,6 +1,6 @@
 import document_processor as doc
 import documents_processor as docs
-import api_call_managment as man
+import api_call_management as man
 import requests
 import json
 import zipfile

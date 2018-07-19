@@ -10,8 +10,8 @@ with open(home + '/.env/regulationskey.txt') as f:
 def document_processor(doc_ids):
     """
     This process takes all of the document ids given to it and saves all of the data for the documents in a temporary directory.
-    :param doc_ids: list of document ids that  to be collected.
-    :return: Temporary directory that data was written to.
+    :param doc_ids: list of document ids that have to be collected.
+    :return: temporary directory that data was written to.
     """
     dirpath = tempfile.TemporaryDirectory()
     for doc_id in doc_ids:
@@ -21,9 +21,9 @@ def document_processor(doc_ids):
 
 def make_doc_url(documentId):
     """
-    Given a documentID as a string append it to the end of the api call
+    Given a documentId as a string append it to the end of the api call
     :param documentId: the string of a documentId
-    :return:
+    :return: the url that will be called with a documentId through regulations.gov API
     """
     return base_url + documentId
 
@@ -32,7 +32,7 @@ def save_document(dirpath, doc_json, documentId):
     """
     Saves the json of the document call
     :param dirpath: path to the directory where the json will be saved
-    :param doc_json: the json recieved from the api call
+    :param doc_json: the json received from the api call
     :param documentId: the string of a documentId
     :return:
     """
@@ -85,7 +85,7 @@ def download_doc_formats(dirpath, doc_json, documentId):
     :param dirpath: path to the directory where the download will be saved
     :param doc_json: the json from a single document api call
     :param documentId: the string of a documentId
-    :return:
+    :return: the total number of requests used to download the extra formats
     """
     total_requests = 0
     try:
@@ -107,7 +107,7 @@ def download_attachments(dirpath, doc_json, documentId):
     :param dirpath: path to the directory where the download will be saved
     :param doc_json: the json from a single document api call
     :param documentId: the string of a documentId
-    :return:
+    :return: the total number of requests used to download the extra attachments
     """
     total_requests = 0
     try:
@@ -123,9 +123,3 @@ def download_attachments(dirpath, doc_json, documentId):
     except KeyError:
         pass
     return total_requests
-
-
-
-
-
-
