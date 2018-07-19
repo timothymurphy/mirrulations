@@ -104,7 +104,7 @@ def writeAPIKey(key):
     if not os.path.exists(fileDirectory):
         os.makedirs(fileDirectory)
 
-    f = open(fileDirectory + "/regulationskey.txt", "r+")
+    f = open(fileDirectory + "/regulationskey.txt", "w+")
 
     stuff = f.read()
 
