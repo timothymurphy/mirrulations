@@ -53,6 +53,7 @@
          ],
         ]
  "version":"v1.0"
+ "client\_id":"..."
 }
 </code></pre>
   * Loop through the `"data"` entry in the json - List of lists
@@ -78,6 +79,7 @@
          ],
         ]
  "version":"v1.0"
+ "client\_id":"..."
 }
 	</code></pre>
   * Check formating of the documents `doc.ID.*`
