@@ -59,7 +59,7 @@ def test_non_existent_endpoint(client):
     assert result.status_code == 404
 
 
-@mock.patch('redis_manager.RedisManager.get_work')
+@mock.patch('redis_manager.RedisManager.get_work', return_value='{}')
 @mock.patch('endpoints.generate_json', return_value='Okay')
 def test_get_work_success(mock_work, mock_json, client):
     result = client.get('/get_work', query_string={'client_id': '1'})

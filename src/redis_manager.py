@@ -33,7 +33,7 @@ class RedisManager:
         :return:
         """
         with self.lock:
-            self.r.lpush("queue", work)
+            self.r.rpush("queue", work)
 
     def add_to_progress(self, work):
         """
@@ -83,15 +83,14 @@ class RedisManager:
 
     def get_specific_job_from_queue(self, job_id):
         """
-           Gets a job from the queue from its job_id
+           Gets a job from the "queue" queue using its job_id
            :param job_id: the id for the job in question
-           :return: returns the job with the given job_id
+           :return: returns the job of the given job_id or '' if the job does not exist
            """
         with self.lock:
             for element in range(self.r.llen('queue')):
 
                 current = (self.r.lindex('queue', element)).decode("utf-8")
-
 
                 info = json.loads(current)
 
@@ -102,9 +101,9 @@ class RedisManager:
 
     def does_job_exist_in_queue(self, job_id):
         """
-        Verifies that a given job that is in the queue exists
+        Verifies that a given job is in the "queue" queue exists
         :param job_id: the id for the job in question
-        :return: true if the job is in the queue, false if it is not in the queue
+        :return: True if the job is in the "queue", False if it is not in the "queue"
         """
         with self.lock:
             job = self.get_specific_job_from_queue(job_id)
@@ -115,20 +114,21 @@ class RedisManager:
 
     def remove_specific_job_from_queue(self, job_id):
         """
-        Removes a completed or expired job from the queue
+        Removes a job from the "queue" queue
         :param job_id: the id for the job in question
         """
         with self.lock:
             job = self.get_specific_job_from_queue(job_id)
             self.r.lrem('queue', job, 1)
 
-    def does_job_exist_in_progress(self,key):
+    def does_job_exist_in_progress(self, job_id):
         """
-        Verifies that a given job that is in progress exists
-        :param key: the key of the job
-        :return: true if the job is in progress, false if it is not in progress
+        Verifies that a given job is in the "progress" queue exists
+        :param job_id: the key of the job
+        :return: True if the job is in progress, False if it is not in progress
         """
         with self.lock:
+            key = self.get_keys_from_progress(job_id)
             job = self.get_specific_job_from_progress(key)
             if job == '':
                 return False
@@ -137,9 +137,9 @@ class RedisManager:
 
     def get_specific_job_from_progress(self, key):
         """
-        Get a specific job that is in progress
+        Get a specific job that is in the "progress" queue
         :param key: the key of the job requested
-        :return: nothing if the job does not exist, otherwise returns the data for the job
+        :return: '' if the job does not exist, otherwise returns the data for the job
         """
         with self.lock:
             job = self.r.hget('progress', key)
@@ -152,9 +152,9 @@ class RedisManager:
 
     def get_keys_from_progress(self, job_id):
         """
-        Get the key of a job that is in progress
-        :param job_id: the id of the job you want the key from
-        :return: nothing if the job does not exist, or the key if it does exist
+        Get the key of a job that is the "progress" queue
+        :param job_id: the id of the job you want to get the key for
+        :return: '' if the job does not exist, or the key if the job does exist
         """
         with self.lock:
             key_list = self.r.hgetall('progress')
@@ -167,7 +167,7 @@ class RedisManager:
 
     def remove_job_from_progress(self, key):
         """
-        Removes a job from being in progress
+        Removes a job from the "progress" queue
         :param key: the key of the job that is to be removed
         :return: 
         """
@@ -177,7 +177,8 @@ class RedisManager:
     # Combined Functions
     def renew_job(self, job_id):
         """
-        Takes an expired job and adds it back into the job queue
+        Takes an expired job from the "progress" queue and adds it back into the "queue" queue. It then deletes
+        the expired job from the "progress" queue
         :param job_id: the id for the job in question
         :return:
         """

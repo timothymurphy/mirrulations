@@ -101,7 +101,91 @@ def test_id_matches_bad():
     assert df.id_matches(PATH + "doc.FMCSA-1997-2350-21653.json", "FMCSA-1997-2350-21653") is False
 
 
-# Assimilation Tests
+def test_is_document_beginning_good():
+    assert df.beginning_is_letter("AHRQ_FRDOC_0001-0036") is True
+
+
+def test_is_document_beginning_bad():
+    assert df.beginning_is_letter("9147_FRDOC_0001-0036") is False
+
+
+# Saving Tests
+def test_get_file_list(workfile_tempdir, savefile_tempdir):
+    compressed_file = PATH + "Archive.zip"
+    PATHstr = savefile_tempdir
+    file_list = df.get_file_list(compressed_file, PATHstr + "/")
+    assert len(file_list) == 4
+
+
+def test_get_file_list_and_work(workfile_tempdir, savefile_tempdir):
+    compressed_file = PATH + "Archive.zip"
+    PATHstr = savefile_tempdir
+    file_list = df.get_file_list(compressed_file, PATHstr + "/")
+
+    condition = True
+    for file in file_list:
+        org, docket_id, document_id = df.get_doc_attributes(file)
+
+        if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
+            pass
+        else:
+            condition = False
+            break
+
+    assert condition is True
+
+
+def test_get_file_list_and_bad_work(savefile_tempdir):
+    compressed_file = PATH + "Bad_Archive.zip"
+    PATHstr = savefile_tempdir
+    file_list = df.get_file_list(compressed_file, PATHstr + "/")
+
+    condition = True
+    for file in file_list:
+        org, docket_id, document_id = df.get_doc_attributes(file)
+
+        if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
+            pass
+        else:
+            condition = False
+
+    assert condition is False
+
+
+def test_get_file_list_and_more_bad_work(savefile_tempdir):
+    compressed_file = PATH + "Bad_Middle_Archive.zip"
+    PATHstr = savefile_tempdir
+    file_list = df.get_file_list(compressed_file, PATHstr + "/")
+
+    condition = True
+    for file in file_list:
+        org, docket_id, document_id = df.get_doc_attributes(file)
+
+        if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
+            pass
+        else:
+            condition = False
+
+    assert condition is False
+
+
+def test_get_file_list_and_bad_number_work(savefile_tempdir):
+    compressed_file = PATH + "Bad_Number_Archive.zip"
+    PATHstr = savefile_tempdir
+    file_list = df.get_file_list(compressed_file, PATHstr + "/")
+
+    condition = True
+    for file in file_list:
+        org, docket_id, document_id = df.get_doc_attributes(file)
+
+        if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
+            pass
+        else:
+            condition = False
+
+    assert condition is False
+
+
 def test_local_save(workfile_tempdir, savefile_tempdir):
     filename = "doc.FMCSA-1997-2350-21654.json"
     path = workfile_tempdir + '/' + filename

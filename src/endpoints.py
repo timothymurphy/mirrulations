@@ -34,9 +34,8 @@ def get_work():
     client_id = request.args.get('client_id')
     if client_id is None:
         raise BadParameterException
-    work_list = r.get_work()
-    json_info = generate_json(work_list)
-    return json_info
+    json_info = r.get_work()
+    return json.dumps(json_info)
 
 
 @app.route('/return_docs', methods=['POST'])
@@ -51,7 +50,7 @@ def return_docs():
         raise BadParameterException
     if json_info is None:
         raise PostException
-    process_docs(json_info, r)
+    process_docs(json.dumps(json_info))
     return 'Successful!'
 
 
@@ -66,7 +65,7 @@ def return_doc():
         json_info= request.form['json_info']
     except:
         raise BadParameterException
-    process_doc(json_info, files, r)
+    process_doc(json.dumps(json_info), files)
     return 'Successful!'
 
 
