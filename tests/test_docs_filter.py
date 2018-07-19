@@ -22,31 +22,31 @@ def setUp():
 # Validation Tests
 def test_file_checker_500_lines():
     test_data = generate_json_data(PATH + '500_lines.json')
-    assert dsf.file_length_checker(test_data) is True
+    assert dsf.work_file_length_checker(test_data) is True
     assert test_data["job_type"] == "documents"
 
 
 def test_file_checker_1000_lines():
     test_data = generate_json_data(PATH + '1000_lines.json')
-    assert dsf.file_length_checker(test_data) is True
+    assert dsf.work_file_length_checker(test_data) is True
     assert test_data["job_type"] == "documents"
 
 
 def test_file_checker_2_workfiles():
     test_data = generate_json_data(PATH + '2_workfiles.json')
-    assert dsf.file_length_checker(test_data) is True
+    assert dsf.work_file_length_checker(test_data) is True
     assert test_data["job_type"] == "documents"
 
 
 def test_file_checker_1001_lines():
     test_data = generate_json_data(PATH + '1001_lines.json')
-    assert dsf.file_length_checker(test_data) is False
+    assert dsf.work_file_length_checker(test_data) is False
     assert test_data["job_type"] == "documents"
 
 
 def test_file_checker_too_many_attachments():
     test_data = generate_json_data(PATH + 'too_many_attachments.json')
-    assert dsf.file_length_checker(test_data) is False
+    assert dsf.work_file_length_checker(test_data) is False
     assert test_data["job_type"] == "documents"
 
 
@@ -55,9 +55,9 @@ def test_create_job():
     r = setUp()
     test_data = generate_json_data(PATH + '500_lines.json')
     job_id = "1"
-    job = dsf.create_job(test_data["data"], job_id)
-    sff.add_job(job, r, "queue")
-    assert sff.job_exists('1', r, "queue")
+    job = dsf.create_document_job(test_data["data"], job_id)
+    sff.add_job_list(job, r, "queue")
+    assert sff.job_exists_list('1', r, "queue")
 
 
 

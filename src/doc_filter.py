@@ -180,7 +180,7 @@ def process_doc(json_data, compressed_file, Redis_Manager):
     :return:
     """
 
-    if sff.job_exists(json_data, Redis_Manager, 'progress') is False:
+    if sff.job_exists_list(json_data, Redis_Manager, 'progress') is False:
         pass
 
     else:
@@ -215,4 +215,4 @@ def process_doc(json_data, compressed_file, Redis_Manager):
             for file in file_list:
                 local_save(PATHstr + "/" + file, "~/regulations-data/")
             key = sff.get_key_hash(json_data["job_id"], Redis_Manager, "progress")
-            sff.remove_job_progress(key, Redis_Manager, "progress")
+            sff.remove_job_hash(key, Redis_Manager, "progress")

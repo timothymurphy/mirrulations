@@ -1,7 +1,12 @@
 import json
 
+"""
+These are the functions that the document and documents filters both need in order to work
+"""
+
+
 # General Functions
-def add_job(job, Redis_Manager, queue):
+def add_job_list(job, Redis_Manager, queue):
     """
     Adds a job to the queue of jobs for server to provide to clients
     :param job: the job to be added
@@ -12,7 +17,7 @@ def add_job(job, Redis_Manager, queue):
     Redis_Manager.rpush(queue, job)
 
 
-def get_job(job_id, Redis_Manager, queue):
+def get_job_list(job_id, Redis_Manager, queue):
     """
     Selects a job from the queue by its id
     :param job_id: the id for the job in question
@@ -34,7 +39,7 @@ def get_job(job_id, Redis_Manager, queue):
 
 
 # Queue Functions
-def job_exists(job_id, Redis_Manager, queue):
+def job_exists_list(job_id, Redis_Manager, queue):
     """
     Verifies that a given job that is to be completed exists
     :param job_id: the id for the job in question
@@ -43,14 +48,14 @@ def job_exists(job_id, Redis_Manager, queue):
     :return:
     """
 
-    job = get_job(job_id, Redis_Manager, queue)
+    job = get_job_list(job_id, Redis_Manager, queue)
     if job == '':
         return False
     else:
         return True
 
 
-def remove_job_queue(job_id, Redis_Manager, queue):
+def remove_job_list(job_id, Redis_Manager, queue):
     """
     Removes a completed or expired job from the queue
     :param job_id: the id for the job in question
@@ -58,12 +63,12 @@ def remove_job_queue(job_id, Redis_Manager, queue):
     :param queue: the queue containing jobs to be completed
     :return:
     """
-    job = get_job(job_id, Redis_Manager, queue)
+    job = get_job_list(job_id, Redis_Manager, queue)
     Redis_Manager.lrem(queue, 1, job)
 
 
 # Progress Functions
-def add_job_progress(job, Redis_Manager, queue, time):
+def add_job_hash(job, Redis_Manager, queue, time):
     """
     TODO
     :param job:
@@ -75,7 +80,7 @@ def add_job_progress(job, Redis_Manager, queue, time):
     Redis_Manager.hset(queue, time, job)
 
 
-def job_exists_progress(key, Redis_Manager, queue):
+def job_exists_hash(key, Redis_Manager, queue):
     """
 
     :param key:
@@ -83,14 +88,14 @@ def job_exists_progress(key, Redis_Manager, queue):
     :param queue:
     :return:
     """
-    job = get_job_progress(key, Redis_Manager, queue)
+    job = get_job_hash(key, Redis_Manager, queue)
     if job == '':
         return False
     else:
         return True
 
 
-def get_job_progress(key, Redis_Manager, queue):
+def get_job_hash(key, Redis_Manager, queue):
     """
 
     :param key:
@@ -110,14 +115,14 @@ def get_job_progress(key, Redis_Manager, queue):
 def get_key_hash(job_id, Redis_Manager, queue):
     key_list = Redis_Manager.hgetall(queue)
     for key in key_list:
-        x = get_job_progress(key, Redis_Manager, queue)
+        x = get_job_hash(key, Redis_Manager, queue)
         info = json.loads(x)
         if info["job_id"] == job_id:
             return key.decode("utf-8")
     return ''
 
 
-def remove_job_progress(key, Redis_Manager, queue):
+def remove_job_hash(key, Redis_Manager, queue):
     Redis_Manager.hdel(queue, key)
 
 
@@ -133,8 +138,6 @@ def renew_job(job_id, Redis_Manager):
     queue = "queue"
 
     key = get_key_hash(job_id, Redis_Manager, progress)
-    job = get_job_progress(key, Redis_Manager, progress)
-    job_id = json.loads(job)
-    job_id = job_id['job_id']
-    add_job(job, Redis_Manager, 'queue')
-    remove_job_progress(key, Redis_Manager, 'progress')
+    job = get_job_hash(key, Redis_Manager, progress)
+    add_job_list(job, Redis_Manager, 'queue')
+    remove_job_hash(key, Redis_Manager, 'progress')
