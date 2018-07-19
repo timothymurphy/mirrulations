@@ -3,7 +3,7 @@ import sys, os, os.path, tempfile, json, shutil, re, zipfile
 import shared_filter_functions as sff
 
 """
-This program does the validation and assimilation of data for the document jobs
+This program does the validation of data for the document jobs and then saves that data locally
 """
 
 

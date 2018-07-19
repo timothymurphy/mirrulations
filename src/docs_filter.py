@@ -57,7 +57,7 @@ def create_document_job(workfile, job_id):
 # Final Function
 def process_docs(json_data, Redis_Manager):
     """
-    Main documents function, called by the server to compile list of document jobs
+    Main documents function, called by the server to compile list of document jobs and add them to the "queue"
     :param json_data: the json data for the jobs
     :param Redis_Manager: database manager
     :return:
