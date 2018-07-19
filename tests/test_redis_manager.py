@@ -1,5 +1,6 @@
 import pytest
 import fakeredis
+import json
 import redis
 import mock
 from redis_manager import RedisManager
@@ -11,9 +12,9 @@ import time
 def make_databse(reset, lock):
     r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()
-    list = ["a", ["b", "c"]]
-    list2 = ["d", ["e", "f"]]
-    list3 = ["g", ["h", "i"]]
+    list = {"A":"a", "B":["b", "c"]}
+    list2 = {"D":"d", "E":["e", "f"]}
+    list3 = {"G":"g", "H":["h", "i"]}
     r.add_to_queue(list)
     r.add_to_queue(list2)
     r.add_to_queue(list3)
@@ -34,7 +35,7 @@ def ignore_test_iterate():
 def test_get_single_queue_item():
     r = make_databse()
     item = literal_eval(r.get_singe_queue_item().decode('utf-8'))
-    assert item == ["g", ["h", "i"]]
+    assert item == {"G":"g", "H":["h", "i"]}
 
 def test_get_all_item_in_queue():
     r = make_databse()
@@ -52,7 +53,7 @@ def test_get_work():
     assert len(r.get_all_items_in_queue()) == 3
     assert len(r.get_all_items_in_progress()) == 0
     work = r.get_work()
-    assert work == ["g", ["h", "i"]]
+    assert work == {"G":"g", "H":["h", "i"]}
     assert len(r.get_all_items_in_queue()) == 2
     assert len(r.get_all_items_in_progress()) == 1
 
@@ -89,6 +90,79 @@ def test_find_no_expired():
     assert len(r.get_all_items_in_progress()) == 2
     r.find_expired()
     assert len(r.get_all_items_in_progress()) == 2
+
+def test_get_specific_item_from_queue():
+    r = make_databse()
+    r.delete_all()
+    r.add_to_queue(json.dumps({"A":"B", "job_id":"d"}))
+    assert r.get_sepcific_job_from_queue("d") == json.dumps({"A":"B", "job_id":"d"})
+
+def test_get_specific_item_from_queue_does_not_match():
+    r = make_databse()
+    r.delete_all()
+    r.add_to_queue(json.dumps({"A":"B", "job_id":"c"}))
+    assert r.get_sepcific_job_from_queue("d") == ''
+
+def test_remove_specific_job_from_queue():
+    r = make_databse()
+    r.delete_all()
+    r.add_to_queue(json.dumps({"A": "B", "job_id": "c"}))
+    r.add_to_queue(json.dumps({"A": "B", "job_id": "d"}))
+    assert len(r.get_all_items_in_queue()) == 2
+    r.remove_specific_job_from_queue("c")
+    assert len(r.get_all_items_in_queue()) == 1
+    r.remove_specific_job_from_queue("d")
+    assert len(r.get_all_items_in_queue()) == 0
+
+def test_remove_specific_job_from_queue_no_item():
+    r = make_databse()
+    r.delete_all()
+    r.add_to_queue(json.dumps({"A": "B", "job_id": "c"}))
+    r.add_to_queue(json.dumps({"A": "B", "job_id": "d"}))
+    assert len(r.get_all_items_in_queue()) == 2
+    r.remove_specific_job_from_queue("a")
+    assert len(r.get_all_items_in_queue()) == 2
+
+@mock.patch('redis_manager.get_curr_time', return_value=15)
+def test_get_keys_progress(time):
+    r = make_databse()
+    r.delete_all()
+    r.add_to_progress(json.dumps({"A": "B", "job_id": "c"}))
+    r.add_to_progress(json.dumps({"A": "B", "job_id": "d"}))
+    assert r.get_keys_from_progress("d") == "15"
+
+@mock.patch('redis_manager.get_curr_time', return_value=15)
+def test_does_job_exist_in_progress(time):
+    r = make_databse()
+    r.delete_all()
+    r.add_to_progress(json.dumps({"A": "B", "job_id": "c"}))
+    assert r.does_job_exist_in_progress(15)
+
+
+@mock.patch('redis_manager.get_curr_time', return_value=15)
+def test_delete_from_progress(time):
+    r = make_databse()
+    r.delete_all()
+    r.add_to_progress(json.dumps({"A": "B", "job_id": "c"}))
+    assert len(r.get_all_items_in_progress()) == 1
+    r.remove_job_from_progress(15)
+    assert len(r.get_all_items_in_progress()) == 0
+
+
+@mock.patch('redis_manager.get_curr_time', return_value=15)
+def test_renew_job(time):
+    r = make_databse()
+    r.delete_all()
+    r.add_to_progress(json.dumps({"A": "B", "job_id": "c"}))
+    assert len(r.get_all_items_in_progress()) == 1
+    assert len(r.get_all_items_in_queue()) == 0
+    r.renew_job("c")
+    assert len(r.get_all_items_in_queue()) == 1
+    assert len(r.get_all_items_in_progress()) == 0
+
+
+
+
 
 
 
