@@ -82,7 +82,6 @@ def add_job_hash(job, Redis_Manager, queue, time):
 
 def job_exists_hash(key, Redis_Manager, queue):
     """
-
     :param key:
     :param Redis_Manager:
     :param queue:
@@ -97,7 +96,6 @@ def job_exists_hash(key, Redis_Manager, queue):
 
 def get_job_hash(key, Redis_Manager, queue):
     """
-
     :param key:
     :param Redis_Manager:
     :param queue:

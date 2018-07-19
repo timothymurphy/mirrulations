@@ -1,6 +1,8 @@
 import random
 import json
-import shared_filter_functions as sff
+import redis
+from redis_manager import RedisManager
+r = RedisManager(redis.Redis())
 
 """
 This program does the validation of data for the documents jobs and then creates document jobs using that data
@@ -30,7 +32,7 @@ def work_file_length_checker(json_data):
 
 
 # Assimilation Functions
-def add_document_job(json_data, Redis_Manager):
+def add_document_job(json_data):
     """
     Creates a job for each workfile and then adds each to the "queue"
     :param json_data: the json data containing all the workfiles
@@ -40,7 +42,7 @@ def add_document_job(json_data, Redis_Manager):
     for workfile in json_data["data"]:
         job_id = str(random.randint(0,1000000000))
         job = create_document_job(workfile, job_id)
-        sff.add_job_list(job, Redis_Manager, "queue")
+        r.add_to_queue(job)
 
 
 def create_document_job(workfile, job_id):
@@ -63,17 +65,17 @@ def process_docs(json_data, Redis_Manager):
     :return:
     """
 
-    if sff.job_exists_hash(json_data["job_id"], Redis_Manager, "progress") is False:
+    if r.does_job_exist_in_progress(json_data["job_id"]) is False:
         pass
 
     else:
         if work_file_length_checker(json_data) and json_data["job_type"] == "documents":
             add_document_job(json_data, Redis_Manager)
-            key = sff.get_key_hash(json_data["job_id"], Redis_Manager, "progress")
-            sff.remove_job_hash(key, Redis_Manager, "progress")
+            key = r.get_keys_from_progress(json_data["job_id"])
+            r.remove_job_from_progress(key)
 
         else:
-            sff.renew_job(json_data, Redis_Manager)
+            r.renew_job(json_data["job_id"])
 
 
 

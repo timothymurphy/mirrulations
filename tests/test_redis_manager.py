@@ -51,7 +51,7 @@ def test_get_work():
     assert len(r.get_all_items_in_queue()) == 3
     assert len(r.get_all_items_in_progress()) == 0
     work = r.get_work()
-    assert work == {"G":"g", "H":["h", "i"]}
+    assert work == {"A":"a", "B":["b", "c"]}
     assert len(r.get_all_items_in_queue()) == 2
     assert len(r.get_all_items_in_progress()) == 1
 
@@ -144,7 +144,7 @@ def test_does_job_exist_in_progress(time):
     r = make_database()
     r.delete_all()
     r.add_to_progress(json.dumps({"A": "B", "job_id": "c"}))
-    assert r.does_job_exist_in_progress(15)
+    assert r.does_job_exist_in_progress("c")
 
 
 @mock.patch('redis_manager.get_curr_time', return_value=15)
