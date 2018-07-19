@@ -28,7 +28,6 @@ def monolith():
         file = open(key_file, "w+")
 
     regulations_key = os.environ["REGULATIONS_KEY"]
-    work_server_key = os.environ["WORK_SERVER_KEY"]
 
     #Getting where we are in the number of files to be downloaded, from the docs_count file
     current_page = file.readline().replace("\n","")
@@ -62,8 +61,9 @@ def monolith():
                 if current_page == max_page_hit:
                     break
 
-            #Makes a JSON from the list of URLs and sends it to the server as work
-            r.add_to_queue(endpoints.generate_json(url_list))
+            #Makes a JSON from the list of URLs and send it to the queue as a job
+            docs_work = [''.join(random.choices(string.ascii_letters + string.digits, k=16)), "docs", url_list]
+            r.add_to_queue(endpoints.generate_json(docs_work))
 
 
 
