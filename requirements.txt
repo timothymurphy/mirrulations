@@ -1,7 +1,7 @@
 requests
 redis
 flask
-redis-lock
+python-redis-lock
 pytest
 requests-mock
 mock
