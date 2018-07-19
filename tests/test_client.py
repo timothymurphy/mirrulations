@@ -2,7 +2,7 @@ from client import *
 import pytest
 import requests_mock
 from api_call import add_api_key
-from api_call_managment import CallFailException
+from api_call_management import CallFailException
 
 server_url = "http://127.0.0.1:5000"
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
