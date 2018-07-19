@@ -50,12 +50,13 @@ class RedisManager:
             pass
 
     def find_expired(self):
-        for item in self.r.hgetall('progress'):
-            if (float(time.time()) - float(item.decode('utf-8')) > 21600):
-                self.r.hdel('progress',item)
-                self.add_to_queue(item)
-            else:
-                pass
+        with self.lock:
+            for item in self.r.hgetall('progress'):
+                if (float(time.time()) - float(item.decode('utf-8')) > 21600):
+                    self.r.hdel('progress',item)
+                    self.add_to_queue(item)
+                else:
+                    pass
 
 
     def delete_all(self):
@@ -72,18 +73,18 @@ class RedisManager:
            :param queue: the queue containing jobs to be completed
            :return:
            """
+        with self.lock:
+            for element in range(self.r.llen('queue')):
 
-        for element in range(self.r.llen('queue')):
-
-            current = (self.r.lindex('queue', element)).decode("utf-8")
+                current = (self.r.lindex('queue', element)).decode("utf-8")
 
 
-            info = json.loads(current)
+                info = json.loads(current)
 
-            if job_id == info['job_id']:
-                return current
+                if job_id == info['job_id']:
+                    return current
 
-        return ''
+            return ''
 
     def does_job_exist_in_queue(self, job_id):
         """
@@ -93,12 +94,12 @@ class RedisManager:
         :param queue: the queue containing jobs to be completed
         :return:
         """
-
-        job = self.get_sepcific_job_from_queue(job_id)
-        if job == '':
-            return False
-        else:
-            return True
+        with self.lock:
+            job = self.get_sepcific_job_from_queue(job_id)
+            if job == '':
+                return False
+            else:
+                return True
 
     def remove_specific_job_from_queue(self, job_id):
         """
@@ -108,8 +109,9 @@ class RedisManager:
         :param queue: the queue containing jobs to be completed
         :return:
         """
-        job = self.get_sepcific_job_from_queue(job_id)
-        self.r.lrem('queue', job, 1)
+        with self.lock:
+            job = self.get_sepcific_job_from_queue(job_id)
+            self.r.lrem('queue', job, 1)
 
     def does_job_exist_in_progress(self,key):
         """
@@ -119,11 +121,12 @@ class RedisManager:
         :param queue:
         :return:
         """
-        job = self.get_specific_job_from_progress(key)
-        if job == '':
-            return False
-        else:
-            return True
+        with self.lock:
+            job = self.get_specific_job_from_progress(key)
+            if job == '':
+                return False
+            else:
+                return True
 
     def get_specific_job_from_progress(self, key):
         """
@@ -133,25 +136,28 @@ class RedisManager:
         :param queue:
         :return:
         """
-        job = self.r.hget('progress', key)
+        with self.lock:
+            job = self.r.hget('progress', key)
 
-        if job is None:
-            return ''
-        else:
-            data = job.decode("utf-8")
-            return data
+            if job is None:
+                return ''
+            else:
+                data = job.decode("utf-8")
+                return data
 
     def get_keys_from_progress(self, job_id):
-        key_list = self.r.hgetall('progress')
-        for key in key_list:
-            json_info = self.get_specific_job_from_progress(key)
-            info = json.loads(json_info)
-            if info["job_id"] == job_id:
-                return key.decode("utf-8")
-        return ''
+        with self.lock:
+            key_list = self.r.hgetall('progress')
+            for key in key_list:
+                json_info = self.get_specific_job_from_progress(key)
+                info = json.loads(json_info)
+                if info["job_id"] == job_id:
+                    return key.decode("utf-8")
+            return ''
 
     def remove_job_from_progress(self, key):
-        self.r.hdel('progress', key)
+        with self.lock:
+            self.r.hdel('progress', key)
 
     # Combined Functions
     def renew_job(self, job_id):
@@ -161,11 +167,11 @@ class RedisManager:
         :param Redis_Manager: database manager
         :return:
         """
-
-        key = self.get_keys_from_progress(job_id)
-        job = self.get_specific_job_from_progress(key)
-        self.add_to_queue(job)
-        self.remove_job_from_progress(key)
+        with self.lock:
+            key = self.get_keys_from_progress(job_id)
+            job = self.get_specific_job_from_progress(key)
+            self.add_to_queue(job)
+            self.remove_job_from_progress(key)
 
 
 def reset_lock(database):
