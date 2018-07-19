@@ -1,6 +1,7 @@
 import random
 import json
 import redis
+import string
 from redis_manager import RedisManager
 r = RedisManager(redis.Redis())
 
@@ -36,12 +37,11 @@ def add_document_job(json_data):
     """
     Creates a job for each workfile and then adds each to the "queue"
     :param json_data: the json data containing all the workfiles
-    :param Redis_Manager: database manager
     :return:
     """
     for workfile in json_data["data"]:
-        job_id = str(random.randint(0,1000000000))
-        job = create_document_job(workfile, job_id)
+        random_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+        job = create_document_job(workfile, random_id)
         r.add_to_queue(job)
 
 
@@ -57,11 +57,10 @@ def create_document_job(workfile, job_id):
 
 
 # Final Function
-def process_docs(json_data, Redis_Manager):
+def process_docs(json_data):
     """
-    Main documents function, called by the server to compile list of document jobs and add them to the "queue"
+    Main documents function, called by the server to compile list of document jobs and add them to the "queue" queue
     :param json_data: the json data for the jobs
-    :param Redis_Manager: database manager
     :return:
     """
 
@@ -70,7 +69,7 @@ def process_docs(json_data, Redis_Manager):
 
     else:
         if work_file_length_checker(json_data) and json_data["job_type"] == "documents":
-            add_document_job(json_data, Redis_Manager)
+            add_document_job(json_data)
             key = r.get_keys_from_progress(json_data["job_id"])
             r.remove_job_from_progress(key)
 

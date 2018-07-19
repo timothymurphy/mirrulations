@@ -1,6 +1,8 @@
 #!/usr/bin/env python
-import sys, os, os.path, tempfile, json, shutil, re, zipfile
-
+import os, os.path, tempfile, json, shutil, re, zipfile
+import redis
+from redis_manager import RedisManager
+r = RedisManager(redis.Redis())
 
 """
 This program does the validation of data for the document jobs and then saves that data locally
@@ -22,7 +24,7 @@ def get_file_name(path):
     """
     Extracts the name of the file from the given path
     :param path: location of the file in which the name will be extracted from
-    :return:
+    :return: file_name: The file name from the path
     """
     split_path = path.split("/")
     file_name = split_path[len(split_path) - 1]
@@ -33,7 +35,9 @@ def get_doc_attributes(file_name):
     """
     Get the organization(s), the docket_id and the document_id from a file name
     :param file_name: name of the file to extract attributes of the document name
-    :return:
+    :return: orgs: The organizations(s),
+             docket_id: the docket_id,
+             document_id: the document_id
     """
     document_id = get_document_id(file_name)
 
@@ -65,9 +69,9 @@ def get_doc_attributes(file_name):
 
 def add_hyphens(list):
     """
-    This returns the ordered list of the organizations in the docket. This will be useful for creating the directories
+    Adds hyphens between the list of strings passed
     :param list: the list to be hyphenated
-    :return:
+    :return: A string of the list with hyphens in-between
     """
     hyphened_string = ""
     for x in range(len(list)):
@@ -87,14 +91,14 @@ def add_hyphens(list):
     return hyphened_string
 
 
-# Validator Functions
-def ending_is_number(document):
+# Validation Functions
+def ending_is_number(document_id):
     """
     Ensure that the document id ends in a number
-    :param document: the document file containing the id
+    :param document_id: the document id being checked
     :return:
     """
-    list = re.split("-", document)
+    list = re.split("-", document_id)
     number = list[-1]
     return number.isdigit()
 
@@ -114,17 +118,17 @@ def id_matches(path, doc_id):
     return document_id == doc_id
 
 
-def begining_is_letter(document):
+def beginning_is_letter(document_id):
     """
     Ensures that the beginning of the document id begins with a letter
-    :param document: the document file containing the id
+    :param document_id: the document id being checked
     :return:
     """
-    letter = document[0]
+    letter = document_id[0]
     return letter.isalpha()
 
 
-# Assimilation Functions
+# Saving Functions
 def local_save(cur_path, destination):
     """
     Save the file located at the current path to the destination location
@@ -154,7 +158,7 @@ def get_file_list(compressed_file, PATHstr):
     Get the list of files to be processed from a compressed file
     :param compressed_file: file containing file list to be uncompressed
     :param PATHstr: location of the file in string form
-    :return:
+    :return: The list of file names in the compressed file
     """
     files = zipfile.ZipFile(compressed_file, "r")
     files.extractall(PATHstr)
@@ -171,16 +175,15 @@ def get_file_list(compressed_file, PATHstr):
 
 
 # Final Function
-def process_doc(json_data, compressed_file, Redis_Manager):
+def process_doc(json_data, compressed_file):
     """
-    Main doc function, called by the server to check and save documents returned from the client
+    Main document function, called by the server to check and save document files returned from the client
     :param json_data: json data of the job
-    :param compressed_file: compressed file of file names
-    :param Redis_Manager: database manager
+    :param compressed_file: compressed file of document data
     :return:
     """
 
-    if sff.job_exists_hash(json_data["job_id"], Redis_Manager, 'progress') is False:
+    if r.does_job_exist_in_progress(json_data["job_id"]) is False:
         pass
 
     else:
@@ -195,24 +198,24 @@ def process_doc(json_data, compressed_file, Redis_Manager):
         for file in file_list:
             org, docket_id, document_id = get_doc_attributes(file)
 
-            if file.startswith("doc.") and begining_is_letter(document_id) and ending_is_number(document_id) and file.endswith(".json"):
+            if file.startswith("doc.") and beginning_is_letter(document_id) and ending_is_number(document_id) and file.endswith(".json"):
                 if id_matches(file, document_id):
                     pass
                 else:
-                    renew = False
+                    renew = True
                     break
 
-            elif file.startswith("doc.") and ending_is_number(document_id) and begining_is_letter(document_id):
+            elif file.startswith("doc.") and ending_is_number(document_id) and beginning_is_letter(document_id):
                     pass
             else:
                 renew = True
                 break
 
         if renew is True:
-            sff.renew_job(json_data, Redis_Manager)
+            r.renew_job(json_data)
 
         else:
             for file in file_list:
                 local_save(PATHstr + "/" + file, "~/regulations-data/")
-            key = sff.get_key_hash(json_data["job_id"], Redis_Manager, "progress")
-            sff.remove_job_hash(key, Redis_Manager, "progress")
+            key = r.get_keys_from_progress(json_data["job_id"])
+            r.remove_job_from_progress(key)
