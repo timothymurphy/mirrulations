@@ -42,7 +42,7 @@ def get_work():
 @app.route('/return_docs', methods=['POST'])
 def return_docs():
     """
-    the endpoint the client calls to return the document ids received from the regualtions docs calls
+    the endpoint the client calls to return the document ids received from the regulations docs calls
     :return: returns a string saying successful so the client knows the call was successful
     """
     try:
@@ -72,7 +72,7 @@ def return_doc():
 
 def generate_json(work_list):
     """
-    given a list of values, the the list will be converted into json format
+    given a list of values, the list will be converted into json format
     :param list: the list of values that will be converted into json
     :return: returns the json formatted list
     """
@@ -102,7 +102,7 @@ class PostException(Exception):
 
 
 if __name__ == '__main__':
-    app.run('10.76.100.45',port=6060)
+    app.run('10.76.100.45', port=6060)
 
 
 

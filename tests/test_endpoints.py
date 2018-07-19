@@ -44,8 +44,8 @@ def make_json():
 def make_databse():
     r = fakeredis.FakeRedis()
     r.flushall()
-    list = ["a", ["b", "c"]]
-    r.lpush("queue", list)
+    test_list = ["a", ["b", "c"]]
+    r.lpush("queue", test_list)
     return r
 
 
@@ -91,23 +91,28 @@ def test_generate_json():
     json1 = generate_json(list)
     assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version":"v0.1"})
 
+
 @mock.patch('endpoints.process_docs')
 def test_return_docs_call_success(docs, client):
     result = client.post("/return_docs", json=make_json())
     assert result.status_code == 200
 
+
 def test_return_docs_no_parameter(client):
     with pytest.raises(PostException):
         result = client.post('/return_docs')
+
 
 @mock.patch('endpoints.process_doc', return_value=True)
 def test_return_doc_call_success(doc,client):
     result = client.post('/return_doc', data={'file':open('test_files/filename.txt', 'rb'), 'json_info':json.dumps(make_json())})
     assert result.status_code == 200
 
+
 def test_return_doc_no_file_parameter(client):
     with pytest.raises(BadParameterException):
         result = client.post('/return_doc', data=dict(json_info=json.dumps(make_json())))
+
 
 def test_return_doc_no_json_parameter(client):
     with pytest.raises(BadParameterException):

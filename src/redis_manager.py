@@ -8,7 +8,6 @@ import time
 
 class RedisManager:
 
-
     def __init__(self, database):
         """
         Initialize the database and create the lock
@@ -17,39 +16,56 @@ class RedisManager:
         reset_lock(self.r)
         self.lock = set_lock(self.r)
 
-
     def get_work(self):
+        """
+        Gets a single job from the queue
+        :return: returns the work to be done from the queue
+        """
         with self.lock:
             work = literal_eval(self.r.lpop("queue").decode("utf-8"))
             self.add_to_progress(work)
             return work
 
-    def get_singe_queue_item(self):
-        with self.lock:
-            return self.r.lpop("queue")
-
     def add_to_queue(self, work):
+        """
+        Adds work to the queue
+        :param work: the word to be added to the queue
+        :return:
+        """
         with self.lock:
             self.r.lpush("queue", work)
 
     def add_to_progress(self, work):
+        """
+        Adds work to progress queue
+        :param work: the work that is in progress
+        :return:
+        """
         with self.lock:
             self.r.hset("progress", get_curr_time(), work)
 
     def get_all_items_in_queue(self):
+        """
+        Returns all the items currently in the queue
+        :return: the list of items in the queue
+        """
         with self.lock:
             return self.r.lrange("queue", 0, -1)
 
     def get_all_items_in_progress(self):
+        """
+        Returns all the items currently in progress
+        :return: the list of items currently in progress
+        """
         with self.lock:
             return self.r.hgetall("progress")
 
-
-    def move_between_queues(self, move_from, move_to):
-        with self.lock:
-            pass
-
     def find_expired(self):
+        """
+        Searches through the work in progress, checks which works have been in progress for over 6 hours,
+        and moves those that have been in progress for over 6 hours back to the queue
+        :return:
+        """
         with self.lock:
             for item in self.r.hgetall('progress'):
                 if (float(time.time()) - float(item.decode('utf-8')) > 21600):
@@ -65,13 +81,11 @@ class RedisManager:
         """
         self.r.flushall()
 
-    def get_sepcific_job_from_queue(self, job_id):
+    def get_specific_job_from_queue(self, job_id):
         """
-           Selects a job from the queue by its id
+           Gets a job from the queue from its job_id
            :param job_id: the id for the job in question
-           :param Redis_Manager: database manager
-           :param queue: the queue containing jobs to be completed
-           :return:
+           :return: returns the job with the given job_id
            """
         with self.lock:
             for element in range(self.r.llen('queue')):
@@ -88,14 +102,12 @@ class RedisManager:
 
     def does_job_exist_in_queue(self, job_id):
         """
-        Verifies that a given job that is to be completed exists
+        Verifies that a given job that is in the queue exists
         :param job_id: the id for the job in question
-        :param Redis_Manager: database manager
-        :param queue: the queue containing jobs to be completed
-        :return:
+        :return: true if the job is in the queue, false if it is not in the queue
         """
         with self.lock:
-            job = self.get_sepcific_job_from_queue(job_id)
+            job = self.get_specific_job_from_queue(job_id)
             if job == '':
                 return False
             else:
@@ -105,21 +117,16 @@ class RedisManager:
         """
         Removes a completed or expired job from the queue
         :param job_id: the id for the job in question
-        :param Redis_Manager: database manager
-        :param queue: the queue containing jobs to be completed
-        :return:
         """
         with self.lock:
-            job = self.get_sepcific_job_from_queue(job_id)
+            job = self.get_specific_job_from_queue(job_id)
             self.r.lrem('queue', job, 1)
 
     def does_job_exist_in_progress(self,key):
         """
-
-        :param key:
-        :param Redis_Manager:
-        :param queue:
-        :return:
+        Verifies that a given job that is in progress exists
+        :param key: the key of the job
+        :return: true if the job is in progress, false if it is not in progress
         """
         with self.lock:
             job = self.get_specific_job_from_progress(key)
@@ -130,11 +137,9 @@ class RedisManager:
 
     def get_specific_job_from_progress(self, key):
         """
-
-        :param key:
-        :param Redis_Manager:
-        :param queue:
-        :return:
+        Get a specific job that is in progress
+        :param key: the key of the job requested
+        :return: nothing if the job does not exist, otherwise returns the data for the job
         """
         with self.lock:
             job = self.r.hget('progress', key)
@@ -146,6 +151,11 @@ class RedisManager:
                 return data
 
     def get_keys_from_progress(self, job_id):
+        """
+        Get the key of a job that is in progress
+        :param job_id: the id of the job you want the key from
+        :return: nothing if the job does not exist, or the key if it does exist
+        """
         with self.lock:
             key_list = self.r.hgetall('progress')
             for key in key_list:
@@ -156,6 +166,11 @@ class RedisManager:
             return ''
 
     def remove_job_from_progress(self, key):
+        """
+        Removes a job from being in progress
+        :param key: the key of the job that is to be removed
+        :return: 
+        """
         with self.lock:
             self.r.hdel('progress', key)
 
@@ -164,7 +179,6 @@ class RedisManager:
         """
         Takes an expired job and adds it back into the job queue
         :param job_id: the id for the job in question
-        :param Redis_Manager: database manager
         :return:
         """
         with self.lock:
@@ -174,11 +188,16 @@ class RedisManager:
             self.remove_job_from_progress(key)
 
 
+# Used to reset the locks
 def reset_lock(database):
     redis_lock.reset_all(database)
 
-def set_lock(database):
-    redis_lock.Lock(database, "lock72")
 
+# Sets the lock for the database
+def set_lock(database):
+    return redis_lock.Lock(database, "lock72")
+
+
+# Returns the current time
 def get_curr_time():
     return float(time.time())
