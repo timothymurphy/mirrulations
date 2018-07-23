@@ -1,10 +1,15 @@
 import requests
 import os
+import logging
 
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
     key = f.readline().strip()
 
+FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
+logging.basicConfig(filename='api_call.log', format=FORMAT)
+d = {'clientip': '192.168.0.1', 'user': 'CLIENT'}
+logger = logging.getLogger('tcpserver')
 
 def call(url):
 
@@ -19,10 +24,13 @@ def call(url):
     """
     result = requests.get(url)
     if 300 <= result.status_code < 400:
+        logger.warning('Exception: %s', 'TemporaryException for return docs', extra=d)
         raise TemporaryException
     if result.status_code == 429:
+        logger.warning('Exception: %s', 'ApiCountZeroException for return docs', extra=d)
         raise ApiCountZeroException
     if 400 <= result.status_code < 600:
+        logger.warning('Exception: %s', 'PermanentException for return docs', extra=d)
         raise PermanentException
     return result
 
