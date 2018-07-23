@@ -30,6 +30,7 @@ def get_work(client_id):
     :return: the result of making a call to get work
     """
     global d
+    logger.warning('Call Successful: %s', 'get_work: call made successfully', extra=d)
     logger.warning('Assign Variable: %s', 'get_work: create the url for getting work', extra=d)
     url = serverurl+"/get_work?client_id="+str(client_id)
     logger.warning('Variable Success: %s', 'get_work: url created successfully for get work', extra=d)
@@ -98,6 +99,7 @@ def return_doc(json_result, client_id):
     for dic in doc_dicts:
         logger.warning('Assign Variable: %s', 'return_doc: attempting to get each document id from each json', extra=d)
         doc_ids.append(dic['id'])
+        logger.warning('Variable Success: %s', 'return_doc: document id added to the list', extra=d)
     logger.warning('Variable Success: %s', 'return_doc: list of document ids was created', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: create result.zip as storage for data files', extra=d)
     result = zipfile.ZipFile("result.zip", 'w', zipfile.ZIP_DEFLATED)
@@ -152,6 +154,8 @@ def do_work():
         elif work_json["type"] == "none":
             logger.warning('Function Successful: %s', 'do_work: sleep due to no work', extra=d)
             time.sleep(3600)
+        else:
+            logger.warning('Exception: %s', 'do_work: type specified in json object was not in - doc, docs, none')
         logger.warning('Function Successful: %s', 'do_work: successful iteration in do work', extra=d)
 
 
