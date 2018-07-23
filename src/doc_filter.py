@@ -1,11 +1,18 @@
 #!/usr/bin/env python
 import os, os.path, tempfile, json, shutil, re, zipfile
 import redis
+import logging
 from redis_manager import RedisManager
+
+FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
+logging.basicConfig(filename='example.log', format=FORMAT)
+d = { 'clientip': '192.168.0.1', 'user': 'FILTERS'}
+logger = logging.getLogger('tcpserver')
+
 r = RedisManager(redis.Redis())
 
 """
-This program does the validation of data for the document jobs and then saves that data locally
+This program does the validation of data for the doc jobs and then saves that data locally
 """
 
 
@@ -16,7 +23,11 @@ def get_document_id(file_name):
     :param file_name: name of the file that the id will be extracted from
     :return id: the string of the document id from the file name
     """
+    logger.warning('Function Successful: % s',
+                   'get_document_id: get_document_id successfully called from get_doc_attributes', extra=d)
     doc,id,ending = file_name.split(".")
+    logger.warning('Returning: %s',
+                   'get_document_id: returning document_id', extra=d)
     return id
 
 
@@ -26,8 +37,12 @@ def get_file_name(path):
     :param path: location of the file in which the name will be extracted from
     :return: file_name: The file name from the path
     """
+    logger.warning('Function Successful: % s',
+                   'get_file_name: get_file_name successfully called from local_save', extra=d)
     split_path = path.split("/")
     file_name = split_path[len(split_path) - 1]
+    logger.warning('Returning: %s',
+                   'get_file_name: returning the file name', extra=d)
     return file_name
 
 
@@ -168,7 +183,7 @@ def get_file_list(compressed_file, PATHstr):
 
     final_list = []
     for file in file_list:
-        if file.startswith("doc"):
+        if file.startswith("doc."):
             final_list.append(file)
 
     return final_list
@@ -198,14 +213,20 @@ def process_doc(json_data, compressed_file):
         for file in file_list:
             org, docket_id, document_id = get_doc_attributes(file)
 
-            if file.startswith("doc.") and beginning_is_letter(document_id) and ending_is_number(document_id) and file.endswith(".json"):
+            fsw = file.startswith("doc.")
+            bil = beginning_is_letter(document_id)
+            ein = ending_is_number(document_id)
+            few = file.endswith(".json")
+            job_type = json_data["job_type"] == "doc"
+
+            if fsw and bil and ein and few and job_type:
                 if id_matches(file, document_id):
                     pass
                 else:
                     renew = True
                     break
 
-            elif file.startswith("doc.") and ending_is_number(document_id) and beginning_is_letter(document_id):
+            elif fsw and bil and ein and job_type:
                     pass
             else:
                 renew = True
