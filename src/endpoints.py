@@ -17,6 +17,7 @@ app = Flask(__name__)
 
 r = RedisManager(redis.Redis())
 
+version = 'v1.0'
 
 @app.route('/')
 def default():
@@ -70,9 +71,9 @@ def return_docs():
     if json_info is None:
         logger.warning('Exception: %s', 'return_docs: PostException for return docs', extra=d)
         raise PostException
-    logger.warning('Calling Function: %s', 'return_docs: Return docs calling process docs', extra=d)
+    logger.warning('Calling Function: %s', 'return_docs: return_docs calling process_docs', extra=d)
     process_docs(json.dumps(json_info))
-    logger.warning('Function Successful: %s', 'return_docs: process docs successfully called from return docs', extra=d)
+    logger.warning('Function Successful: %s', 'return_docs: process_docs successfully called from return_docs', extra=d)
     logger.warning('Returning: %s', 'return_docs: returning success from return_docs', extra=d)
     return 'Successful!'
 
@@ -83,7 +84,7 @@ def return_doc():
     the endpoint the client calls to return documents they received from the individual regulations doc calls
     :return: returns a string saying successful so the client knows the call was successful
     """
-    logger.warning('Successful API Call: %s', 'return_doc: return doc', extra=d)
+    logger.warning('Successful API Call: %s', 'return_doc: return_doc call successful', extra=d)
     try:
         logger.warning('Assign Variable: %s', 'return_doc: getting the files from the file request field', extra=d)
         files = request.files['file']
@@ -92,12 +93,12 @@ def return_doc():
         json_info= request.form['json_info']
         logger.warning('Variable Success: %s', 'return_doc: json retrieved from the doc post call', extra=d)
     except:
-        logger.warning('Exception: %s', 'return_doc: BadParameterException for return doc', extra=d)
+        logger.warning('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
         raise BadParameterException
-    logger.warning('Exception: %s', 'return_doc: BadParameterException for return docs', extra=d)
-    logger.warning('Calling Function: %s', 'return_doc: Return doc calling process docs', extra=d)
+    logger.warning('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
+    logger.warning('Calling Function: %s', 'return_doc: call process_docs with the json and files posted to return_doc endpoint', extra=d)
     process_doc(json.dumps(json_info), files)
-    logger.warning('Function Successful: %s', 'return_doc: returning success from return doc', extra=d)
+    logger.warning('Function Successful: %s', 'return_doc: success from return_doc', extra=d)
     logger.warning('Returning: %s', 'return_doc: returning success from return_doc', extra=d)
     return 'Successful!'
 
@@ -105,7 +106,7 @@ def return_doc():
 def generate_json(work_list):
     """
     given a list of values, the list will be converted into json format
-    :param list: the list of values that will be converted into json
+    :param work_list: the list of values that will be converted into json
     :return: returns the json formatted list
     """
     logger.warning('Call Successful: %s', 'generate_json: generate_json called successfully', extra=d)
@@ -123,7 +124,7 @@ def generate_json(work_list):
         "job_id": job_id,
         "type": type,
         "data": data,
-        "version": "v0.1"
+        "version": version
     }
     logger.warning('Variable Success: %s', 'generate_json: converted_json created', extra=d)
     logger.warning("Returning: %s", 'generate_json: returning converted_json', extra=d)

@@ -145,8 +145,7 @@ class RedisManager:
                     logger.warning('Queue Add Attempt: %s', 'find_expired: attempt to add item to queue', extra=d)
                     self.r.rpush("queue", item)
                     logger.warning('Queue Add Success: %s', 'find_expired: successfully removed item from queue', extra=d)
-                else:
-                    pass
+
 
 
     def delete_all(self):
@@ -404,12 +403,14 @@ class RedisManager:
 # Used to reset the locks
 def reset_lock(database):
     logger.warning('Call Successful: %s', 'reset_lock: call successful', extra=d)
+    logger.warning('Locking: %s', 'reset_lock: all locks have been reset', extra=d)
     redis_lock.reset_all(database)
 
 
 # Sets the lock for the database
 def set_lock(database):
     logger.warning('Call Successful: %s', 'set_lock: call successful', extra=d)
+    logger.warning('Locking: %s', 'set_lock: lock has been sent', extra=d)
     logger.warning('Returning: %s', 'set_lock: return the set lock', extra=d)
     return redis_lock.Lock(database, "lock72")
 
