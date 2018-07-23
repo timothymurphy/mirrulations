@@ -19,7 +19,7 @@ def document_processor(doc_ids):
     :param doc_ids: list of document ids that have to be collected.
     :return: temporary directory that data was written to.
     """
-    logger.warning('Call Successful: %s', 'document_processor: processing documents', extra=d)
+    logger.warning('Call Successful: %s', 'document_processor: processing document ID list', extra=d)
     dirpath = tempfile.TemporaryDirectory()
     for doc_id in doc_ids:
         logger.warning('Call Successful: %s', 'document_processor: processing document: ' + doc_id, extra=d)

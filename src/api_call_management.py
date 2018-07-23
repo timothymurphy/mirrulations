@@ -35,7 +35,7 @@ def api_call_manager(url):
         except ApiCountZeroException:
             logger.warning('Exception: %s', 'api_call_mangement: Caught ApiCountZeroException. Waiting 1 hour.', extra=d)
             time.sleep(3600)
-    logger.warning('Exception: %s', 'CallFailException for return docs', extra=d)
+    logger.warning('Exception: %s', 'api_call_mangement: CallFailException for return docs', extra=d)
     raise CallFailException
 
 

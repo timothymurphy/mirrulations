@@ -33,7 +33,6 @@ def documents_processor(urls, job_id, client_id):
             process_results(result)
             logger.warning('Call Successful: %s', 'documents_processor: Done processing URL: ' + url, extra=d)
         except:
-            pass
             logger.warning('Exception: %s', 'documents_processor: Error processing URL: ' + url, extra=d)
     result = json.loads(json.dumps({"job_id" : job_id, "data" : workfiles, "client_id" : str(client_id), "version" : version}))
     return result
