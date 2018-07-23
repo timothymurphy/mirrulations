@@ -4,7 +4,7 @@ import requests_mock
 from api_call import add_api_key
 from api_call_management import CallFailException
 
-server_url = "http://127.0.0.1:5000"
+server_url = "http://10.76.100.45:5000"
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
 
 home = os.getenv("HOME")
@@ -19,7 +19,7 @@ def mock_req():
 
 
 def test_get_work(mock_req):
-    url = "http://127.0.0.1:5000/get_work?client_id=" + str(client_id)
+    url = "http://10.76.100.45:5000/get_work?client_id=" + str(client_id)
     mock_req.get(url, status_code=200, text='RANDOM')
     result = get_work(str(client_id))
     assert result.status_code == 200
