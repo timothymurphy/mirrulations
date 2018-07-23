@@ -25,12 +25,6 @@ def test_get_work(mock_req):
     assert result.status_code == 200
 
 
-def test_get_work(mock_req):
-    url = "http://127.0.0.1:5000/get_work?client_id=" + str(client_id)
-    mock_req.get(url, status_code=400, text='Error')
-    with pytest.raises(CallFailException):
-        assert get_work(str(client_id))
-
 
 def test_return_docs(mock_req):
     mock_req.post(serverurl+"/return_docs", status_code=200)
