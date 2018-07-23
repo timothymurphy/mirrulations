@@ -7,7 +7,7 @@ import zipfile
 import os
 import time
 
-serverurl = "http://127.0.0.1:5000"
+serverurl = "http://10.76.100.45:5000"
 version = "v1.0"
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
@@ -85,3 +85,5 @@ def do_work():
             time.sleep(3600)
         else:
             raise AttributeError
+
+do_work()
