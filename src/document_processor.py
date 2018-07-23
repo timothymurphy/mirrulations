@@ -7,14 +7,22 @@ with open(home + '/.env/regulationskey.txt') as f:
     key = f.readline().strip()
     client_id = f.readline().strip()
 
+FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
+logging.basicConfig(filename='document_processor.log', format=FORMAT)
+d = {'clientip': '192.168.0.1', 'user': client_id}
+logger = logging.getLogger('tcpserver')
+
+
 def document_processor(doc_ids):
     """
     This process takes all of the document ids given to it and saves all of the data for the documents in a temporary directory.
     :param doc_ids: list of document ids that have to be collected.
     :return: temporary directory that data was written to.
     """
+    logger.warning('Call Successful: %s', 'document_processor: processing documents', extra=d)
     dirpath = tempfile.TemporaryDirectory()
     for doc_id in doc_ids:
+        logger.warning('Call Successful: %s', 'document_processor: processing document: ' + doc_id, extra=d)
         result = api_call_manager(add_api_key(make_doc_url(doc_id)))
         total = get_extra_documents(result, dirpath.name, doc_id)
     return dirpath
@@ -36,6 +44,7 @@ def save_document(dirpath, doc_json, documentId):
     :param documentId: the string of a documentId
     :return:
     """
+    logger.warning('Call Successful: %s', 'document_processor: saving document with docID: ' + documentId, extra=d)
     location = dirpath + "/doc." + documentId + ".json"
     with open(location , "w+") as f:
         json.dump(doc_json, f)
@@ -50,6 +59,9 @@ def download_document(dirpath, documentId, result, type):
     :param type: the type of file that will be saved
     :return:
     """
+
+    logger.warning('Call Successful: %s', 'document_processor: downloading document with docID: ' + documentId, extra=d)
+
     # These are special cases where the api representation is different from the user's interpretation
     if(type == "excel12book"):
         type = "xlsx"
@@ -71,7 +83,10 @@ def get_extra_documents(result, dirpath, documentId):
     :param documentId: the string of a documentId
     :return: the total number of requests required to download all of them
     """
-    doc_json = load_json(result)
+
+    logger.warning('Call Successful: %s', 'document_processor: getting extra documents for docID: ' + documentId, extra=d)
+
+    doc_json = json.loads(result.text)
     save_document(dirpath, doc_json, documentId)
     total_requests = 0
     total_requests += download_doc_formats(dirpath, doc_json, documentId)
@@ -87,6 +102,9 @@ def download_doc_formats(dirpath, doc_json, documentId):
     :param documentId: the string of a documentId
     :return: the total number of requests used to download the extra formats
     """
+
+    logger.warning('Call Successful: %s', 'document_processor: downloading doc formats for docID: ' + documentId, extra=d)
+
     total_requests = 0
     try:
         extra_formats = doc_json["fileFormats"]
@@ -109,6 +127,9 @@ def download_attachments(dirpath, doc_json, documentId):
     :param documentId: the string of a documentId
     :return: the total number of requests used to download the extra attachments
     """
+
+    logger.warning('Call Successful: %s', 'document_processor: downloading attachments for docID: ' + documentId, extra=d)
+
     total_requests = 0
     try:
         extra_attachments = doc_json["attachments"]
