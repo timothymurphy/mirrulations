@@ -9,7 +9,6 @@ import time
 import logging
 
 
-
 # These variables are specific to the current implementation
 serverurl = "http://10.76.100.45:5000"
 version = "v1.0"
@@ -22,6 +21,7 @@ FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='client.log', format=FORMAT)
 d = {'clientip': '192.168.0.1', 'user': client_id}
 logger = logging.getLogger('tcpserver')
+
 
 def get_work(client_id):
     """
@@ -95,8 +95,9 @@ def return_doc(json_result, client_id):
     logger.warning('Function Successful: %s', 'return_doc: job_id and document ids retrieved successfully', extra=d)
     logger.warning('Assign Variable: %s', 'return_doc: attempting to get document ids from each json', extra=d)
     doc_ids = []
-    for d in doc_dicts:
-        doc_ids.append(d['id'])
+    for dic in doc_dicts:
+        logger.warning('Assign Variable: %s', 'return_doc: attempting to get each document id from each json', extra=d)
+        doc_ids.append(dic['id'])
     logger.warning('Variable Success: %s', 'return_doc: list of document ids was created', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: create result.zip as storage for data files', extra=d)
     result = zipfile.ZipFile("result.zip", 'w', zipfile.ZIP_DEFLATED)
@@ -104,7 +105,7 @@ def return_doc(json_result, client_id):
     logger.warning('Calling Function: %s', 'return_doc: call document_processor with the list of document ids', extra=d)
     path = doc.document_processor(doc_ids)
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
-    logger.warning('Calling Function: %s', 'return_doc: walk through every file in the directory to compress all files into results.zipp', extra=d)
+    logger.warning('Calling Function: %s', 'return_doc: walk through every file in the directory to compress all files into results.zip', extra=d)
     for root, dirs, files in os.walk(path.name):
         for file in files:
             logger.warning('Calling Function: %s', 'return_doc: write each file to zip file', extra=d)
@@ -151,5 +152,8 @@ def do_work():
         elif work_json["type"] == "none":
             logger.warning('Function Successful: %s', 'do_work: sleep due to no work', extra=d)
             time.sleep(3600)
+        logger.warning('Function Successful: %s', 'do_work: successful iteration in do work', extra=d)
 
-do_work()
+
+if __name__ == '__main__':
+    do_work()
