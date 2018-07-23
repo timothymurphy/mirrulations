@@ -181,11 +181,10 @@ class RedisManager:
         with self.lock:
             job = self.r.hget('progress', key)
 
-            if job is None:
-                return ''
-            else:
+            if job is not None:
                 data = job.decode("utf-8")
                 return data
+            return ''
 
     def get_specific_job_from_progress_no_lock(self, key):
         """
@@ -195,11 +194,10 @@ class RedisManager:
         """
         job = self.r.hget('progress', key)
 
-        if job is None:
-            return ''
-        else:
+        if job is not None:
             data = job.decode("utf-8")
             return data
+        return ''
 
     def get_keys_from_progress(self, job_id):
         """
