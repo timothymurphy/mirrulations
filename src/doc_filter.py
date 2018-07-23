@@ -5,7 +5,7 @@ import logging
 from redis_manager import RedisManager
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='example.log', format=FORMAT)
+logging.basicConfig(filename='doc_filter.log', format=FORMAT)
 d = { 'clientip': '192.168.0.1', 'user': 'FILTERS'}
 logger = logging.getLogger('tcpserver')
 
