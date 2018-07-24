@@ -179,7 +179,7 @@ class RedisManager:
                     return current
 
             logger.warning("Returning: %s", 'get_specific_job_from_queue: returning nothing if the item wasnt found', extra=d)
-            return ''
+            return '{"type":"none"}'
 
     def get_specific_job_from_queue_no_lock(self, job_id):
         """
@@ -202,7 +202,7 @@ class RedisManager:
                 logger.warning("Returning: %s", 'get_specific_job_from_queue_no_lock: returning json information as a string',extra=d)
                 return current
         logger.warning("Returning: %s", 'get_specific_job_from_queue_no_lock: returning nothing if the item wasnt found', extra=d)
-        return ''
+        return '{"type":"none"}'
 
     def does_job_exist_in_queue(self, job_id):
         """
@@ -286,7 +286,7 @@ class RedisManager:
                 logger.warning("Returning: %s",'get_specific_job_from_progress: return the decoded job', extra=d)
                 return data
             logger.warning("Returning: %s", 'get_specific_job_from_progress: returning nothing if the item wasnt found', extra=d)
-            return ''
+            return '{"type":"none"}'
 
     def get_specific_job_from_progress_no_lock(self, key):
         """
@@ -355,7 +355,7 @@ class RedisManager:
                 logger.warning('Returning: %s', 'get_keys_from_progress_no_lock: return the decoded key', extra=d)
                 return key.decode("utf-8")
         logger.warning("Returning: %s", 'get_keys_from_progress_no_lock: returning nothing if the item wasnt found', extra=d)
-        return ''
+        return '{"type":"none"}'
 
     def remove_job_from_progress(self, key):
         """
