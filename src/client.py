@@ -10,8 +10,8 @@ import logging
 
 
 # These variables are specific to the current implementation
+version = "v1.1"
 serverurl = "http://10.76.100.34:5000"
-version = "v1.0"
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
     key = f.readline().strip()
@@ -141,7 +141,7 @@ def do_work():
         work = get_work(client_id)
         logger.warning('Function Successful: %s', 'do_work: get_work call successful', extra=d)
         logger.warning('Assign Variable: %s', 'do_work: decode the json variable from get_work', extra=d)
-        work_json = work.content.decode('utf-8')
+        work_json = json.loads(work.content.decode('utf-8'))
         logger.warning('Variable Success: %s', 'do_work: decode the json of work successfully', extra=d)
         if work_json["type"] == "doc":
             logger.warning('Calling Function: %s', 'do_work: call return_doc', extra=d)
