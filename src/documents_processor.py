@@ -2,7 +2,7 @@ from api_call_management import *
 import json
 
 workfiles = []
-version = "v1.0"
+version = "v1.1"
 
 
 def documents_processor(urls, job_id, client_id):

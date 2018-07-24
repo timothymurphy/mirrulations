@@ -8,7 +8,7 @@ r = RedisManager(redis.Redis())
 """
 This program does the validation of data for the documents jobs and then creates document jobs using that data
 """
-
+version= 'v1.1'
 
 # Validation Functions
 def work_file_length_checker(json_data):
@@ -52,7 +52,7 @@ def create_document_job(workfile, job_id):
     :param job_id: The id for the job
     :return: A dictionary in the form of a json
     """
-    dict = {"job_id": job_id, "job_type": "document", "data": workfile, "version": "1.0"}
+    dict = {"job_id": job_id, "job_type": "document", "data": workfile, "version": version}
     return json.dumps(dict)
 
 
