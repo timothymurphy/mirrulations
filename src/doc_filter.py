@@ -383,7 +383,7 @@ def process_doc(json_data, compressed_file):
             logger.warning('Function Successful: % s',
                            'process_doc: process_doc successfully called endswith', extra=d)
 
-            job_type = json_data["job_type"] == "doc"
+            job_type = json_data["type"] == "doc"
 
             if fsw and bil and ein and few and job_type:
                 logger.warning('Calling Function: % s',
