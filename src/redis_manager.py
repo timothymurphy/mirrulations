@@ -392,7 +392,7 @@ class RedisManager:
             logger.warning('Queue Add Success: %s', 'renew_job: added the job back to the queue', extra=d)
             logger.warning('Queue Remove Attempt: %s', 'renew_job: remove a job from progress', extra=d)
             self.r.hdel('progress', key)
-            
+
 
 
 # Used to reset the locks

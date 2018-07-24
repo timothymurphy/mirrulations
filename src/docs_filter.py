@@ -52,7 +52,7 @@ def create_document_job(workfile, job_id):
     :param job_id: The id for the job
     :return: A dictionary in the form of a json
     """
-    dict = {"job_id": job_id, "job_type": "document", "data": workfile, "version": version}
+    dict = {"job_id": job_id, "type": "doc", "data": workfile, "version": version}
     return json.dumps(dict)
 
 
