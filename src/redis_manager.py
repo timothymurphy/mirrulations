@@ -281,7 +281,7 @@ class RedisManager:
 
             if job is not None:
                 logger.warning('Variable Assign: %s', 'get_specific_job_from_progress: attempt to decode the job', extra=d)
-                data = job
+                data = job.decode("utf-8")
                 logger.warning('Variable Success: %s', 'get_specific_job_from_progress: job was successfully decoded', extra=d)
                 logger.warning("Returning: %s",'get_specific_job_from_progress: return the decoded job', extra=d)
                 return data
@@ -301,12 +301,12 @@ class RedisManager:
 
         if job is not None:
             logger.warning('Variable Assign: %s', 'get_specific_job_from_progress_no_lock: attempt to decode the job', extra=d)
-            data = job
+            data = job.decode("utf-8")
             logger.warning('Variable Success: %s', 'get_specific_job_from_progress_no_lock: job was successfully decoded', extra=d)
             logger.warning("Returning: %s", 'get_specific_job_from_progress_no_lock: return the decoded job', extra=d)
             return data
         logger.warning("Returning: %s", 'get_specific_job_from_progress_no_lock: returning nothing if the item wasnt found',extra=d)
-        return ''
+        return '{"type":"none"}'
 
     def get_keys_from_progress(self, job_id):
         """
@@ -332,7 +332,7 @@ class RedisManager:
                     logger.warning('Returning: %s', 'get_keys_from_progress: return the decoded key', extra=d)
                     return key.decode("utf-8")
             logger.warning("Returning: %s",'get_keys_from_progress: returning nothing if the item wasnt found',extra=d)
-            return ''
+            return '{"type":"none"}'
 
     def get_keys_from_progress_no_lock(self, job_id):
         """
