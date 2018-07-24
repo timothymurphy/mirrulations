@@ -102,7 +102,7 @@ def create_document_job(workfile, job_id):
     """
     logger.warning('Function Successful: % s',
                    'create_document_job: create_document_job successfully called from add_document_job', extra=d)
-    dict = {"job_id": job_id, "job_type": "doc", "data": workfile, "version": "1.0"}
+    dict = {"job_id": job_id, "type": "doc", "data": workfile, "version": "1.0"}
     logger.warning('Returning: %s',
                    'create_document_job: returning a json dictionary', extra=d)
     return json.dumps(dict)
@@ -134,7 +134,7 @@ def process_docs(json_data):
         logger.warning('Function Successful: % s',
                        'process_docs: process_docs successfully called work_file_length_checker', extra=d)
 
-        job_type = json_data["job_type"] == "docs"
+        job_type = json_data["type"] == "docs"
 
         if wklc and job_type:
 
