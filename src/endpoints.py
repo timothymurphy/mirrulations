@@ -145,7 +145,7 @@ class PostException(Exception):
 
 
 if __name__ == '__main__':
-    app.run('10.76.100.45', port=5000)
+    app.run('10.76.100.34', port=5000)
 
 
 
