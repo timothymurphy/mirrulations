@@ -10,8 +10,8 @@ import logging
 
 
 # These variables are specific to the current implementation
-serverurl = "http://10.76.100.45:5000"
 version = "v1.1"
+serverurl = "http://10.76.100.34:5000"
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
     key = f.readline().strip()
