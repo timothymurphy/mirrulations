@@ -73,7 +73,7 @@ def return_docs(json_result, client_id):
     json = docs.documents_processor(urls,job_id,client_id)
     logger.warning('Function Successful: %s', 'return_docs: successful call to documents processor', extra=d)
     logger.warning('Calling Function: %s','return_docs: post to /return_docs endpoint',extra=d)
-    r = requests.post(serverurl+"/return_docs", data=dict(json=json))
+    r = requests.post(serverurl+"/return_docs", json=json)
     logger.warning('Function Successful: %s', 'return_docs: successful call to /return_docs', extra=d)
     logger.warning('Calling Function: %s','return_docs: Raise Exception for bad status code',extra=d)
     r.raise_for_status()
