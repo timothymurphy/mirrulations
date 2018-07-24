@@ -26,7 +26,7 @@ def api_call_manager(url):
             result = call(url)
             return result
         except TemporaryException:
-            logger.warning('Exception: %s', 'api_call_mangement: Caught TemporaryException, waiting 5 minutes. Current pause: ' + pause, extra=d)
+            logger.warning('Exception: %s', 'api_call_mangement: Caught TemporaryException, waiting 5 minutes. Current pause: ' + str(pause), extra=d)
             time.sleep(300)
             pause += 1
         except PermanentException:
