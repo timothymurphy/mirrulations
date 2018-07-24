@@ -34,13 +34,13 @@ With the API limiting that is in place, it would take us months to download all 
 
 To get started, you'll need to have the latest version of Python3 so you can actually run the software, which you can download [here](https://docs.python-guide.org/starting/install3/osx/) for Mac OS and [here](https://docs.python-guide.org/starting/install3/win/) for Windows.
 
-You will also need a valid API key from Regulations.gov to participate. To apply for a key, you must simply [contact the Regulations Help Desk](regulations@erulemakinghelpdesk.com) and provide your name, email address, organization, and intended use of the API. They will email you with a key once they've verified you.
+You will also need a valid API key from Regulations.gov to participate. To apply for a key, you must simply [contact the Regulations Help Desk](regulations@erulemakinghelpdesk.com) and provide your name, email address, organization, and intended use of the API. If you are not with any organizations, just say so in your message. They will email you with a key once they've verified you and activated the key.
 
 To download the actual project, you will need to go to our [GitHub page](https://github.com/MoravianCollege/mirrulations) and [clone](https://help.github.com/articles/cloning-a-repository/) the project to your computer.
 
-Once you've done this, you'll need to be in the project directory to install the python requirements. Once there, you'll need to type `pip install -r requirements.txt` in your terminal window to  properly prepare your environment.
+Once you've done this, you'll need to be in the project directory to install the python requirements. Once there, you'll need to type `pip install -r requirements.txt` in your terminal window to properly prepare your environment.
 
-To begin work on the project, move into the `src` directory and type in `python3 client.py` and enter your API key into the GUI that will pop up.
+To begin work on the project, change your working directory to the `src` directory and type in `python3 client.py` and enter your API key into the GUI that will pop up.
 
 
 ### Disclaimers
