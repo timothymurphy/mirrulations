@@ -70,7 +70,6 @@ class RedisManager:
             logger.warning('Locking: %s', 'add_to_queue: lock retrieved successful', extra=d)
             logger.warning('Queue Add Attempt: %s', 'add_to_queue: attempting to push item to queue', extra=d)
             self.r.rpush("queue", work)
-            logger.warning('Queue Add Success: %s', 'add_to_queue: work added to the queue', extra=d)
 
 
     def add_to_progress(self, work):
@@ -85,7 +84,6 @@ class RedisManager:
             logger.warning('Locking: %s', 'add_to_progress: lock retrieved successful', extra=d)
             logger.warning('Queue Add Attempt: %s', 'add_to_progress: attempting to add item to progress queue', extra=d)
             self.r.hset("progress", get_curr_time(), work)
-            logger.warning('Queue Add Success: %s', 'add_to_progress: work added to the progress queue', extra=d)
 
     def get_all_items_in_queue(self):
         """
@@ -156,7 +154,6 @@ class RedisManager:
         logger.warning('Call Successful: %s', 'delete_all: delete_all call successful', extra=d)
         logger.warning('Flushall Attempt: %s', 'delete_all: attempting to flush all items from queue', extra=d)
         self.r.flushall()
-        logger.warning('Flushall Successful: %s', 'delete_all: deleted everything from database', extra=d)
 
     def get_specific_job_from_queue(self, job_id):
         """
@@ -244,8 +241,6 @@ class RedisManager:
 
             logger.warning('Queue Remove Attempt: %s', 'remove_specific_job_from_queue: attmept to remove item from queue',extra=d)
             self.r.lrem('queue', job, 1)
-            logger.warning('Queue Remove Success: %s', 'remove_specific_job_from_queue: item removed from queues', extra=d)
-
 
     def does_job_exist_in_progress(self, job_id):
         """
@@ -286,7 +281,7 @@ class RedisManager:
 
             if job is not None:
                 logger.warning('Variable Assign: %s', 'get_specific_job_from_progress: attempt to decode the job', extra=d)
-                data = job.decode("utf-8")
+                data = job
                 logger.warning('Variable Success: %s', 'get_specific_job_from_progress: job was successfully decoded', extra=d)
                 logger.warning("Returning: %s",'get_specific_job_from_progress: return the decoded job', extra=d)
                 return data
@@ -306,7 +301,7 @@ class RedisManager:
 
         if job is not None:
             logger.warning('Variable Assign: %s', 'get_specific_job_from_progress_no_lock: attempt to decode the job', extra=d)
-            data = job.decode("utf-8")
+            data = job
             logger.warning('Variable Success: %s', 'get_specific_job_from_progress_no_lock: job was successfully decoded', extra=d)
             logger.warning("Returning: %s", 'get_specific_job_from_progress_no_lock: return the decoded job', extra=d)
             return data
@@ -374,7 +369,6 @@ class RedisManager:
             logger.warning('Locking: %s', 'remove_job_from_progress: lock retrieved successful', extra=d)
             logger.warning('Queue Remove Attempt: %s', 'remove_job_from_progress: attempting to remove job from progress', extra=d)
             self.r.hdel('progress', key)
-            logger.warning('Queue Remove Success: %s', 'remove_job_from_progress: job successfully removed from progress', extra=d)
 
     # Combined Functions
     def renew_job(self, job_id):
