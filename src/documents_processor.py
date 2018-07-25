@@ -53,16 +53,17 @@ def process_results(result):
     except TypeError:
         logger.warning('Exception: %s', 'BadJsonException for return docs', extra=d)
         raise BadJsonException
-    make_docs(doc_list)
+    work = make_docs(doc_list)
 
     return True
 
 
 def make_docs(doc_list):
     """
-    :param document_id: the document id as a string
-    :param total_count: this is an integer for the number of calls to collect all information about the given document
-    :return:
+    Given a list of document jsons that contain the id and the attachment count
+    Add the ids to lists that will contain calls that in total have no more than 1000 predicted API calls
+    :param doc_list: list of document ids and attachment counts as a dictionary
+    :return: the global workfiles variable that contains all of the work in lists
     """
     global workfiles
     size = 0
