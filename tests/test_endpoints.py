@@ -37,7 +37,7 @@ def make_json():
                  }
             ]
         ],
-        "version":"v1"
+        "version":"v1.2"
     }
 
 
@@ -89,7 +89,7 @@ def test_get_queue_item(client):
 def test_generate_json():
     list = ["a", "b", ["a", "b"]]
     json1 = generate_json(list)
-    assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version":"v1.1"})
+    assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version":"v1.2"})
 
 
 @mock.patch('endpoints.process_docs')
