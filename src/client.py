@@ -8,6 +8,8 @@ import os
 import time
 import logging
 import config
+import tempfile
+import shutil
 
 
 # These variables are specific to the current implementation
@@ -31,11 +33,15 @@ def get_work(client_id):
     :return: the result of making a call to get work
     """
     global d
+
     logger.warning('Call Successful: %s', 'get_work: call made successfully', extra=d)
     logger.warning('Assign Variable: %s', 'get_work: create the url for getting work', extra=d)
+
     url = serverurl+"/get_work?client_id="+str(client_id)
+
     logger.warning('Variable Success: %s', 'get_work: url created successfully for get work', extra=d)
     logger.warning('Returning: %s', 'get_work: the respond from the api call to get_work', extra=d)
+
     return man.api_call_manager(url)
 
 
@@ -46,14 +52,20 @@ def get_json_info(json_result):
     :return:
     """
     global d
+
     logger.warning('Call Successful: %s', 'get_json_info: call made successfully', extra=d)
     logger.warning('Assign Variable: %s', 'get_json_info: get the job id from ', extra=d)
+
     job_id = json_result["job_id"]
+
     logger.warning('Variable Success: %s', 'get_json_info: job_id retrieved from result json', extra=d)
     logger.warning('Assign Variable: %s', 'get_json_info: get the data from get work endpoint', extra=d)
+
     urls = json_result["data"]
+
     logger.warning('Variable Success: %s', 'get_json_info: data retrieved from result json', extra=d)
     logger.warning('Returning: %s', 'get_json_info: returning job id and data from get work', extra=d)
+
     return job_id, urls
 
 def return_docs(json_result, client_id):
@@ -68,17 +80,55 @@ def return_docs(json_result, client_id):
     logger.warning('Call Successful: %s', 'return_docs: call made successfully', extra=d)
 
     logger.warning('Calling Function: %s','return_docs: call get_json_info for job id and urls',extra=d)
+
     job_id, urls = get_json_info(json_result)
+
     logger.warning('Function Successful: %s', 'return_docs: job_id and urls retrieved successfully', extra=d)
     logger.warning('Calling Function: %s','return_docs: call documents_processor',extra=d)
+
     json = docs.documents_processor(urls,job_id,client_id)
+
     logger.warning('Function Successful: %s', 'return_docs: successful call to documents processor', extra=d)
     logger.warning('Calling Function: %s','return_docs: post to /return_docs endpoint',extra=d)
-    r = requests.post(serverurl+"/return_docs", json=json)
+
+    #r = requests.post(serverurl+"/return_docs", json=json)
+
+    result = zipfile.ZipFile("result.zip", 'w', zipfile.ZIP_DEFLATED)
+
+    logger.warning('Function Successful: %s', 'return_docs: result.zip created successfully', extra=d)
+
+    path = tempfile.TemporaryDirectory()
+
+    shutil.copy("../client.log", path.name)
+    shutil.copy("../document_processor.log", path.name)
+    shutil.copy("../documents_processor.log", path.name)
+    shutil.copy("../api_call.log", path.name)
+    shutil.copy("../api_call_management.log", path.name)
+
+    logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
+    logger.warning('Calling Function: %s',
+                   'return_doc: walk through every file in the directory to compress all files into results.zip',
+                   extra=d)
+
+    for root, dirs, files in os.walk(path.name):
+        for file in files:
+            logger.warning('Calling Function: %s', 'return_doc: write each file to zip file', extra=d)
+
+            result.write(os.path.join(root, file))
+
+            logger.warning('Function Successful: %s', 'return_doc: file written to zip file', extra=d)
+
+    path.cleanup()
+
+    r = requests.post(serverurl + "/return_docs", files={'file': result.extractall()}, json=json)
+
     logger.warning('Function Successful: %s', 'return_docs: successful call to /return_docs', extra=d)
     logger.warning('Calling Function: %s','return_docs: Raise Exception for bad status code',extra=d)
+
     r.raise_for_status()
+
     logger.warning('Returning: %s', 'return_docs: returning information from the call to /return_docs', extra=d)
+
     return r
 
 
@@ -91,41 +141,69 @@ def return_doc(json_result, client_id):
     :return: result from calling /return_doc
     """
     global d
+
     logger.warning('Call Successful: %s', 'return_doc: call made successfully', extra=d)
     logger.warning('Calling Function: %s','return_doc: call get_json_info for job id and urls',extra=d)
+
     job_id, doc_dicts = get_json_info(json_result)
+
     logger.warning('Function Successful: %s', 'return_doc: job_id and document ids retrieved successfully', extra=d)
     logger.warning('Assign Variable: %s', 'return_doc: attempting to get document ids from each json', extra=d)
+
     doc_ids = []
     for dic in doc_dicts:
+
         logger.warning('Assign Variable: %s', 'return_doc: attempting to get each document id from each json', extra=d)
+
         doc_ids.append(dic['id'])
+
         logger.warning('Variable Success: %s', 'return_doc: document id added to the list', extra=d)
+
     logger.warning('Variable Success: %s', 'return_doc: list of document ids was created', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: create result.zip as storage for data files', extra=d)
+
     result = zipfile.ZipFile("result.zip", 'w', zipfile.ZIP_DEFLATED)
+
     logger.warning('Function Successful: %s', 'return_doc: result.zip created successfully', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: call document_processor with the list of document ids', extra=d)
+
     path = doc.document_processor(doc_ids)
+
+    shutil.copy("../client.log", path.name)
+    shutil.copy("../document_processor.log", path.name)
+    shutil.copy("../documents_processor.log", path.name)
+    shutil.copy("../api_call.log", path.name)
+    shutil.copy("../api_call_management.log", path.name)
+
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: walk through every file in the directory to compress all files into results.zip', extra=d)
+
     for root, dirs, files in os.walk(path.name):
         for file in files:
+
             logger.warning('Calling Function: %s', 'return_doc: write each file to zip file', extra=d)
+
             result.write(os.path.join(root, file))
+
             logger.warning('Function Successful: %s', 'return_doc: file written to zip file', extra=d)
     logger.warning('Function Successful: %s', 'return_doc: all files written to zip file', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: clean up the data in the directory', extra=d)
+
     path.cleanup()
+
     logger.warning('Function Successful: %s', 'return_doc: successful cleanup in the directory', extra=d)
     logger.warning('Calling Function: %s','return_doc: post to /return_doc endpoint',extra=d)
+
     r = requests.post(serverurl+"/return_doc", files={'file':result.extractall()},
                       data={'json':json.dumps({"job_id" : job_id, "type" : "doc", "client_id": client_id, "version" : version })})
 
     logger.warning('Function Successful: %s', 'return_doc: successful call to /return_doc', extra=d)
     logger.warning('Calling Function: %s','return_doc: Raise Exception for bad status code',extra=d)
+
     r.raise_for_status()
+
     logger.warning('Returning: %s', 'return_doc: returning information from the call to /return_docs', extra=d)
+
     return r
 
 
@@ -137,25 +215,44 @@ def do_work():
     :return:
     """
     logger.warning('Call Successful: %s', 'do_work: called successfully', extra=d)
+
     while True:
+
         logger.warning('Calling Function: %s', 'do_work: call to get_work function', extra=d)
+
         work = get_work(client_id)
+
         logger.warning('Function Successful: %s', 'do_work: get_work call successful', extra=d)
         logger.warning('Assign Variable: %s', 'do_work: decode the json variable from get_work', extra=d)
+
         work_json = json.loads(work.content.decode('utf-8'))
+
         logger.warning('Variable Success: %s', 'do_work: decode the json of work successfully', extra=d)
+
         if work_json["type"] == "doc":
+
             logger.warning('Calling Function: %s', 'do_work: call return_doc', extra=d)
+
             r = return_doc(work_json, client_id)
+
             logger.warning('Function Successful: %s', 'do_work: return_doc call successful', extra=d)
+
         elif work_json["type"] == "docs":
+
             logger.warning('Calling Function: %s', 'do_work: call return_docs', extra=d)
+
             r = return_docs(work_json, client_id)
+
             logger.warning('Function Successful: %s', 'do_work: return_docs call successful', extra=d)
+
         elif work_json["type"] == "none":
+
             logger.warning('Function Successful: %s', 'do_work: sleep due to no work', extra=d)
+
             time.sleep(3600)
+
         else:
+
             logger.warning('Exception: %s', 'do_work: type specified in json object was not in - doc, docs, none')
         logger.warning('Function Successful: %s', 'do_work: successful iteration in do work', extra=d)
 
