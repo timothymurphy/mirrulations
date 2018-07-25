@@ -53,12 +53,34 @@ def process_results(result):
     except TypeError:
         logger.warning('Exception: %s', 'BadJsonException for return docs', extra=d)
         raise BadJsonException
-
-    for doc in doc_list:
-        doc = {"id" : doc["documentId"], "count" : doc["attachmentCount"] + 1}
-        workfiles.append(doc)
+    make_docs(doc_list)
 
     return True
+
+
+def make_docs(doc_list):
+    """
+    :param document_id: the document id as a string
+    :param total_count: this is an integer for the number of calls to collect all information about the given document
+    :return:
+    """
+    global workfiles
+    size = 0
+    work_list = []
+    for doc in doc_list:
+        doc_id = doc["documentId"]
+        calls = doc["attachmentCount"] + 1
+        if size + calls > 1000:
+            workfiles.append(work_list)
+            work_list = []
+            size = 0
+        size += calls
+        document = {"id" : doc_id, "count" : calls}
+        work_list.append(document)
+    if size != 0:
+        workfiles.append(work_list)
+    return workfiles
+
 
 # Raised if the json is not correctly formatted or is empty
 class BadJsonException(Exception):
