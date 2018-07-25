@@ -3,7 +3,7 @@ import json
 import logging
 
 workfiles = []
-version = "v1.1"
+version = "v1.2"
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
     key = f.readline().strip()
@@ -63,7 +63,7 @@ def make_docs(doc_list):
     Given a list of document jsons that contain the id and the attachment count
     Add the ids to lists that will contain calls that in total have no more than 1000 predicted API calls
     :param doc_list: list of document ids and attachment counts as a dictionary
-    :return: the global workfiles variable that contains all of the work in lists
+    :return: the global workfiles variable that contains all of the work in list
     """
     global workfiles
     size = 0
