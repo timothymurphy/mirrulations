@@ -179,7 +179,7 @@ class RedisManager:
                     return current
 
             logger.warning("Returning: %s", 'get_specific_job_from_queue: returning nothing if the item wasnt found', extra=d)
-            return '{"type":"none", "job_id":"null"}'
+            return '{"job_id":"null", "type":"none"}'
 
     def get_specific_job_from_queue_no_lock(self, job_id):
         """
@@ -202,7 +202,7 @@ class RedisManager:
                 logger.warning("Returning: %s", 'get_specific_job_from_queue_no_lock: returning json information as a string',extra=d)
                 return current
         logger.warning("Returning: %s", 'get_specific_job_from_queue_no_lock: returning nothing if the item wasnt found', extra=d)
-        return '{"type":"none", "job_id":"null"}'
+        return '{"job_id":"null", "type":"none"}'
 
     def does_job_exist_in_queue(self, job_id):
         """
@@ -259,7 +259,7 @@ class RedisManager:
                 logger.warning('Assign Variable: %s', 'does_job_exist_in_progress: attempt to get the job from the key', extra=d)
                 job = self.get_specific_job_from_progress_no_lock(key)
                 logger.warning('Variable Success: %s', 'does_job_exist_in_progress: job has been received from the key', extra=d)
-                if job == '{"type":"none", "job_id":"null"}':
+                if job == '{"job_id":"null", "type":"none"}':
                     logger.warning("Returning: %s", 'does_job_exist_in_progress: returning False if the job does not exist', extra=d)
                     return False
                 else:
@@ -289,7 +289,7 @@ class RedisManager:
                 logger.warning("Returning: %s",'get_specific_job_from_progress: return the decoded job', extra=d)
                 return data
             logger.warning("Returning: %s", 'get_specific_job_from_progress: returning nothing if the item wasnt found', extra=d)
-            return '{"type":"none", "job_id":"null"}'
+            return '{"job_id":"null", "type":"none"}'
 
     def get_specific_job_from_progress_no_lock(self, key):
         """
@@ -309,7 +309,7 @@ class RedisManager:
             logger.warning("Returning: %s", 'get_specific_job_from_progress_no_lock: return the decoded job', extra=d)
             return data
         logger.warning("Returning: %s", 'get_specific_job_from_progress_no_lock: returning nothing if the item wasnt found',extra=d)
-        return '{"type":"none", "job_id":"null"}'
+        return '{"job_id":"null", "type":"none"}'
 
     def get_keys_from_progress(self, job_id):
         """
