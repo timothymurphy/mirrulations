@@ -179,7 +179,7 @@ class RedisManager:
                     return current
 
             logger.warning("Returning: %s", 'get_specific_job_from_queue: returning nothing if the item wasnt found', extra=d)
-            return '{"type":"none"}'
+            return '{"job_id":"null", "type":"none"}'
 
     def get_specific_job_from_queue_no_lock(self, job_id):
         """
@@ -202,7 +202,7 @@ class RedisManager:
                 logger.warning("Returning: %s", 'get_specific_job_from_queue_no_lock: returning json information as a string',extra=d)
                 return current
         logger.warning("Returning: %s", 'get_specific_job_from_queue_no_lock: returning nothing if the item wasnt found', extra=d)
-        return '{"type":"none"}'
+        return '{"job_id":"null", "type":"none"}'
 
     def does_job_exist_in_queue(self, job_id):
         """
@@ -255,15 +255,18 @@ class RedisManager:
             logger.warning('Assign Variable: %s', 'does_job_exist_in_progress: get the key of a job', extra=d)
             key = self.get_keys_from_progress_no_lock(job_id)
             logger.warning('Variable Success: %s', 'does_job_exist_in_progress: key has been received', extra=d)
-            logger.warning('Assign Variable: %s', 'does_job_exist_in_progress: attempt to get the job from the key', extra=d)
-            job = self.get_specific_job_from_progress_no_lock(key)
-            logger.warning('Variable Success: %s', 'does_job_exist_in_progress: job has been received from the key', extra=d)
-            if job == '':
-                logger.warning("Returning: %s", 'does_job_exist_in_progress: returning False if the job does not exist', extra=d)
-                return False
-            else:
-                logger.warning("Returning: %s",'does_job_exist_in_progress: returning True if the job exists', extra=d)
-                return True
+            if float(key) > -1:
+                logger.warning('Assign Variable: %s', 'does_job_exist_in_progress: attempt to get the job from the key', extra=d)
+                job = self.get_specific_job_from_progress_no_lock(key)
+                logger.warning('Variable Success: %s', 'does_job_exist_in_progress: job has been received from the key', extra=d)
+                if job == '{"job_id":"null", "type":"none"}':
+                    logger.warning("Returning: %s", 'does_job_exist_in_progress: returning False if the job does not exist', extra=d)
+                    return False
+                else:
+                    logger.warning("Returning: %s",'does_job_exist_in_progress: returning True if the job exists', extra=d)
+                    return True
+        logger.warning("Returning: %s", 'does_job_exist_in_progress: returning False if the job does not exist',extra=d)
+        return False
 
     def get_specific_job_from_progress(self, key):
         """
@@ -286,7 +289,7 @@ class RedisManager:
                 logger.warning("Returning: %s",'get_specific_job_from_progress: return the decoded job', extra=d)
                 return data
             logger.warning("Returning: %s", 'get_specific_job_from_progress: returning nothing if the item wasnt found', extra=d)
-            return '{"type":"none"}'
+            return '{"job_id":"null", "type":"none"}'
 
     def get_specific_job_from_progress_no_lock(self, key):
         """
@@ -306,7 +309,7 @@ class RedisManager:
             logger.warning("Returning: %s", 'get_specific_job_from_progress_no_lock: return the decoded job', extra=d)
             return data
         logger.warning("Returning: %s", 'get_specific_job_from_progress_no_lock: returning nothing if the item wasnt found',extra=d)
-        return '{"type":"none"}'
+        return '{"job_id":"null", "type":"none"}'
 
     def get_keys_from_progress(self, job_id):
         """
@@ -327,12 +330,13 @@ class RedisManager:
                 logger.warning('Variable Success: %s', 'get_keys_from_progress: json was received using the key', extra=d)
                 logger.warning('Assign Variable: %s', 'get_keys_from_progress: load the json into a string', extra=d)
                 info = json.loads(json_info)
+
                 logger.warning('Variable Success: %s', 'get_keys_from_progress: successfully loaded the json', extra=d)
                 if info["job_id"] == job_id:
                     logger.warning('Returning: %s', 'get_keys_from_progress: return the decoded key', extra=d)
                     return key.decode("utf-8")
             logger.warning("Returning: %s",'get_keys_from_progress: returning nothing if the item wasnt found',extra=d)
-            return '{"type":"none"}'
+            return -1
 
     def get_keys_from_progress_no_lock(self, job_id):
         """
@@ -349,13 +353,15 @@ class RedisManager:
             json_info = self.get_specific_job_from_progress_no_lock(key)
             logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: json was received using the key', extra=d)
             logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: load the json into a string', extra=d)
+            logger.warning('TestPrintedJson: %s', json_info, extra=d)
+            logger.warning('JsonType: %s', type(json_info), extra=d)
             info = json.loads(json_info)
             logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: successfully loaded the json', extra=d)
             if info["job_id"] == job_id:
                 logger.warning('Returning: %s', 'get_keys_from_progress_no_lock: return the decoded key', extra=d)
                 return key.decode("utf-8")
         logger.warning("Returning: %s", 'get_keys_from_progress_no_lock: returning nothing if the item wasnt found', extra=d)
-        return '{"type":"none"}'
+        return -1
 
     def remove_job_from_progress(self, key):
         """
@@ -384,15 +390,16 @@ class RedisManager:
             logger.warning('Locking: %s', 'renew_job: lock retrieved successful', extra=d)
             logger.warning('Assign Variable: %s', 'renew_job: attempt to get the key from the job_id', extra=d)
             key = self.get_keys_from_progress_no_lock(job_id)
-            logger.warning('Variable Success: %s', 'renew_job: received the key', extra=d)
-            logger.warning('Assign Variable: %s', 'renew_job: attempt to get a job using the key', extra=d)
-            job = self.get_specific_job_from_progress_no_lock(key)
-            logger.warning('Variable Success: %s', 'renew_job: successfully got the job', extra=d)
-            logger.warning('Queue Add Attempt: %s', 'renew_job: attempting to add job back to queue', extra=d)
-            self.r.rpush("queue", job)
-            logger.warning('Queue Add Success: %s', 'renew_job: added the job back to the queue', extra=d)
-            logger.warning('Queue Remove Attempt: %s', 'renew_job: remove a job from progress', extra=d)
-            self.r.hdel('progress', key)
+            if float(key) > -1:
+                logger.warning('Variable Success: %s', 'renew_job: received the key', extra=d)
+                logger.warning('Assign Variable: %s', 'renew_job: attempt to get a job using the key', extra=d)
+                job = self.get_specific_job_from_progress_no_lock(key)
+                logger.warning('Variable Success: %s', 'renew_job: successfully got the job', extra=d)
+                logger.warning('Queue Add Attempt: %s', 'renew_job: attempting to add job back to queue', extra=d)
+                self.r.rpush("queue", job)
+                logger.warning('Queue Add Success: %s', 'renew_job: added the job back to the queue', extra=d)
+                logger.warning('Queue Remove Attempt: %s', 'renew_job: remove a job from progress', extra=d)
+                self.r.hdel('progress', key)
 
 
 # Used to reset the locks
