@@ -18,7 +18,7 @@ app = Flask(__name__)
 
 r = RedisManager(redis.Redis())
 
-version = 'v1.1'
+version = 'v1.2'
 
 @app.route('/')
 def default():
@@ -73,7 +73,7 @@ def return_docs():
         logger.warning('Exception: %s', 'return_docs: PostException for return docs', extra=d)
         raise PostException
     logger.warning('Calling Function: %s', 'return_docs: return_docs calling process_docs', extra=d)
-    process_docs(json.dumps(json_info))
+    process_docs(json_info)
     logger.warning('Function Successful: %s', 'return_docs: process_docs successfully called from return_docs', extra=d)
     logger.warning('Returning: %s', 'return_docs: returning success from return_docs', extra=d)
     return 'Successful!'

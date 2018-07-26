@@ -14,7 +14,7 @@ from pathlib import Path
 
 
 # These variables are specific to the current implementation
-version = "v1.1"
+version = "v1.2"
 serverurl = "http://" + config.read_value("ip") + ":5000"
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
