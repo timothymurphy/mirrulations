@@ -17,8 +17,6 @@ base_url2 = 'https://www.website.com/regulations/v3/documents.json?'
 
 version = 'v1.2'
 
-version = "v1.1"
-
 @pytest.fixture
 def mock_req():
     with requests_mock.Mocker() as m:

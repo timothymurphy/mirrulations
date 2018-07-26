@@ -100,16 +100,7 @@ def return_docs(json_result, client_id):
 
     path = tempfile.TemporaryDirectory()
 
-    logger.warning('Calling Function: %s', 'copy_file_safely: copying client.log to tempfile', extra=d)
-    copy_file_safely(path.name, "../client.log")
-    logger.warning('Calling Function: %s', 'copy_file_safely: copying document_processor.log to tempfile', extra=d)
-    copy_file_safely(path.name, "../document_processor.log")
-    logger.warning('Calling Function: %s', 'copy_file_safely: copying documents_processor.log to tempfile', extra=d)
-    copy_file_safely(path.name, "../documents_processor.log")
-    logger.warning('Calling Function: %s', 'copy_file_safely: copying api_call.log to tempfile', extra=d)
-    copy_file_safely(path.name, "../api_call.log")
-    logger.warning('Calling Function: %s', 'copy_file_safely: copying api_call_management.log to tempfile', extra=d)
-    copy_file_safely(path.name, "../api_call_management.log")
+    add_client_log_files(path.name, "..")
 
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
     logger.warning('Calling Function: %s',
@@ -175,16 +166,7 @@ def return_doc(json_result, client_id):
 
     path = doc.document_processor(doc_ids)
 
-    logger.warning('Calling Function: %s', 'copy_file_safely: copying client.log to tempfile', extra=d)
-    copy_file_safely(path.name, "../client.log")
-    logger.warning('Calling Function: %s', 'copy_file_safely: copying document_processor.log to tempfile', extra=d)
-    copy_file_safely(path.name, "../document_processor.log")
-    logger.warning('Calling Function: %s', 'copy_file_safely: copying documents_processor.log to tempfile', extra=d)
-    copy_file_safely(path.name, "../documents_processor.log")
-    logger.warning('Calling Function: %s', 'copy_file_safely: copying api_call.log to tempfile', extra=d)
-    copy_file_safely(path.name, "../api_call.log")
-    logger.warning('Calling Function: %s', 'copy_file_safely: copying api_call_management.log to tempfile', extra=d)
-    copy_file_safely(path.name, "../api_call_management.log")
+    add_client_log_files(path.name, "..")
 
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: walk through every file in the directory to compress all files into results.zip', extra=d)
@@ -232,6 +214,24 @@ def copy_file_safely(directory, filepath):
             logger.warning('Exception: %s', 'copy_file_safely: Directory does not exist. Not copying.', extra=d)
     else:
         logger.warning('Exception: %s', 'copy_file_safely: No file exists. Not copying.', extra=d)
+
+def add_client_log_files(directory, log_directory):
+    '''
+    Used to copy client log files into the temp directory to be sent to the server.
+    :param directory: Directory to write files to
+    :param log_directory: Directory to get files from
+    :return:
+    '''
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying client.log to tempfile', extra=d)
+    copy_file_safely(directory, log_directory + "/client.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying document_processor.log to tempfile', extra=d)
+    copy_file_safely(directory, log_directory + "/document_processor.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying documents_processor.log to tempfile', extra=d)
+    copy_file_safely(directory, log_directory + "/documents_processor.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying api_call.log to tempfile', extra=d)
+    copy_file_safely(directory, log_directory + "/api_call.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying api_call_management.log to tempfile', extra=d)
+    copy_file_safely(directory, log_directory + "/api_call_management.log")
 
 
 def do_work():
