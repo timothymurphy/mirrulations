@@ -10,6 +10,7 @@ import logging
 import config
 import tempfile
 import shutil
+from pathlib import Path
 
 
 # These variables are specific to the current implementation
@@ -99,11 +100,16 @@ def return_docs(json_result, client_id):
 
     path = tempfile.TemporaryDirectory()
 
-    shutil.copy("../client.log", path.name)
-    shutil.copy("../document_processor.log", path.name)
-    shutil.copy("../documents_processor.log", path.name)
-    shutil.copy("../api_call.log", path.name)
-    shutil.copy("../api_call_management.log", path.name)
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying client.log to tempfile', extra=d)
+    copy_file_safely(path.name, "../client.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying document_processor.log to tempfile', extra=d)
+    copy_file_safely(path.name, "../document_processor.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying documents_processor.log to tempfile', extra=d)
+    copy_file_safely(path.name, "../documents_processor.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying api_call.log to tempfile', extra=d)
+    copy_file_safely(path.name, "../api_call.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying api_call_management.log to tempfile', extra=d)
+    copy_file_safely(path.name, "../api_call_management.log")
 
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
     logger.warning('Calling Function: %s',
@@ -169,11 +175,16 @@ def return_doc(json_result, client_id):
 
     path = doc.document_processor(doc_ids)
 
-    shutil.copy("../client.log", path.name)
-    shutil.copy("../document_processor.log", path.name)
-    shutil.copy("../documents_processor.log", path.name)
-    shutil.copy("../api_call.log", path.name)
-    shutil.copy("../api_call_management.log", path.name)
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying client.log to tempfile', extra=d)
+    copy_file_safely(path.name, "../client.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying document_processor.log to tempfile', extra=d)
+    copy_file_safely(path.name, "../document_processor.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying documents_processor.log to tempfile', extra=d)
+    copy_file_safely(path.name, "../documents_processor.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying api_call.log to tempfile', extra=d)
+    copy_file_safely(path.name, "../api_call.log")
+    logger.warning('Calling Function: %s', 'copy_file_safely: copying api_call_management.log to tempfile', extra=d)
+    copy_file_safely(path.name, "../api_call_management.log")
 
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: walk through every file in the directory to compress all files into results.zip', extra=d)
@@ -205,6 +216,22 @@ def return_doc(json_result, client_id):
     logger.warning('Returning: %s', 'return_doc: returning information from the call to /return_docs', extra=d)
 
     return r
+
+def copy_file_safely(directory, filepath):
+    '''
+    Safely copies a file to a directory; if the file isn't there to be copied, it won't be copied.
+    :param directory: Directory to copy to
+    :param filepath: File to copy
+    '''
+
+    if Path(filepath).exists():
+        if Path(directory).exists():
+            shutil.copy(filepath, directory)
+            logger.warning('Call Successfuly: %s', 'copy_file_safely: File copied.', extra=d)
+        else:
+            logger.warning('Exception: %s', 'copy_file_safely: Directory does not exist. Not copying.', extra=d)
+    else:
+        logger.warning('Exception: %s', 'copy_file_safely: No file exists. Not copying.', extra=d)
 
 
 def do_work():

@@ -7,7 +7,17 @@ d = {'clientip': '192.168.0.1', 'user': 'CONFIG'}
 logger = logging.getLogger('tcpserver')
 
 def read_value(value):
-    m = json.loads(open("../config.json","r").read())
+    '''
+    Reads a file from the configuration JSON file.
+    :param value: Value to be read from the JSON
+    :return: Value read from the JSON
+    '''
+    logger.warning('Calling Function: %s', 'read_value: Reading a value from the configuration file', extra=d)
+    try:
+        m = json.loads(open("../config.json","r").read())
+    except:
+        logger.warning('Exception: %s', 'read_value: Error opening/loading JSON', extra=d)
+
     try:
         result = m[value]
     except KeyError:
