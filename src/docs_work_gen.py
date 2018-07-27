@@ -27,7 +27,9 @@ def monolith():
     except:
         file = open(key_file, "w+")
 
-    regulations_key = os.environ["REGULATIONS_KEY"]
+    home = os.getenv("HOME")
+    with open(home + '/.env/regulationskey.txt') as f:
+        regulations_key = f.readline().strip()
 
     #Getting where we are in the number of files to be downloaded, from the docs_count file
     current_page = file.readline().replace("\n","")

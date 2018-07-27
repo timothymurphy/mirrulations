@@ -52,9 +52,9 @@ class RedisManager:
                 logger.warning('Assign Variable: %s', 'get_work: assign work to the item retrieved from the queue', extra=d)
                 work = literal_eval(item_from_queue.decode('utf-8'))
                 logger.warning('Variable Success: %s', 'get_work: work assigned to item_from_queue', extra=d)
-            logger.warning('Queue Add Attempt: %s', 'get_work: attempting to add the work gotten to the progress queue', extra=d)
-            self.r.hset("progress", get_curr_time(), work)
-            logger.warning('Queue Add Success: %s', 'get_work: work added to the progress queue', extra=d)
+                logger.warning('Queue Add Attempt: %s', 'get_work: attempting to add the work gotten to the progress queue', extra=d)
+                self.r.hset("progress", get_curr_time(), work)
+                logger.warning('Queue Add Success: %s', 'get_work: work added to the progress queue', extra=d)
             logger.warning("Returning: %s", 'get_work: returning the work to do', extra=d)
             return work
 
@@ -329,7 +329,7 @@ class RedisManager:
                 json_info = self.get_specific_job_from_progress_no_lock(key)
                 logger.warning('Variable Success: %s', 'get_keys_from_progress: json was received using the key', extra=d)
                 logger.warning('Assign Variable: %s', 'get_keys_from_progress: load the json into a string', extra=d)
-                info = json.loads(json_info)
+                info = literal_eval(json_info)
 
                 logger.warning('Variable Success: %s', 'get_keys_from_progress: successfully loaded the json', extra=d)
                 if info["job_id"] == job_id:
@@ -355,7 +355,7 @@ class RedisManager:
             logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: load the json into a string', extra=d)
             logger.warning('TestPrintedJson: %s', json_info, extra=d)
             logger.warning('JsonType: %s', type(json_info), extra=d)
-            info = json.loads(json_info)
+            info = literal_eval(json_info)
             logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: successfully loaded the json', extra=d)
             if info["job_id"] == job_id:
                 logger.warning('Returning: %s', 'get_keys_from_progress_no_lock: return the decoded key', extra=d)

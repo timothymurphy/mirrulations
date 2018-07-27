@@ -307,18 +307,20 @@ def get_file_list(compressed_file, PATHstr):
     # Create a list of all the files in the directory
     logger.warning('Calling Function: % s',
                    'get_file_list: get_file_list calling listdir', extra=d)
-    file_list = os.listdir(PATHstr)
+    path_to_doc = PATHstr + "var/folders/cz/w2rxs61n63bgx_xtbph5_nfw0000gn/T/"
+    file_list = os.listdir(path_to_doc)
     logger.warning('Function Successful: % s',
                    'get_file_list: get_file_list successfully called listdir', extra=d)
+    dir_list = os.listdir(path_to_doc + file_list[0] + "/")
 
     final_list = []
-    for file in file_list:
+    for file in dir_list:
         if file.startswith("doc."):
             final_list.append(file)
 
     logger.warning('Returning: %s',
                    'get_file_list: returning list of files', extra=d)
-    return final_list
+    return final_list, (path_to_doc + file_list[0] + "/")
 
 
 # Final Function
@@ -342,12 +344,12 @@ def process_doc(json_data, compressed_file):
         PATH = tempfile.mkdtemp()
         logger.warning('Function Successful: % s',
                        'process_doc: process_doc successfully called mkdtemp', extra=d)
-        PATHstr = str(PATH)
+        PATHstr = str(PATH + "/")
 
         # Unzip the zipfile and then remove the tar file and create a list of all the files in the directory
         logger.warning('Calling Function: % s',
                        'process_doc: process_doc calling mkdtemp', extra=d)
-        file_list = get_file_list(compressed_file, PATHstr)
+        file_list, path = get_file_list(compressed_file, PATHstr)
         logger.warning('Function Successful: % s',
                        'process_doc: process_doc successfully called mkdtemp', extra=d)
 
@@ -388,7 +390,7 @@ def process_doc(json_data, compressed_file):
             if fsw and bil and ein and few and job_type:
                 logger.warning('Calling Function: % s',
                                'process_doc: process_doc calling id_matches', extra=d)
-                if id_matches(file, document_id):
+                if id_matches(path + file, document_id):
                     logger.warning('Variable Success: %s',
                                    'process_doc: fsw, bil, ein, and job_type are True', extra=d)
                     logger.warning('Function Successful: % s',
@@ -445,7 +447,8 @@ def process_doc(json_data, compressed_file):
             for file in file_list:
                 logger.warning('Calling Function: % s',
                                'process_doc: process_doc calling local_save', extra=d)
-                local_save(PATHstr + "/" + file, "~/regulations-data/")
+                home = os.getenv("HOME")
+                local_save(path + file, home + "/regulations-data/")
                 logger.warning('Function Successful: % s',
                                'process_doc: process_doc successfully called local_save', extra=d)
 

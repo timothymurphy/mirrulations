@@ -5,6 +5,7 @@ from docs_filter import process_docs
 from doc_filter import process_doc
 from redis_manager import RedisManager
 import logging
+import io
 
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
@@ -17,7 +18,7 @@ app = Flask(__name__)
 
 r = RedisManager(redis.Redis())
 
-version = 'v1.1'
+version = 'v1.2'
 
 @app.route('/')
 def default():
@@ -87,17 +88,18 @@ def return_doc():
     logger.warning('Successful API Call: %s', 'return_doc: return_doc call successful', extra=d)
     try:
         logger.warning('Assign Variable: %s', 'return_doc: getting the files from the file request field', extra=d)
-        files = request.files['file']
+        files = request.files['file'].read()
         logger.warning('Variable Success: %s', 'return_doc: files successfully retrieved from the return doc post', extra=d)
         logger.warning('Assign Variable: %s', 'return_doc: get the json_info from the post request', extra=d)
-        json_info= request.form['json_info']
+        json_info= request.form['json']
         logger.warning('Variable Success: %s', 'return_doc: json retrieved from the doc post call', extra=d)
     except:
         logger.warning('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
         raise BadParameterException
+    files = io.BytesIO(files)
     logger.warning('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: call process_docs with the json and files posted to return_doc endpoint', extra=d)
-    process_doc(json.dumps(json_info), files)
+    process_doc(json.loads(json_info), files)
     logger.warning('Function Successful: %s', 'return_doc: success from return_doc', extra=d)
     logger.warning('Returning: %s', 'return_doc: returning success from return_doc', extra=d)
     return 'Successful!'

@@ -7,10 +7,10 @@ import zipfile
 import os
 import time
 import logging
-
+import shutil
 
 # These variables are specific to the current implementation
-version = "v1.1"
+version = "v1.2"
 serverurl = "http://10.76.100.34:5000"
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
@@ -116,9 +116,11 @@ def return_doc(json_result, client_id):
     logger.warning('Function Successful: %s', 'return_doc: all files written to zip file', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: clean up the data in the directory', extra=d)
     path.cleanup()
+    result.close()
     logger.warning('Function Successful: %s', 'return_doc: successful cleanup in the directory', extra=d)
     logger.warning('Calling Function: %s','return_doc: post to /return_doc endpoint',extra=d)
-    r = requests.post(serverurl+"/return_doc", files={'file':result.extractall()},
+    fileobj = open('result.zip', 'rb')
+    r = requests.post(serverurl+"/return_doc", files={'file':('result.zip', fileobj)},
                       data={'json':json.dumps({"job_id" : job_id, "type" : "doc", "client_id": client_id, "version" : version })})
 
     logger.warning('Function Successful: %s', 'return_doc: successful call to /return_doc', extra=d)
