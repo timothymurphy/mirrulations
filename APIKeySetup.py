@@ -6,9 +6,9 @@ import json
 from appJar import gui
 from pathlib import Path
 
-# Set this to true to have the GUI prompt the user for a config everytime it is opened
-# This will overwrite the config. If set to false, the GUI will only prompt the user for
-# config input if no config file is found.
+''' Set this to true to have the GUI prompt the user for a config everytime it is opened
+ This will overwrite the config. If set to false, the GUI will only prompt the user for
+ config input if no config file is found.'''
 overwrite_config = False
 
 submitName = "   Submit   "
@@ -48,12 +48,12 @@ def writeAPIKey(key, directory):
 
     try:
         f = open(directory + "/regulationskey.txt", "r")
-        stuff = f.read()
+        contents = f.read()
         f.close()
     except FileNotFoundError:
-        stuff = ""
+        contents = ""
 
-    if stuff == "":
+    if contents == "":
         #Writes the user's API key to the file, with a random string for the client's ID.
         file = open(directory + "/regulationskey.txt", "w")
         file.write(key + "\n" + ''.join(random.choices(string.ascii_letters + string.digits, k=16)))
@@ -80,8 +80,9 @@ def press(buttonName):
             return
 
         '''
-        Anything 300 & above is an error, but 429 is the error for a key that's run out of requests
-        and 403 is the error for an invalid key
+        Anything 300 & above is an error
+        429 is the error for a key that's run out of requests
+        403 is the error for an invalid key
         '''
         if r.status_code > 299 and r.status_code != 429:
 
@@ -94,8 +95,12 @@ def press(buttonName):
             writeAPIKey(apiKey, os.getenv("HOME") + "/.env")
             app.showSubWindow("successWindow")
 
-# Called when the button of the config setup window is pressed
 def configPress(buttonName):
+    '''
+    Called when the button of the config setup window is pressed
+    :param buttonName: Passed by appJar when the method is called.
+    :return:
+    '''
     if buttonName == config_ip_submitName:
         f = open("config.json", "w")
         f.write("{\n" + '\"ip\":' + "\"" + app.getEntry("IP") + "\",\n")
@@ -131,10 +136,10 @@ if __name__ == "__main__":
     app.stopSubWindow()
     # Done building window.
 
-    ''' 
-    This code builds a window to display an invalid API key message.
-    The window can be shown by calling: app.showSubWindow("invalidKeyWindow")
-    '''
+
+    # This code builds a window to display an invalid API key message.
+    # The window can be shown by calling: app.showSubWindow("invalidKeyWindow")
+
     app.startSubWindow("invalidKeyWindow", "Error")
 
     app.top = True
@@ -153,10 +158,10 @@ if __name__ == "__main__":
     app.stopSubWindow()
     # Done building window.
 
-    '''
-    Builds a window for the final message, to be displayed if/when everything finishes correctly.
-    The window can be shown by calling: app.showSubWindow("successWindow")
-    '''
+
+    # Builds a window for the final message, to be displayed if/when everything finishes correctly.
+    # The window can be shown by calling: app.showSubWindow("successWindow")
+
     app.startSubWindow("successWindow", "Mirrulations")
 
     app.top = True
@@ -232,12 +237,18 @@ if __name__ == "__main__":
 
     if Path("config.json").exists() and not overwrite_config:
         try:
-            contents = json.loads(open("../config.json", "r").read())
+            print("Okay")
+            contents = json.loads(open("config.json", "r").read())
+            print("Okay2")
             contents["ip"]
+            print("Okay3")
             contents["port"]
-            app.showSubWindow("api_key_window")
+            print("Okay4")
         except:
+            print("Exceptional")
             app.showSubWindow("config_ip_window")
+        else:
+            app.showSubWindow("api_key_window")
     else:
         app.showSubWindow("config_ip_window")
 

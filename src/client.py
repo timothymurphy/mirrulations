@@ -100,7 +100,7 @@ def return_docs(json_result, client_id):
 
     path = tempfile.TemporaryDirectory()
 
-    add_client_log_files(path.name, "..")
+    add_client_log_files(path.name, ".")
 
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
     logger.warning('Calling Function: %s',
@@ -166,7 +166,7 @@ def return_doc(json_result, client_id):
 
     path = doc.document_processor(doc_ids)
 
-    add_client_log_files(path.name, "..")
+    add_client_log_files(path.name, ".")
 
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: walk through every file in the directory to compress all files into results.zip', extra=d)
