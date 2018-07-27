@@ -307,20 +307,18 @@ def get_file_list(compressed_file, PATHstr):
     # Create a list of all the files in the directory
     logger.warning('Calling Function: % s',
                    'get_file_list: get_file_list calling listdir', extra=d)
-    path_to_doc = PATHstr + "var/folders/cz/w2rxs61n63bgx_xtbph5_nfw0000gn/T/"
-    file_list = os.listdir(path_to_doc)
+    file_list = os.listdir(PATHstr)
     logger.warning('Function Successful: % s',
                    'get_file_list: get_file_list successfully called listdir', extra=d)
-    dir_list = os.listdir(path_to_doc + file_list[0] + "/")
 
     final_list = []
-    for file in dir_list:
+    for file in file_list:
         if file.startswith("doc."):
             final_list.append(file)
 
     logger.warning('Returning: %s',
                    'get_file_list: returning list of files', extra=d)
-    return final_list, (path_to_doc + file_list[0] + "/")
+    return final_list, PATHstr
 
 
 # Final Function

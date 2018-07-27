@@ -101,23 +101,17 @@ def return_doc(json_result, client_id):
         doc_ids.append(dic['id'])
         logger.warning('Variable Success: %s', 'return_doc: document id added to the list', extra=d)
     logger.warning('Variable Success: %s', 'return_doc: list of document ids was created', extra=d)
-    logger.warning('Calling Function: %s', 'return_doc: create result.zip as storage for data files', extra=d)
-    result = zipfile.ZipFile("result.zip", 'w', zipfile.ZIP_DEFLATED)
+
     logger.warning('Function Successful: %s', 'return_doc: result.zip created successfully', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: call document_processor with the list of document ids', extra=d)
+
     path = doc.document_processor(doc_ids)
+
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
-    logger.warning('Calling Function: %s', 'return_doc: walk through every file in the directory to compress all files into results.zip', extra=d)
-    for root, dirs, files in os.walk(path.name):
-        for file in files:
-            logger.warning('Calling Function: %s', 'return_doc: write each file to zip file', extra=d)
-            result.write(os.path.join(root, file))
-            logger.warning('Function Successful: %s', 'return_doc: file written to zip file', extra=d)
-    logger.warning('Function Successful: %s', 'return_doc: all files written to zip file', extra=d)
-    logger.warning('Calling Function: %s', 'return_doc: clean up the data in the directory', extra=d)
-    path.cleanup()
-    result.close()
-    logger.warning('Function Successful: %s', 'return_doc: successful cleanup in the directory', extra=d)
+
+    logger.warning('File Create Attempt: %s', 'return_doc: attempting to create the zip file', extra=d)
+    shutil.make_archive("result", "zip", path.name)
+    logger.warning('File Creation Successful: %s', "return_doc: successfully created the zip file", extra=d)
     logger.warning('Calling Function: %s','return_doc: post to /return_doc endpoint',extra=d)
     fileobj = open('result.zip', 'rb')
     r = requests.post(serverurl+"/return_doc", files={'file':('result.zip', fileobj)},
