@@ -2,10 +2,20 @@ import requests
 import os
 import random
 import string
+import json
 from appJar import gui
+from pathlib import Path
 
-app = gui("Regulations-BOINC")
+# Set this to true to have the GUI prompt the user for a config everytime it is opened
+# This will overwrite the config. If set to false, the GUI will only prompt the user for
+# config input if no config file is found.
+overwrite_config = False
 
+submitName = "   Submit   "
+cancelName = "   Cancel   "
+
+config_ip_submitName = " Enter IP "
+config_port_submitName = " Enter Port "
 
 def exit(buttonName):
     '''
@@ -26,113 +36,37 @@ def end(buttonName):
     app.hideSubWindow("successWindow")
     app.stop()
 
-
-#This code builds a window to display an error message.
-#The window can be shown by calling: app.showSubWindow("errorWindow")
-app.startSubWindow("errorWindow", "Error")
-
-app.top = True
-app.resizable = False
-app.font = {'size': 18, 'family': 'Gill Sans'}
-
-app.padding = (10, 8)
-app.guiPadding = (10, 30)
-
-app.addLabel("errorCode", "We weren't able to connect to regulations.gov.")
-app.addLabel("errorMessage", "Please try again later.")
-
-app.addButton("   Okay   ", exit)
-
-app.stopSubWindow()
-#Done building window.
-
-
-
-''' 
-This code builds a window to display an invalid API key message.
-The window can be shown by calling: app.showSubWindow("invalidKeyWindow")
-'''
-app.startSubWindow("invalidKeyWindow", "Error")
-
-app.top = True
-app.resizable = False
-app.font = {'size': 18, 'family': 'Gill Sans'}
-
-app.padding = (50, 2)
-
-app.addLabel("errorLabel1", "Invalid API Key!")
-app.addLabel("errorLabel2", "Please visit:")
-app.link("regulations.gov", "https://regulationsgov.github.io/developers/")
-app.addLabel("errorLabel3", "for an API Key.")
-
-app.addButton("   Back   ", exit)
-
-app.stopSubWindow()
-#Done building window.
-
-
-'''
-Builds a window for the final message, to be displayed if/when everything finishes correctly.
-The window can be shown by calling: app.showSubWindow("successWindow")
-'''
-app.startSubWindow("successWindow", "Regulations-Boinc")
-
-app.top = True
-app.resizable = False
-app.font = {'size': 18, 'family': 'Gill Sans'}
-
-app.padding = (50, 2)
-
-app.addLabel("successMessage", "Successfully stored API Key!")
-
-app.addNamedButton("   Done   ", "doneButton", end)
-
-app.stopSubWindow()
-#Done building window
-
-
-def writeAPIKey(key):
+def writeAPIKey(key, directory):
     '''
     Writes the user's API Key to ~/.env/regulationskey.txt
     :param key: APIKey to be written to the file.
     :return:
     '''
 
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
-    fileDirectory = os.getenv("HOME") + "/.env"
-
-    if not os.path.exists(fileDirectory):
-        os.makedirs(fileDirectory)
-
-    f = open(fileDirectory + "/regulationskey.txt", "w+")
-
-    stuff = f.read()
+    try:
+        f = open(directory + "/regulationskey.txt", "r")
+        stuff = f.read()
+        f.close()
+    except FileNotFoundError:
+        stuff = ""
 
     if stuff == "":
         #Writes the user's API key to the file, with a random string for the client's ID.
-        f.write(key + "\n" + ''.join(random.choices(string.ascii_letters + string.digits, k=16)))
-    f.close()
+        file = open(directory + "/regulationskey.txt", "w")
+        file.write(key + "\n" + ''.join(random.choices(string.ascii_letters + string.digits, k=16)))
+        file.close()
 
-
-
-#Below code builds the main window
-submitName = "   Submit   "
-cancelName = "   Cancel   "
-
-app.top = True
-app.resizable = False
-app.font = {'size':18, 'family':'Gill Sans'}
-
-app.padding = (10,8)
-app.guiPadding = (10,30)
-
-app.addLabel("header","Please enter your regulations.gov API Key.")
-
-app.addLabelEntry("APIKey")
-
-
-# Called when a button is pressed
+# Called when a button is pressed on the API key window
 def press(buttonName):
+    '''
+    Runs when one of the two buttons on the api window is clicked. Does all of the work of processing the API key they gave.
+    :param buttonName: Passed by appJar when the method is called.
+    :return:
+    '''
+
 
     if buttonName == cancelName:
         app.stop()
@@ -157,11 +91,155 @@ def press(buttonName):
                 app.showSubWindow("errorWindow")
 
         else:
-            writeAPIKey(apiKey)
+            writeAPIKey(apiKey, os.getenv("HOME") + "/.env")
             app.showSubWindow("successWindow")
 
+# Called when the button of the config setup window is pressed
+def configPress(buttonName):
+    if buttonName == config_ip_submitName:
+        f = open("config.json", "w")
+        f.write("{\n" + '\"ip\":' + "\"" + app.getEntry("IP") + "\",\n")
+        f.close()
+        app.hideSubWindow("config_ip_window")
+        app.showSubWindow("config_port_window")
+    if buttonName == config_port_submitName:
+        f = open("config.json", "a")
+        f.write('\"port\":' + "\"" + app.getEntry("Port") + "\"\n}")
+        f.close()
+        app.hideSubWindow("config_port_window")
+        app.showSubWindow("api_key_window")
+
+if __name__ == "__main__":
+    app = gui("Mirrulations")
+
+    # This code builds a window to display an error message.
+    # The window can be shown by calling: app.showSubWindow("errorWindow")
+    app.startSubWindow("errorWindow", "Error")
+
+    app.top = True
+    app.resizable = False
+    app.font = {'size': 18, 'family': 'Gill Sans'}
+
+    app.padding = (10, 8)
+    app.guiPadding = (10, 30)
+
+    app.addLabel("errorCode", "We weren't able to connect to regulations.gov.")
+    app.addLabel("errorMessage", "Please try again later.")
+
+    app.addButton("   Okay   ", exit)
+
+    app.stopSubWindow()
+    # Done building window.
+
+    ''' 
+    This code builds a window to display an invalid API key message.
+    The window can be shown by calling: app.showSubWindow("invalidKeyWindow")
+    '''
+    app.startSubWindow("invalidKeyWindow", "Error")
+
+    app.top = True
+    app.resizable = False
+    app.font = {'size': 18, 'family': 'Gill Sans'}
+
+    app.padding = (50, 2)
+
+    app.addLabel("errorLabel1", "Invalid API Key!")
+    app.addLabel("errorLabel2", "Please visit:")
+    app.link("regulations.gov", "https://regulationsgov.github.io/developers/")
+    app.addLabel("errorLabel3", "for an API Key.")
+
+    app.addButton("   Back   ", exit)
+
+    app.stopSubWindow()
+    # Done building window.
+
+    '''
+    Builds a window for the final message, to be displayed if/when everything finishes correctly.
+    The window can be shown by calling: app.showSubWindow("successWindow")
+    '''
+    app.startSubWindow("successWindow", "Mirrulations")
+
+    app.top = True
+    app.resizable = False
+    app.font = {'size': 18, 'family': 'Gill Sans'}
+
+    app.padding = (50, 2)
+
+    app.addLabel("successMessage", "Successfully stored API Key!")
+
+    app.addNamedButton("   Done   ", "doneButton", end)
+
+    app.stopSubWindow()
+    # Done building window
+
+    # Below code builds the API key window
+    app.startSubWindow("api_key_window")
+
+    app.top = True
+    app.resizable = False
+    app.font = {'size': 18, 'family': 'Gill Sans'}
+
+    app.padding = (10, 8)
+    app.guiPadding = (10, 30)
+
+    app.addLabel("header", "Please enter your regulations.gov API Key.")
+
+    app.addLabelEntry("APIKey")
+
+    app.addButtons([submitName, cancelName], press)
+
+    app.stopSubWindow()
+    # Done building API key window
 
 
-app.addButtons([submitName, cancelName], press)
+    #Below code builds the config ip setup window
+    app.startSubWindow("config_ip_window")
 
-app.go()
+    app.top = True
+    app.resizable = False
+    app.font = {'size': 18, 'family': 'Gill Sans'}
+
+    app.padding = (10, 8)
+    app.guiPadding = (10, 30)
+
+    app.addLabel("config_header_ip", "   Please enter the IP of the server \n        you wish to connect to.")
+
+    app.addLabelEntry("IP")
+
+    app.addButton(config_ip_submitName, configPress)
+
+    app.stopSubWindow()
+    # Done building config setup window
+
+    # Below code builds the config port setup window
+    app.startSubWindow("config_port_window")
+
+    app.top = True
+    app.resizable = False
+    app.font = {'size': 18, 'family': 'Gill Sans'}
+
+    app.padding = (10, 8)
+    app.guiPadding = (10, 30)
+
+    app.addLabel("config_header_port", "    Please enter the port of the server \n        you wish to connect on.")
+
+    app.addLabelEntry("Port")
+
+    app.addButton(config_port_submitName, configPress)
+
+    app.stopSubWindow()
+    # Done building config setup window
+
+    if Path("config.json").exists() and not overwrite_config:
+        try:
+            contents = json.loads(open("../config.json", "r").read())
+            contents["ip"]
+            contents["port"]
+            app.showSubWindow("api_key_window")
+        except:
+            app.showSubWindow("config_ip_window")
+    else:
+        app.showSubWindow("config_ip_window")
+
+    app.go()
+
