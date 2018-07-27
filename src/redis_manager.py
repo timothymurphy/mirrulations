@@ -52,9 +52,9 @@ class RedisManager:
                 logger.warning('Assign Variable: %s', 'get_work: assign work to the item retrieved from the queue', extra=d)
                 work = literal_eval(item_from_queue.decode('utf-8'))
                 logger.warning('Variable Success: %s', 'get_work: work assigned to item_from_queue', extra=d)
-            logger.warning('Queue Add Attempt: %s', 'get_work: attempting to add the work gotten to the progress queue', extra=d)
-            self.r.hset("progress", get_curr_time(), work)
-            logger.warning('Queue Add Success: %s', 'get_work: work added to the progress queue', extra=d)
+                logger.warning('Queue Add Attempt: %s', 'get_work: attempting to add the work gotten to the progress queue', extra=d)
+                self.r.hset("progress", get_curr_time(), work)
+                logger.warning('Queue Add Success: %s', 'get_work: work added to the progress queue', extra=d)
             logger.warning("Returning: %s", 'get_work: returning the work to do', extra=d)
             return work
 
