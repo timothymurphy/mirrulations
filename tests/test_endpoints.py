@@ -69,15 +69,15 @@ def test_get_work_success(mock_work, mock_json, client):
 @mock.patch('redis_manager.RedisManager.get_work')
 @mock.patch('endpoints.generate_json')
 def test_get_work_throws_exception_if_no_client_id(mock_work,mock_json, client):
-    with pytest.raises(GetException):
-        result = client.get('/get_work')
+    result = client.get('/get_work')
+    assert result.status_code == 400
 
 
 @mock.patch('redis_manager.RedisManager.get_work')
 @mock.patch('endpoints.generate_json')
 def test_get_work_wrong_parameter(mock_work,mock_json, client):
-    with pytest.raises(BadParameterException):
-        result = client.get('/get_work', query_string={'clientid': '1'})
+    result = client.get('/get_work', query_string={'clientid': '1'})
+    assert result.status_code == 400
 
 
 def test_get_queue_item(client):
@@ -99,24 +99,24 @@ def test_return_docs_call_success(docs, client):
 
 
 def test_return_docs_no_parameter(client):
-    with pytest.raises(PostException):
-        result = client.post('/return_docs')
+    result = client.post('/return_docs')
+    assert result.status_code == 400
 
 
 @mock.patch('endpoints.process_doc', return_value=True)
 def test_return_doc_call_success(doc,client):
-    result = client.post('/return_doc', data={'file':open('test_files/filename.txt', 'rb'), 'json_info':json.dumps(make_json())})
+    result = client.post('/return_doc', data={'file':open('test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
 def test_return_doc_no_file_parameter(client):
-    with pytest.raises(BadParameterException):
-        result = client.post('/return_doc', data=dict(json_info=json.dumps(make_json())))
+    result = client.post('/return_doc', data=dict(json_info=json.dumps(make_json())))
+    assert result.status_code == 400
 
 
 def test_return_doc_no_json_parameter(client):
-    with pytest.raises(BadParameterException):
-        result = client.post('/return_doc', data=dict(file=open('test_files/filename.txt', 'rb')))
+    result = client.post('/return_doc', data=dict(file=open('test_files/filename.txt', 'rb')))
+    assert result.status_code == 400
 
 
 
