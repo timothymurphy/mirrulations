@@ -14,7 +14,7 @@ from pathlib import Path
 
 # These variables are specific to the current implementation
 version = "v1.2"
-serverurl = "http://" + config.read_value("ip") + ":5000"
+serverurl = "http://" + config.read_value("ip") + ":" + config.read_value("port")
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
     key = f.readline().strip()
@@ -106,7 +106,6 @@ def return_docs(json_result, client_id):
     logger.warning('Calling Function: %s', 'return_docs: post to /return_docs endpoint', extra=d)
     r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json':json})
     logger.warning('Function Successful: %s', 'return_docs: successful call to /return_doc', extra=d)
-
 
     r.raise_for_status()
 
