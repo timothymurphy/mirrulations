@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+
 from documents_processor import *
 import tempfile
 import pytest
