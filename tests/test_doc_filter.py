@@ -113,17 +113,17 @@ def test_is_document_beginning_bad():
 def test_get_file_list(workfile_tempdir, savefile_tempdir):
     compressed_file = PATH + "Archive.zip"
     PATHstr = savefile_tempdir
-    file_list = df.get_file_list(compressed_file, PATHstr + "/")
-    assert len(file_list) == 4
+    file_list = df.get_file_list(compressed_file, PATHstr + "/", '123')
+    assert len(file_list[0]) == 4
 
 
 def test_get_file_list_and_work(workfile_tempdir, savefile_tempdir):
     compressed_file = PATH + "Archive.zip"
     PATHstr = savefile_tempdir
-    file_list = df.get_file_list(compressed_file, PATHstr + "/")
+    file_list = df.get_file_list(compressed_file, PATHstr + "/", '123')
 
     condition = True
-    for file in file_list:
+    for file in file_list[0]:
         org, docket_id, document_id = df.get_doc_attributes(file)
 
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
@@ -138,10 +138,10 @@ def test_get_file_list_and_work(workfile_tempdir, savefile_tempdir):
 def test_get_file_list_and_bad_work(savefile_tempdir):
     compressed_file = PATH + "Bad_Archive.zip"
     PATHstr = savefile_tempdir
-    file_list = df.get_file_list(compressed_file, PATHstr + "/")
+    file_list = df.get_file_list(compressed_file, PATHstr + "/", '123')
 
     condition = True
-    for file in file_list:
+    for file in file_list[0]:
         org, docket_id, document_id = df.get_doc_attributes(file)
 
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
@@ -155,10 +155,10 @@ def test_get_file_list_and_bad_work(savefile_tempdir):
 def test_get_file_list_and_more_bad_work(savefile_tempdir):
     compressed_file = PATH + "Bad_Middle_Archive.zip"
     PATHstr = savefile_tempdir
-    file_list = df.get_file_list(compressed_file, PATHstr + "/")
+    file_list = df.get_file_list(compressed_file, PATHstr + "/", '123')
 
     condition = True
-    for file in file_list:
+    for file in file_list[0]:
         org, docket_id, document_id = df.get_doc_attributes(file)
 
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
@@ -172,10 +172,10 @@ def test_get_file_list_and_more_bad_work(savefile_tempdir):
 def test_get_file_list_and_bad_number_work(savefile_tempdir):
     compressed_file = PATH + "Bad_Number_Archive.zip"
     PATHstr = savefile_tempdir
-    file_list = df.get_file_list(compressed_file, PATHstr + "/")
+    file_list = df.get_file_list(compressed_file, PATHstr + "/", '123')
 
     condition = True
-    for file in file_list:
+    for file in file_list[0]:
         org, docket_id, document_id = df.get_doc_attributes(file)
 
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):

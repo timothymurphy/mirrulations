@@ -6,6 +6,8 @@ from doc_filter import process_doc
 from redis_manager import RedisManager
 import logging
 import io
+import config
+
 
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
@@ -41,13 +43,13 @@ def get_work():
     logging.warning("Successful API Call: %s", 'get_work: get_work', extra=d)
     if len(request.args) != 1:
         logger.warning('Exception: %s', 'get_work: Get Exception for incorrect number of parameters', extra=d)
-        raise GetException
+        return 'Parameter Missing', 400
     logger.warning('Assign Variable: %s', 'get_work: attempting to get client_id', extra=d)
     client_id = request.args.get('client_id')
     logger.warning('Variable Success: %s', 'get_work: successfully retrieved the client id', extra=d)
     if client_id is None:
         logging.warning("Exception: %s", 'get_work: BadParameterException, client id was none', extra=d)
-        raise BadParameterException
+        return 'Bad Parameter', 400
     logger.warning('Assign Variable: %s', 'get_work: attempting to get json_info from get_work - Calling get_work', extra=d)
     json_info = r.get_work()
     logger.warning('Variable Success: %s', 'get_work: successfully retrieved the json_info', extra=d)
@@ -64,16 +66,21 @@ def return_docs():
     logger.warning('Successful API Call: %s', 'return_docs: return docs', extra=d)
     try:
         logger.warning('Assign Variable: %s', 'return_docs: attempting to get json_info from the request', extra=d)
-        json_info = request.get_json()
+        json_info = request.form['json']
         logger.warning('Variable Success: %s', 'return_docs: successfully retreived json_info', extra=d)
+        logger.warning('Assign Variable: %s', 'return_doc: getting the files from the file request field', extra=d)
+        files = request.files['file'].read()
+        logger.warning('Variable Success: %s', 'return_doc: files successfully retrieved from the return doc post',
+                       extra=d)
     except:
         logger.warning('Exception: %s', 'return_docs: BadParameterException for return docs', extra=d)
-        raise BadParameterException
+        return 'Bad Parameter', 400
     if json_info is None:
         logger.warning('Exception: %s', 'return_docs: PostException for return docs', extra=d)
-        raise PostException
+        return 'Bad Parameter', 400
     logger.warning('Calling Function: %s', 'return_docs: return_docs calling process_docs', extra=d)
-    process_docs(json_info)
+    files = io.BytesIO(files)
+    process_docs(json_info, files)
     logger.warning('Function Successful: %s', 'return_docs: process_docs successfully called from return_docs', extra=d)
     logger.warning('Returning: %s', 'return_docs: returning success from return_docs', extra=d)
     return 'Successful!'
@@ -95,7 +102,7 @@ def return_doc():
         logger.warning('Variable Success: %s', 'return_doc: json retrieved from the doc post call', extra=d)
     except:
         logger.warning('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
-        raise BadParameterException
+        return 'Bad Parameter', 400
     files = io.BytesIO(files)
     logger.warning('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: call process_docs with the json and files posted to return_doc endpoint', extra=d)
@@ -133,21 +140,10 @@ def generate_json(work_list):
     return json.dumps(converted_json)
 
 
-# Throw exception if there is an error making the get call
-class GetException(Exception):
-    print("Bad Request")
-
-# Throw exception if one of the parameters is incorrect
-class BadParameterException(Exception):
-    print("Bad Request")
-
-# Throw exception if there was an error making the post request
-class PostException(Exception):
-    print("Bad Request")
 
 
 if __name__ == '__main__':
-    app.run('10.76.100.34', port=5000)
+    app.run(config.read_value("ip"), port=int(config.read_value("port")))
 
 
 

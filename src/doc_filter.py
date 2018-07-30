@@ -282,13 +282,16 @@ def create_new_dir(path):
                        'create_new_dir: create_new_dir successfully called makedirs', extra=d)
 
 
-def get_file_list(compressed_file, PATHstr):
+def get_file_list(compressed_file, PATHstr, client_id):
     """
     Get the list of files to be processed from a compressed file
     :param compressed_file: file containing file list to be uncompressed
     :param PATHstr: location of the file in string form
     :return: The list of file names in the compressed file
     """
+
+    home=os.getenv("HOME")
+    client_path = home + '/client-logs/' + str(client_id) + '/'
     logger.warning('Function Successful: % s',
                    'get_file_list: get_file_list successfully called from process_doc', extra=d)
 
@@ -307,20 +310,26 @@ def get_file_list(compressed_file, PATHstr):
     # Create a list of all the files in the directory
     logger.warning('Calling Function: % s',
                    'get_file_list: get_file_list calling listdir', extra=d)
-    path_to_doc = PATHstr + "var/folders/cz/w2rxs61n63bgx_xtbph5_nfw0000gn/T/"
-    file_list = os.listdir(path_to_doc)
+    file_list = os.listdir(PATHstr)
     logger.warning('Function Successful: % s',
                    'get_file_list: get_file_list successfully called listdir', extra=d)
-    dir_list = os.listdir(path_to_doc + file_list[0] + "/")
 
     final_list = []
-    for file in dir_list:
+    logger.warning('Loop: %s', 'get_file_list: loop through the files')
+    for file in file_list:
         if file.startswith("doc."):
             final_list.append(file)
+        elif file.endswith(".log"):
+            if not os.path.exists(client_path):
+                os.makedirs(client_path)
+                shutil.copy(PATHstr + file, client_path)
+            else:
+                shutil.copy(PATHstr + file, client_path)
+    logger.warning('Loop successful: %s', 'get_file_list: successfully looped through the files', extra=d)
 
     logger.warning('Returning: %s',
                    'get_file_list: returning list of files', extra=d)
-    return final_list, (path_to_doc + file_list[0] + "/")
+    return final_list, PATHstr
 
 
 # Final Function
@@ -349,7 +358,7 @@ def process_doc(json_data, compressed_file):
         # Unzip the zipfile and then remove the tar file and create a list of all the files in the directory
         logger.warning('Calling Function: % s',
                        'process_doc: process_doc calling mkdtemp', extra=d)
-        file_list, path = get_file_list(compressed_file, PATHstr)
+        file_list, path = get_file_list(compressed_file, PATHstr, json_data['client_id'])
         logger.warning('Function Successful: % s',
                        'process_doc: process_doc successfully called mkdtemp', extra=d)
 
