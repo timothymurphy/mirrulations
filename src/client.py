@@ -101,9 +101,11 @@ def return_docs(json_result, client_id):
     logger.warning('Archive Success: %s', 'return_docs: archive successfully made', extra=d)
     logger.warning('Assign Variable: %s', 'return_docs: opening the zip file to send', extra=d)
     fileobj = open('result.zip', 'rb')
-    logger.warning('Variable Success: %s', 'return_doc: zip file opened', extra=d)
+    logger.warning('Variable Success: %s', 'return_docs: zip file opened', extra=d)
 
+    logger.warning('Calling Function: %s', 'return_docs: post to /return_docs endpoint', extra=d)
     r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json':json})
+    logger.warning('Function Successful: %s', 'return_docs: successful call to /return_doc', extra=d)
 
 
     r.raise_for_status()
@@ -153,8 +155,10 @@ def return_doc(json_result, client_id):
     logger.warning('File Create Attempt: %s', 'return_doc: attempting to create the zip file', extra=d)
     shutil.make_archive("result", "zip", path.name)
     logger.warning('File Creation Successful: %s', "return_doc: successfully created the zip file", extra=d)
-    logger.warning('Calling Function: %s','return_doc: post to /return_doc endpoint',extra=d)
+    logger.warning('Assign Variable: %s', 'return_doc: opening the zip', extra=d)
     fileobj = open('result.zip', 'rb')
+    logger.warning('Variable Success: %s', 'return_doc: zip opened', extra=d)
+    logger.warning('Calling Function: %s', 'return_doc: post to /return_doc endpoint', extra=d)
     r = requests.post(serverurl+"/return_doc",
                       files={'file':('result.zip', fileobj)},
                       data={'json':json.dumps({"job_id" : job_id, "type" : "doc",

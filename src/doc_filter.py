@@ -315,6 +315,7 @@ def get_file_list(compressed_file, PATHstr, client_id):
                    'get_file_list: get_file_list successfully called listdir', extra=d)
 
     final_list = []
+    logger.warning('Loop: %s', 'get_file_list: loop through the files')
     for file in file_list:
         if file.startswith("doc."):
             final_list.append(file)
@@ -324,6 +325,7 @@ def get_file_list(compressed_file, PATHstr, client_id):
                 shutil.copy(PATHstr + file, client_path)
             else:
                 shutil.copy(PATHstr + file, client_path)
+    logger.warning('Loop successful: %s', 'get_file_list: successfully looped through the files', extra=d)
 
     logger.warning('Returning: %s',
                    'get_file_list: returning list of files', extra=d)

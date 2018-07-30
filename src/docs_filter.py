@@ -144,6 +144,7 @@ def save_client_log(client_id, compressed_file):
     logger.warning('Function Successful: % s',
                    'get_file_list: get_file_list successfully called listdir', extra=d)
 
+    logger.warning('Loop: %s', 'get_file_list: loop through the files in the file list', extra=d)
     for file in file_list:
         if file.endswith(".log"):
             if not os.path.exists(client_path):
@@ -151,6 +152,7 @@ def save_client_log(client_id, compressed_file):
                 shutil.copy(PATHstr + file, client_path)
             else:
                 shutil.copy(PATHstr + file, client_path)
+    logger.warning('Loop Successful: %s', 'get_file_list: loop successful', extra=d)
 
 
 # Final Function
