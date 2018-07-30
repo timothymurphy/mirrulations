@@ -6,6 +6,8 @@ from doc_filter import process_doc
 from redis_manager import RedisManager
 import logging
 import io
+import config
+
 
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
@@ -136,7 +138,7 @@ def generate_json(work_list):
 
 
 if __name__ == '__main__':
-    app.run('10.76.100.34', port=5000)
+    app.run(config.read_value("ip"), port=5000)
 
 
 
