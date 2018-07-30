@@ -143,7 +143,7 @@ def generate_json(work_list):
 
 
 if __name__ == '__main__':
-    app.run(config.read_value("ip"), port=5000)
+    app.run(config.read_value("ip"), port=int(config.read_value("port")))
 
 
 
