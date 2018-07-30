@@ -14,7 +14,7 @@ def read_value(value):
     '''
     logger.warning('Calling Function: %s', 'read_value: Reading a value from the configuration file', extra=d)
     try:
-        contents = json.loads(open("../config.json","r").read())
+        contents = json.loads(open("./config.json","r").read())
     except:
         logger.warning('Exception: %s', 'read_value: Error opening/loading JSON', extra=d)
 
