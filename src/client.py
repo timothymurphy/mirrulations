@@ -3,7 +3,6 @@ import documents_processor as docs
 import api_call_management as man
 import requests
 import json
-import zipfile
 import os
 import time
 import logging
@@ -86,7 +85,7 @@ def return_docs(json_result, client_id):
     logger.warning('Function Successful: %s', 'return_docs: job_id and urls retrieved successfully', extra=d)
     logger.warning('Calling Function: %s','return_docs: call documents_processor',extra=d)
 
-    json = docs.documents_processor(urls,job_id,client_id)
+    json_info = docs.documents_processor(urls,job_id,client_id)
 
     logger.warning('Function Successful: %s', 'return_docs: successful call to documents processor', extra=d)
 
@@ -104,7 +103,7 @@ def return_docs(json_result, client_id):
     logger.warning('Variable Success: %s', 'return_docs: zip file opened', extra=d)
 
     logger.warning('Calling Function: %s', 'return_docs: post to /return_docs endpoint', extra=d)
-    r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json':json})
+    r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json':json.dumps(json_info)})
     logger.warning('Function Successful: %s', 'return_docs: successful call to /return_doc', extra=d)
 
     r.raise_for_status()

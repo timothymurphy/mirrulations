@@ -80,7 +80,7 @@ def return_docs():
         return 'Bad Parameter', 400
     logger.warning('Calling Function: %s', 'return_docs: return_docs calling process_docs', extra=d)
     files = io.BytesIO(files)
-    process_docs(json_info, files)
+    process_docs(json.loads(json_info), files)
     logger.warning('Function Successful: %s', 'return_docs: process_docs successfully called from return_docs', extra=d)
     logger.warning('Returning: %s', 'return_docs: returning success from return_docs', extra=d)
     return 'Successful!'

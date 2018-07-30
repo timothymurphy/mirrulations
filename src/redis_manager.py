@@ -26,9 +26,6 @@ class RedisManager:
         logger.warning('Assign Variable: %s', '__init__: attempting assign the lock', extra=d)
         logger.warning('Calling Function: %s', '__init__: attempting to set a lock', extra=d)
         self.lock = set_lock(self.r)
-        logger.warning('Function Successful: %s', '__init__: lock has been reset', extra=d)
-        logger.warning('Variable Success: %s', '__init__: lock variable has been assigned', extra=d)
-        logger.warning('INIT: %s', '__init__: redis database has been initialized', extra=d)
 
 
     def get_work(self):
