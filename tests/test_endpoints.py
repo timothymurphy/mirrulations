@@ -94,7 +94,7 @@ def test_generate_json():
 
 @mock.patch('endpoints.process_docs')
 def test_return_docs_call_success(docs, client):
-    result = client.post("/return_docs", json=make_json())
+    result = client.post("/return_docs", data={'file':open('test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 

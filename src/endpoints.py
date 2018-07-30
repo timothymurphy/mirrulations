@@ -66,8 +66,12 @@ def return_docs():
     logger.warning('Successful API Call: %s', 'return_docs: return docs', extra=d)
     try:
         logger.warning('Assign Variable: %s', 'return_docs: attempting to get json_info from the request', extra=d)
-        json_info = request.get_json()
+        json_info = request.form['json']
         logger.warning('Variable Success: %s', 'return_docs: successfully retreived json_info', extra=d)
+        logger.warning('Assign Variable: %s', 'return_doc: getting the files from the file request field', extra=d)
+        files = request.files['file'].read()
+        logger.warning('Variable Success: %s', 'return_doc: files successfully retrieved from the return doc post',
+                       extra=d)
     except:
         logger.warning('Exception: %s', 'return_docs: BadParameterException for return docs', extra=d)
         return 'Bad Parameter', 400
@@ -75,7 +79,8 @@ def return_docs():
         logger.warning('Exception: %s', 'return_docs: PostException for return docs', extra=d)
         return 'Bad Parameter', 400
     logger.warning('Calling Function: %s', 'return_docs: return_docs calling process_docs', extra=d)
-    process_docs(json_info)
+    files = io.BytesIO(files)
+    process_docs(json_info, files)
     logger.warning('Function Successful: %s', 'return_docs: process_docs successfully called from return_docs', extra=d)
     logger.warning('Returning: %s', 'return_docs: returning success from return_docs', extra=d)
     return 'Successful!'
