@@ -4,6 +4,10 @@ import redis
 import string
 import logging
 from redis_manager import RedisManager
+import os
+import zipfile
+import tempfile
+import shutil
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='docs_filter.log', format=FORMAT)
@@ -107,9 +111,52 @@ def create_document_job(workfile, job_id):
                    'create_document_job: returning a json dictionary', extra=d)
     return json.dumps(dict)
 
+def save_client_log(client_id, compressed_file):
+    """
+    Get the list of files to be processed from a compressed file
+    :param compressed_file: file containing file list to be uncompressed
+    :param PATHstr: location of the file in string form
+    :return: The list of file names in the compressed file
+    """
+
+    home=os.getenv("HOME")
+    client_path = home + '/client-logs/' + str(client_id) + '/'
+    logger.warning('Function Successful: % s',
+                   'get_file_list: get_file_list successfully called from process_doc', extra=d)
+
+    logger.warning('Calling Function: % s',
+                   'get_file_list: get_file_list calling ZipFile', extra=d)
+    files = zipfile.ZipFile(compressed_file, "r")
+    logger.warning('Function Successful: % s',
+                   'get_file_list: get_file_list successfully called ZipFile', extra=d)
+    PATH = tempfile.mkdtemp()
+    logger.warning('Calling Function: % s',
+                   'get_file_list: get_file_list calling extractall', extra=d)
+    PATHstr = str(PATH + "/")
+    files.extractall(PATHstr)
+    logger.warning('Function Successful: % s',
+                   'get_file_list: get_file_list successfully called extractall', extra=d)
+
+    # Create a list of all the files in the directory
+    logger.warning('Calling Function: % s',
+                   'get_file_list: get_file_list calling listdir', extra=d)
+    file_list = os.listdir(PATHstr)
+    logger.warning('Function Successful: % s',
+                   'get_file_list: get_file_list successfully called listdir', extra=d)
+
+    logger.warning('Loop: %s', 'get_file_list: loop through the files in the file list', extra=d)
+    for file in file_list:
+        if file.endswith(".log"):
+            if not os.path.exists(client_path):
+                os.makedirs(client_path)
+                shutil.copy(PATHstr + file, client_path)
+            else:
+                shutil.copy(PATHstr + file, client_path)
+    logger.warning('Loop Successful: %s', 'get_file_list: loop successful', extra=d)
+
 
 # Final Function
-def process_docs(json_data):
+def process_docs(json_data, compressed_file):
     """
     Main documents function, called by the server to compile list of document jobs and add them to the "queue" queue
     :param json_data: the json data for the jobs
@@ -124,7 +171,7 @@ def process_docs(json_data):
                        'process_docs: job_id does not exist in progress queue', extra=d)
 
     else:
-
+        save_client_log(json_data['client_id'], compressed_file)
         logger.warning('Variable Success: %s',
                        'process_docs: job does exist in progress queue', extra=d)
 

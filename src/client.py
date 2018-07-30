@@ -7,11 +7,10 @@ import zipfile
 import os
 import time
 import logging
+import shutil
 import config
 import tempfile
-import shutil
 from pathlib import Path
-
 
 # These variables are specific to the current implementation
 version = "v1.2"
@@ -90,37 +89,23 @@ def return_docs(json_result, client_id):
     json = docs.documents_processor(urls,job_id,client_id)
 
     logger.warning('Function Successful: %s', 'return_docs: successful call to documents processor', extra=d)
-    logger.warning('Calling Function: %s','return_docs: post to /return_docs endpoint',extra=d)
 
-    #r = requests.post(serverurl+"/return_docs", json=json)
-
-    result = zipfile.ZipFile("result.zip", 'w', zipfile.ZIP_DEFLATED)
-
-    logger.warning('Function Successful: %s', 'return_docs: result.zip created successfully', extra=d)
-
+    logger.warning('Assign Variable: %s', 'return_docs: making the tempfile', extra=d)
     path = tempfile.TemporaryDirectory()
-
+    logger.warning('Variable Success: %s', 'return_docs: tempfile successfully made', extra=d)
+    logger.warning('Calling function: %s', 'return_docs: call add_client_log', extra=d)
     add_client_log_files(path.name, ".")
+    logger.warning('Function Successful: %s', 'return_docs: add_client_log completed', extra=d)
+    logger.warning('Attempt Archive: %s', 'return_docs: attempting to make the archive', extra=d)
+    shutil.make_archive("result", "zip", path.name)
+    logger.warning('Archive Success: %s', 'return_docs: archive successfully made', extra=d)
+    logger.warning('Assign Variable: %s', 'return_docs: opening the zip file to send', extra=d)
+    fileobj = open('result.zip', 'rb')
+    logger.warning('Variable Success: %s', 'return_docs: zip file opened', extra=d)
 
-    logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
-    logger.warning('Calling Function: %s',
-                   'return_doc: walk through every file in the directory to compress all files into results.zip',
-                   extra=d)
-
-    for root, dirs, files in os.walk(path.name):
-        for file in files:
-            logger.warning('Calling Function: %s', 'return_doc: write each file to zip file', extra=d)
-
-            result.write(os.path.join(root, file))
-
-            logger.warning('Function Successful: %s', 'return_doc: file written to zip file', extra=d)
-
-    path.cleanup()
-
-    r = requests.post(serverurl + "/return_docs", files={'file': result.extractall()}, json=json)
-
-    logger.warning('Function Successful: %s', 'return_docs: successful call to /return_docs', extra=d)
-    logger.warning('Calling Function: %s','return_docs: Raise Exception for bad status code',extra=d)
+    logger.warning('Calling Function: %s', 'return_docs: post to /return_docs endpoint', extra=d)
+    r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json':json})
+    logger.warning('Function Successful: %s', 'return_docs: successful call to /return_doc', extra=d)
 
     r.raise_for_status()
 
@@ -157,9 +142,6 @@ def return_doc(json_result, client_id):
         logger.warning('Variable Success: %s', 'return_doc: document id added to the list', extra=d)
 
     logger.warning('Variable Success: %s', 'return_doc: list of document ids was created', extra=d)
-    logger.warning('Calling Function: %s', 'return_doc: create result.zip as storage for data files', extra=d)
-
-    result = zipfile.ZipFile("result.zip", 'w', zipfile.ZIP_DEFLATED)
 
     logger.warning('Function Successful: %s', 'return_doc: result.zip created successfully', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: call document_processor with the list of document ids', extra=d)
@@ -167,28 +149,19 @@ def return_doc(json_result, client_id):
     path = doc.document_processor(doc_ids)
 
     add_client_log_files(path.name, ".")
-
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
-    logger.warning('Calling Function: %s', 'return_doc: walk through every file in the directory to compress all files into results.zip', extra=d)
 
-    for root, dirs, files in os.walk(path.name):
-        for file in files:
-
-            logger.warning('Calling Function: %s', 'return_doc: write each file to zip file', extra=d)
-
-            result.write(os.path.join(root, file))
-
-            logger.warning('Function Successful: %s', 'return_doc: file written to zip file', extra=d)
-    logger.warning('Function Successful: %s', 'return_doc: all files written to zip file', extra=d)
-    logger.warning('Calling Function: %s', 'return_doc: clean up the data in the directory', extra=d)
-
-    path.cleanup()
-
-    logger.warning('Function Successful: %s', 'return_doc: successful cleanup in the directory', extra=d)
-    logger.warning('Calling Function: %s','return_doc: post to /return_doc endpoint',extra=d)
-
-    r = requests.post(serverurl+"/return_doc", files={'file':result.extractall()},
-                      data={'json':json.dumps({"job_id" : job_id, "type" : "doc", "client_id": client_id, "version" : version })})
+    logger.warning('File Create Attempt: %s', 'return_doc: attempting to create the zip file', extra=d)
+    shutil.make_archive("result", "zip", path.name)
+    logger.warning('File Creation Successful: %s', "return_doc: successfully created the zip file", extra=d)
+    logger.warning('Assign Variable: %s', 'return_doc: opening the zip', extra=d)
+    fileobj = open('result.zip', 'rb')
+    logger.warning('Variable Success: %s', 'return_doc: zip opened', extra=d)
+    logger.warning('Calling Function: %s', 'return_doc: post to /return_doc endpoint', extra=d)
+    r = requests.post(serverurl+"/return_doc",
+                      files={'file':('result.zip', fileobj)},
+                      data={'json':json.dumps({"job_id" : job_id, "type" : "doc",
+                                               "client_id": client_id, "version" : version })})
 
     logger.warning('Function Successful: %s', 'return_doc: successful call to /return_doc', extra=d)
     logger.warning('Calling Function: %s','return_doc: Raise Exception for bad status code',extra=d)
