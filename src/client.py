@@ -15,7 +15,7 @@ from pathlib import Path
 
 # These variables are specific to the current implementation
 version = "v1.2"
-serverurl = "http://" + config.read_value("ip") + ":5000"
+serverurl = "http://" + config.read_value("ip") + ":" + config.read_value("port")
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
     key = f.readline().strip()
@@ -100,7 +100,7 @@ def return_docs(json_result, client_id):
 
     path = tempfile.TemporaryDirectory()
 
-    add_client_log_files(path.name, "..")
+    add_client_log_files(path.name, ".")
 
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
     logger.warning('Calling Function: %s',
@@ -166,7 +166,7 @@ def return_doc(json_result, client_id):
 
     path = doc.document_processor(doc_ids)
 
-    add_client_log_files(path.name, "..")
+    add_client_log_files(path.name, ".")
 
     logger.warning('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
     logger.warning('Calling Function: %s', 'return_doc: walk through every file in the directory to compress all files into results.zip', extra=d)

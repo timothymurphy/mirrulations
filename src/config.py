@@ -14,12 +14,12 @@ def read_value(value):
     '''
     logger.warning('Calling Function: %s', 'read_value: Reading a value from the configuration file', extra=d)
     try:
-        m = json.loads(open("../config.json","r").read())
+        contents = json.loads(open("../config.json","r").read())
     except:
         logger.warning('Exception: %s', 'read_value: Error opening/loading JSON', extra=d)
 
     try:
-        result = m[value]
+        result = contents[value]
     except KeyError:
         logger.warning('Exception: %s', 'config: Caught KeyError, no value present for: ' + str(value) + '. Returning None.', extra=d)
         return None
