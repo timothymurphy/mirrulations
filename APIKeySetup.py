@@ -6,9 +6,15 @@ import json
 from appJar import gui
 from pathlib import Path
 
-''' Set this to true to have the GUI prompt the user for a config everytime it is opened
- This will overwrite the config. If set to false, the GUI will only prompt the user for
- config input if no config file is found.'''
+''' 
+ This program will prompt the user for their regulations.gov API Key, as well as the IP and port
+ of the work server they want to connect to. It will set up the config.json file, store the user's
+ API Key, and generate a random ClientID.
+ '''
+
+# Set of overwrite_config to toggle config overwriting. If this is true, it will prompt the user for an IP and port
+# every time, and rewrite the config everytime. Otherwise it will only prompt the user for config info if the config
+# is missing or corrupt.
 overwrite_config = False
 
 submitName = "   Submit   "
@@ -118,7 +124,7 @@ if __name__ == "__main__":
     app = gui("Mirrulations")
 
     # This code builds a window to display an error message.
-    # The window can be shown by calling: app.showSubWindow("errorWindow")
+
     app.startSubWindow("errorWindow", "Error")
 
     app.top = True
@@ -237,13 +243,9 @@ if __name__ == "__main__":
 
     if Path("config.json").exists() and not overwrite_config:
         try:
-            print("Okay")
             contents = json.loads(open("config.json", "r").read())
-            print("Okay2")
             contents["ip"]
-            print("Okay3")
             contents["port"]
-            print("Okay4")
         except:
             print("Exceptional")
             app.showSubWindow("config_ip_window")
