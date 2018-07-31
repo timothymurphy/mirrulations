@@ -41,4 +41,5 @@ def api_call_manager(url):
 
 # Raise an exception is there is an error making the api call
 class CallFailException(Exception):
-    print("NOTICE: There is an error with your API call")
+    def __init__(self):
+        print("NOTICE: There is an error with your API call")

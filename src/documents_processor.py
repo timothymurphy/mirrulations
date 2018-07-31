@@ -53,10 +53,9 @@ def process_results(result):
     docs_json = json.loads(result.text)
     try:
         doc_list = docs_json["documents"]
+        work = make_docs(doc_list)
     except TypeError:
         logger.warning('Exception: %s', 'BadJsonException for return docs', extra=d)
-        raise BadJsonException
-    work = make_docs(doc_list)
 
     return True
 
@@ -88,4 +87,5 @@ def make_docs(doc_list):
 
 # Raised if the json is not correctly formatted or is empty
 class BadJsonException(Exception):
-    print("NOTICE: The Json appears to be formatted incorrectly.")
+    def __init__(self):
+        print("NOTICE: The Json appears to be formatted incorrectly.")

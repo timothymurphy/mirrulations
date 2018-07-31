@@ -23,8 +23,11 @@ def document_processor(doc_ids):
     dirpath = tempfile.TemporaryDirectory()
     for doc_id in doc_ids:
         logger.warning('Call Successful: %s', 'document_processor: processing document: ' + doc_id, extra=d)
-        result = api_call_manager(add_api_key(make_doc_url(doc_id)))
-        total = get_extra_documents(result, dirpath.name, doc_id)
+        try:
+            result = api_call_manager(add_api_key(make_doc_url(doc_id)))
+            total = get_extra_documents(result, dirpath.name, doc_id)
+        except CallFailException:
+            logger.warning('CallFailException: %s', 'document_processor: error with doc_id ' + doc_id, extra=d)
     return dirpath
 
 def make_doc_url(documentId):
