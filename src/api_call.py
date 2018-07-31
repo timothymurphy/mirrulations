@@ -43,16 +43,16 @@ def add_api_key(url):
 # Raise an exception if there is an error communicating
 class TemporaryException(Exception):
     def __init__(self):
-        print("NOTICE: There seems to be a connection error")
+        logger.warning('EXCEPTION: %s', 'TemporaryException: There seems to be a connection error', extra=d)
 
 
 # Raise an exception if the user is out of api calls
 class ApiCountZeroException(Exception):
     def __init__(self):
-        print("NOTICE: You have used all your API calls.")
+        logger.warning('EXCEPTION: %s', 'ApiCountZeroException: You have used all of your api calls', extra=d)
 
 
 # Raise an exception if there is an error with the API call
 class PermanentException(Exception):
     def __init__(self):
-        print("NOTICE: There is an error with your API call")
+        logger.warning('EXCEPTION: %s', 'PermanentException: There is an error with your api call', extra=d)

@@ -88,4 +88,4 @@ def make_docs(doc_list):
 # Raised if the json is not correctly formatted or is empty
 class BadJsonException(Exception):
     def __init__(self):
-        print("NOTICE: The Json appears to be formatted incorrectly.")
+        logger.warning('EXCEPTION: %s', 'BadJsonException: Your Json appears to be formatted incorrectly', extra=d)
