@@ -26,9 +26,6 @@ class RedisManager:
         logger.warning('Assign Variable: %s', '__init__: attempting assign the lock', extra=d)
         logger.warning('Calling Function: %s', '__init__: attempting to set a lock', extra=d)
         self.lock = set_lock(self.r)
-        logger.warning('Function Successful: %s', '__init__: lock has been reset', extra=d)
-        logger.warning('Variable Success: %s', '__init__: lock variable has been assigned', extra=d)
-        logger.warning('INIT: %s', '__init__: redis database has been initialized', extra=d)
 
 
     def get_work(self):
@@ -52,9 +49,9 @@ class RedisManager:
                 logger.warning('Assign Variable: %s', 'get_work: assign work to the item retrieved from the queue', extra=d)
                 work = literal_eval(item_from_queue.decode('utf-8'))
                 logger.warning('Variable Success: %s', 'get_work: work assigned to item_from_queue', extra=d)
-            logger.warning('Queue Add Attempt: %s', 'get_work: attempting to add the work gotten to the progress queue', extra=d)
-            self.r.hset("progress", get_curr_time(), work)
-            logger.warning('Queue Add Success: %s', 'get_work: work added to the progress queue', extra=d)
+                logger.warning('Queue Add Attempt: %s', 'get_work: attempting to add the work gotten to the progress queue', extra=d)
+                self.r.hset("progress", get_curr_time(), work)
+                logger.warning('Queue Add Success: %s', 'get_work: work added to the progress queue', extra=d)
             logger.warning("Returning: %s", 'get_work: returning the work to do', extra=d)
             return work
 
@@ -70,7 +67,6 @@ class RedisManager:
             logger.warning('Locking: %s', 'add_to_queue: lock retrieved successful', extra=d)
             logger.warning('Queue Add Attempt: %s', 'add_to_queue: attempting to push item to queue', extra=d)
             self.r.rpush("queue", work)
-            logger.warning('Queue Add Success: %s', 'add_to_queue: work added to the queue', extra=d)
 
 
     def add_to_progress(self, work):
@@ -85,7 +81,6 @@ class RedisManager:
             logger.warning('Locking: %s', 'add_to_progress: lock retrieved successful', extra=d)
             logger.warning('Queue Add Attempt: %s', 'add_to_progress: attempting to add item to progress queue', extra=d)
             self.r.hset("progress", get_curr_time(), work)
-            logger.warning('Queue Add Success: %s', 'add_to_progress: work added to the progress queue', extra=d)
 
     def get_all_items_in_queue(self):
         """
@@ -156,7 +151,6 @@ class RedisManager:
         logger.warning('Call Successful: %s', 'delete_all: delete_all call successful', extra=d)
         logger.warning('Flushall Attempt: %s', 'delete_all: attempting to flush all items from queue', extra=d)
         self.r.flushall()
-        logger.warning('Flushall Successful: %s', 'delete_all: deleted everything from database', extra=d)
 
     def get_specific_job_from_queue(self, job_id):
         """
@@ -182,7 +176,7 @@ class RedisManager:
                     return current
 
             logger.warning("Returning: %s", 'get_specific_job_from_queue: returning nothing if the item wasnt found', extra=d)
-            return ''
+            return '{"job_id":"null", "type":"none"}'
 
     def get_specific_job_from_queue_no_lock(self, job_id):
         """
@@ -205,7 +199,7 @@ class RedisManager:
                 logger.warning("Returning: %s", 'get_specific_job_from_queue_no_lock: returning json information as a string',extra=d)
                 return current
         logger.warning("Returning: %s", 'get_specific_job_from_queue_no_lock: returning nothing if the item wasnt found', extra=d)
-        return ''
+        return '{"job_id":"null", "type":"none"}'
 
     def does_job_exist_in_queue(self, job_id):
         """
@@ -244,8 +238,6 @@ class RedisManager:
 
             logger.warning('Queue Remove Attempt: %s', 'remove_specific_job_from_queue: attmept to remove item from queue',extra=d)
             self.r.lrem('queue', job, 1)
-            logger.warning('Queue Remove Success: %s', 'remove_specific_job_from_queue: item removed from queues', extra=d)
-
 
     def does_job_exist_in_progress(self, job_id):
         """
@@ -260,15 +252,18 @@ class RedisManager:
             logger.warning('Assign Variable: %s', 'does_job_exist_in_progress: get the key of a job', extra=d)
             key = self.get_keys_from_progress_no_lock(job_id)
             logger.warning('Variable Success: %s', 'does_job_exist_in_progress: key has been received', extra=d)
-            logger.warning('Assign Variable: %s', 'does_job_exist_in_progress: attempt to get the job from the key', extra=d)
-            job = self.get_specific_job_from_progress_no_lock(key)
-            logger.warning('Variable Success: %s', 'does_job_exist_in_progress: job has been received from the key', extra=d)
-            if job == '':
-                logger.warning("Returning: %s", 'does_job_exist_in_progress: returning False if the job does not exist', extra=d)
-                return False
-            else:
-                logger.warning("Returning: %s",'does_job_exist_in_progress: returning True if the job exists', extra=d)
-                return True
+            if float(key) > -1:
+                logger.warning('Assign Variable: %s', 'does_job_exist_in_progress: attempt to get the job from the key', extra=d)
+                job = self.get_specific_job_from_progress_no_lock(key)
+                logger.warning('Variable Success: %s', 'does_job_exist_in_progress: job has been received from the key', extra=d)
+                if job == '{"job_id":"null", "type":"none"}':
+                    logger.warning("Returning: %s", 'does_job_exist_in_progress: returning False if the job does not exist', extra=d)
+                    return False
+                else:
+                    logger.warning("Returning: %s",'does_job_exist_in_progress: returning True if the job exists', extra=d)
+                    return True
+        logger.warning("Returning: %s", 'does_job_exist_in_progress: returning False if the job does not exist',extra=d)
+        return False
 
     def get_specific_job_from_progress(self, key):
         """
@@ -291,7 +286,7 @@ class RedisManager:
                 logger.warning("Returning: %s",'get_specific_job_from_progress: return the decoded job', extra=d)
                 return data
             logger.warning("Returning: %s", 'get_specific_job_from_progress: returning nothing if the item wasnt found', extra=d)
-            return ''
+            return '{"job_id":"null", "type":"none"}'
 
     def get_specific_job_from_progress_no_lock(self, key):
         """
@@ -311,7 +306,7 @@ class RedisManager:
             logger.warning("Returning: %s", 'get_specific_job_from_progress_no_lock: return the decoded job', extra=d)
             return data
         logger.warning("Returning: %s", 'get_specific_job_from_progress_no_lock: returning nothing if the item wasnt found',extra=d)
-        return ''
+        return '{"job_id":"null", "type":"none"}'
 
     def get_keys_from_progress(self, job_id):
         """
@@ -331,13 +326,14 @@ class RedisManager:
                 json_info = self.get_specific_job_from_progress_no_lock(key)
                 logger.warning('Variable Success: %s', 'get_keys_from_progress: json was received using the key', extra=d)
                 logger.warning('Assign Variable: %s', 'get_keys_from_progress: load the json into a string', extra=d)
-                info = json.loads(json_info)
+                info = literal_eval(json_info)
+
                 logger.warning('Variable Success: %s', 'get_keys_from_progress: successfully loaded the json', extra=d)
                 if info["job_id"] == job_id:
                     logger.warning('Returning: %s', 'get_keys_from_progress: return the decoded key', extra=d)
                     return key.decode("utf-8")
             logger.warning("Returning: %s",'get_keys_from_progress: returning nothing if the item wasnt found',extra=d)
-            return ''
+            return -1
 
     def get_keys_from_progress_no_lock(self, job_id):
         """
@@ -354,13 +350,15 @@ class RedisManager:
             json_info = self.get_specific_job_from_progress_no_lock(key)
             logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: json was received using the key', extra=d)
             logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: load the json into a string', extra=d)
-            info = json.loads(json_info)
+            logger.warning('TestPrintedJson: %s', json_info, extra=d)
+            logger.warning('JsonType: %s', type(json_info), extra=d)
+            info = literal_eval(json_info)
             logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: successfully loaded the json', extra=d)
             if info["job_id"] == job_id:
                 logger.warning('Returning: %s', 'get_keys_from_progress_no_lock: return the decoded key', extra=d)
                 return key.decode("utf-8")
         logger.warning("Returning: %s", 'get_keys_from_progress_no_lock: returning nothing if the item wasnt found', extra=d)
-        return ''
+        return -1
 
     def remove_job_from_progress(self, key):
         """
@@ -374,7 +372,6 @@ class RedisManager:
             logger.warning('Locking: %s', 'remove_job_from_progress: lock retrieved successful', extra=d)
             logger.warning('Queue Remove Attempt: %s', 'remove_job_from_progress: attempting to remove job from progress', extra=d)
             self.r.hdel('progress', key)
-            logger.warning('Queue Remove Success: %s', 'remove_job_from_progress: job successfully removed from progress', extra=d)
 
     # Combined Functions
     def renew_job(self, job_id):
@@ -390,15 +387,16 @@ class RedisManager:
             logger.warning('Locking: %s', 'renew_job: lock retrieved successful', extra=d)
             logger.warning('Assign Variable: %s', 'renew_job: attempt to get the key from the job_id', extra=d)
             key = self.get_keys_from_progress_no_lock(job_id)
-            logger.warning('Variable Success: %s', 'renew_job: received the key', extra=d)
-            logger.warning('Assign Variable: %s', 'renew_job: attempt to get a job using the key', extra=d)
-            job = self.get_specific_job_from_progress_no_lock(key)
-            logger.warning('Variable Success: %s', 'renew_job: successfully got the job', extra=d)
-            logger.warning('Queue Add Attempt: %s', 'renew_job: attempting to add job back to queue', extra=d)
-            self.r.rpush("queue", job)
-            logger.warning('Queue Add Success: %s', 'renew_job: added the job back to the queue', extra=d)
-            logger.warning('Queue Remove Attempt: %s', 'renew_job: remove a job from progress', extra=d)
-            self.r.hdel('progress', key)
+            if float(key) > -1:
+                logger.warning('Variable Success: %s', 'renew_job: received the key', extra=d)
+                logger.warning('Assign Variable: %s', 'renew_job: attempt to get a job using the key', extra=d)
+                job = self.get_specific_job_from_progress_no_lock(key)
+                logger.warning('Variable Success: %s', 'renew_job: successfully got the job', extra=d)
+                logger.warning('Queue Add Attempt: %s', 'renew_job: attempting to add job back to queue', extra=d)
+                self.r.rpush("queue", job)
+                logger.warning('Queue Add Success: %s', 'renew_job: added the job back to the queue', extra=d)
+                logger.warning('Queue Remove Attempt: %s', 'renew_job: remove a job from progress', extra=d)
+                self.r.hdel('progress', key)
 
 
 # Used to reset the locks
