@@ -40,7 +40,7 @@ def add_api_key(url):
     return url + "&api_key=" + str(key)
 
 
-# Raise an exception if there is an error communicating
+# Raise an exception if there is an error communicating with either the work server or regulations
 class TemporaryException(Exception):
     def __init__(self):
         logger.warning('EXCEPTION: %s', 'TemporaryException: There seems to be a connection error', extra=d)
