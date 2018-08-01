@@ -12,7 +12,7 @@ import tempfile
 from pathlib import Path
 
 # These variables are specific to the current implementation
-version = "v1.2"
+version = "v1.3"
 serverurl = "http://" + config.read_value("ip") + ":" + config.read_value("port")
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:

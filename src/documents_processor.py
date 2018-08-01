@@ -3,7 +3,7 @@ import json
 import logging
 
 workfiles = []
-version = "v1.2"
+version = "v1.3"
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
     key = f.readline().strip()

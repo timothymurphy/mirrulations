@@ -19,7 +19,7 @@ r = RedisManager(redis.Redis())
 """
 This program does the validation of data for the docs jobs and then creates doc jobs using that data
 """
-version= 'v1.2'
+version= 'v1.3'
 
 # Validation Functions
 def work_file_length_checker(json_data):
