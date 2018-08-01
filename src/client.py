@@ -12,7 +12,7 @@ import tempfile
 from pathlib import Path
 
 # These variables are specific to the current implementation
-version = "v1.2"
+version = "v1.3"
 serverurl = "http://" + config.read_value("ip") + ":" + config.read_value("port")
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:
@@ -40,8 +40,8 @@ def get_work(client_id):
 
     logger.warning('Variable Success: %s', 'get_work: url created successfully for get work', extra=d)
     logger.warning('Returning: %s', 'get_work: the respond from the api call to get_work', extra=d)
-
     return man.api_call_manager(url)
+
 
 
 def get_json_info(json_result):
@@ -218,15 +218,17 @@ def do_work():
     while True:
 
         logger.warning('Calling Function: %s', 'do_work: call to get_work function', extra=d)
+        try:
+            work = get_work(client_id)
 
-        work = get_work(client_id)
+            logger.warning('Function Successful: %s', 'do_work: get_work call successful', extra=d)
+            logger.warning('Assign Variable: %s', 'do_work: decode the json variable from get_work', extra=d)
 
-        logger.warning('Function Successful: %s', 'do_work: get_work call successful', extra=d)
-        logger.warning('Assign Variable: %s', 'do_work: decode the json variable from get_work', extra=d)
+            work_json = json.loads(work.content.decode('utf-8'))
 
-        work_json = json.loads(work.content.decode('utf-8'))
-
-        logger.warning('Variable Success: %s', 'do_work: decode the json of work successfully', extra=d)
+            logger.warning('Variable Success: %s', 'do_work: decode the json of work successfully', extra=d)
+        except man.CallFailException:
+            time.sleep(3600)
 
         if work_json["type"] == "doc":
 

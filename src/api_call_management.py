@@ -36,9 +36,11 @@ def api_call_manager(url):
             logger.warning('Exception: %s', 'api_call_mangement: Caught ApiCountZeroException. Waiting 1 hour.', extra=d)
             time.sleep(3600)
     logger.warning('Exception: %s', 'api_call_mangement: CallFailException for return docs', extra=d)
+    logger.warning('Incomplete: %s', url, extra=d)
     raise CallFailException
 
 
 # Raise an exception is there is an error making the api call
 class CallFailException(Exception):
-    print("NOTICE: There is an error with your API call")
+    def __init__(self):
+        logger.warning('EXCEPTION: %s', 'CallFailException: There seems to be an error with your API call', extra=d)

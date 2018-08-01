@@ -23,8 +23,11 @@ def document_processor(doc_ids):
     dirpath = tempfile.TemporaryDirectory()
     for doc_id in doc_ids:
         logger.warning('Call Successful: %s', 'document_processor: processing document: ' + doc_id, extra=d)
-        result = api_call_manager(add_api_key(make_doc_url(doc_id)))
-        total = get_extra_documents(result, dirpath.name, doc_id)
+        try:
+            result = api_call_manager(add_api_key(make_doc_url(doc_id)))
+            total = get_extra_documents(result, dirpath.name, doc_id)
+        except CallFailException:
+            logger.warning('CallFailException: %s', 'document_processor: error with doc_id ' + doc_id, extra=d)
     return dirpath
 
 def make_doc_url(documentId):
@@ -116,6 +119,9 @@ def download_doc_formats(dirpath, doc_json, documentId):
             download_document(dirpath, documentId, result, type)
     except KeyError:
         pass
+    except CallFailException:
+        logger.warning('CallFailException: %s', 'download_doc_formats: Exception trying to download attachment for ' + documentId, extra=d)
+        pass
     return total_requests
 
 
@@ -142,5 +148,8 @@ def download_attachments(dirpath, doc_json, documentId):
                 result = api_call_manager(add_api_key(str(a_format)))
                 download_document(dirpath, documentId, result, type)
     except KeyError:
+        pass
+    except CallFailException:
+        logger.warning('CallFailException: %s', 'download_attachments: error trying to download attachment for ' + documentId, extra=d)
         pass
     return total_requests

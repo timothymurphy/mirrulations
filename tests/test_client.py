@@ -55,15 +55,6 @@ def test_return_doc(mock_req):
     assert r.status_code == 200
 
 
-def test_return_doc_error(mock_req):
-
-    mock_req.get(add_api_key('https://api.data.gov/regulations/v3/document?documentId=website-com'), status_code=400, text='{ "something": '
-                                                                    '["https://api.data.gov/regulations/v3/download?'
-                                                                    'documentId=OSHA-H117-2006-0947-0647&'
-                                                                    'attachmentNumber=1&contentType=pdf"] }')
-    with pytest.raises(CallFailException):
-        r = return_doc({'job_id': 'qwerty', 'data': [{'id':'website-com', 'count':4}]}, str(client_id))
-
 def test_add_logs():
     path = tempfile.TemporaryDirectory()
     zip_path = tempfile.TemporaryDirectory()

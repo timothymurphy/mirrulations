@@ -20,7 +20,7 @@ app = Flask(__name__)
 
 r = RedisManager(redis.Redis())
 
-version = 'v1.2'
+version = 'v1.3'
 
 @app.route('/')
 def default():

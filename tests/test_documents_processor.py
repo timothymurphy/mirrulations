@@ -15,7 +15,7 @@ with open(home + '/.env/regulationskey.txt') as f:
 base_url = 'https://api.data.gov:443/regulations/v3/documents.json?'
 base_url2 = 'https://www.website.com/regulations/v3/documents.json?'
 
-version = 'v1.2'
+version = 'v1.3'
 
 @pytest.fixture
 def mock_req():

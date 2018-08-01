@@ -7,7 +7,7 @@ import mock
 import json
 from ast import literal_eval
 
-
+version = 'v1.3'
 @pytest.fixture
 def mock_req():
     with requests_mock.Mocker() as m:
@@ -37,7 +37,7 @@ def make_json():
                  }
             ]
         ],
-        "version":"v1.2"
+        "version":version
     }
 
 
@@ -89,7 +89,7 @@ def test_get_queue_item(client):
 def test_generate_json():
     list = ["a", "b", ["a", "b"]]
     json1 = generate_json(list)
-    assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version":"v1.2"})
+    assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version": version})
 
 
 @mock.patch('endpoints.process_docs')
