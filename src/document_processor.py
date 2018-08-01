@@ -119,6 +119,9 @@ def download_doc_formats(dirpath, doc_json, documentId):
             download_document(dirpath, documentId, result, type)
     except KeyError:
         pass
+    except CallFailException:
+        logger.warning('CallFailException: %s', 'download_doc_formats: Exception trying to download attachment for ' + documentId, extra=d)
+        pass
     return total_requests
 
 
@@ -145,5 +148,8 @@ def download_attachments(dirpath, doc_json, documentId):
                 result = api_call_manager(add_api_key(str(a_format)))
                 download_document(dirpath, documentId, result, type)
     except KeyError:
+        pass
+    except CallFailException:
+        logger.warning('CallFailException: %s', 'download_attachments: error trying to download attachment for ' + documentId, extra=d)
         pass
     return total_requests
