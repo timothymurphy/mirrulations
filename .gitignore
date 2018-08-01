@@ -6,3 +6,5 @@ __pycache__/
 .idea/
 var/
 dump.rdb
+*.log
+result.zip
