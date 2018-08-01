@@ -17,16 +17,17 @@ logger = logging.getLogger('tcpserver')
 r = RedisManager(redis.Redis())
 
 """
-This program does the validation of data for the docs jobs and then creates doc jobs using that data
+This program does the validation of data from the docs jobs and then creates doc jobs using that data
 """
 version= 'v1.2'
 
-# Validation Functions
+
+# Validation Function
 def work_file_length_checker(json_data):
     """
-    Checks the length of each workfile and the attachment count of each workfile
+    Checks the file count and attachment count of each work file
     :param json_data: the json containing the work files
-    :return: True if there are 1000 or less document ids and 1000 or less attachments per workfile
+    :return: True if there are 1000 or less document ids and 1000 or less attachments per work file
              False if either the ids or attachments are over 1000
     """
 
@@ -35,8 +36,8 @@ def work_file_length_checker(json_data):
 
     file_count = 0
     attachment_count = 0
-    for workfile in json_data["data"]:
-        for line in workfile:
+    for work_file in json_data["data"]:
+        for line in work_file:
             file_count += 1
             attachment_count += line["count"]
 
@@ -72,21 +73,21 @@ def work_file_length_checker(json_data):
     return True
 
 
-# Assimilation Functions
+# Saving and Adding Functions
 def add_document_job(json_data):
     """
-    Creates a job for each workfile and then adds each to the "queue"
-    :param json_data: the json data containing all the workfiles
+    Creates a job for each work file and then adds each job to the "queue"
+    :param json_data: the json data containing all the work files
     :return:
     """
     logger.warning('Function Successful: % s',
                    'add_document_job: add_document_job successfully called from process_docs', extra=d)
-    for workfile in json_data["data"]:
+    for work_file in json_data["data"]:
         random_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
 
         logger.warning('Calling Function: % s',
                        'add_document_job: add_document_job calling create_document_job', extra=d)
-        job = create_document_job(workfile, random_id)
+        job = create_document_job(work_file, random_id)
         logger.warning('Function Successful: % s',
                        'add_document_job: successfully add_document_job called create_document_job', extra=d)
 
@@ -97,26 +98,27 @@ def add_document_job(json_data):
                        'add_document_job: successfully add_document_job called add_to_queue', extra=d)
 
 
-def create_document_job(workfile, job_id):
+def create_document_job(work_file, job_id):
     """
     Creates a job for the server to provide to clients
-    :param workfile: The list of ids for the clients to retrieve
+    :param work_file: The list of ids for the clients to retrieve
     :param job_id: The id for the job
-    :return: A dictionary in the form of a json
+    :return: A json in the form of a dictionary
     """
     logger.warning('Function Successful: % s',
                    'create_document_job: create_document_job successfully called from add_document_job', extra=d)
-    dict = {"job_id": job_id, "type": "doc", "data": workfile, "version": version}
+    dict = {"job_id": job_id, "type": "doc", "data": work_file, "version": version}
     logger.warning('Returning: %s',
                    'create_document_job: returning a json dictionary', extra=d)
     return json.dumps(dict)
 
+
 def save_client_log(client_id, compressed_file):
     """
-    Get the list of files to be processed from a compressed file
-    :param compressed_file: file containing file list to be uncompressed
-    :param PATHstr: location of the file in string form
-    :return: The list of file names in the compressed file
+    Save the client log to the home directory of the server
+    :param client_id: the id of the client that did the job
+    :param compressed_file: the compressed file containing the client log
+    :return:
     """
 
     home=os.getenv("HOME")
@@ -160,6 +162,7 @@ def process_docs(json_data, compressed_file):
     """
     Main documents function, called by the server to compile list of document jobs and add them to the "queue" queue
     :param json_data: the json data for the jobs
+    :param compressed_file: the zipfile containing the client's log
     :return:
     """
     logger.warning('Function Successful: % s',

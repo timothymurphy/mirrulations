@@ -12,7 +12,7 @@ logger = logging.getLogger('tcpserver')
 r = RedisManager(redis.Redis())
 
 """
-This program does the validation of data for the doc jobs and then saves that data locally
+This program does the validation of data from the doc jobs and then saves that data locally
 """
 
 
@@ -152,7 +152,7 @@ def ending_is_number(document_id):
     """
     Ensure that the document id ends in a number
     :param document_id: the document id being checked
-    :return:
+    :return: True if the number is a digit, else it will return False
     """
     logger.warning('Function Successful: % s',
                    'ending_is_number: ending_is_number successfully called from process_doc', extra=d)
@@ -175,7 +175,7 @@ def id_matches(path, doc_id):
     Ensures that the ids of the documents match correctly
     :param path: the file that is being looked at
     :param doc_id: the document id to check
-    :return:
+    :return: True if the document_id equals the doc_id, else it will return False
     """
     logger.warning('Function Successful: % s',
                    'id_matches: id_matches successfully called from process_doc', extra=d)
@@ -209,7 +209,7 @@ def beginning_is_letter(document_id):
     """
     Ensures that the beginning of the document id begins with a letter
     :param document_id: the document id being checked
-    :return:
+    :return: True if the first character of the document_id is a letter, else it will return False
     """
     logger.warning('Function Successful: % s',
                    'beginning_is_letter: beginning_is_letter successfully called from process_doc', extra=d)
@@ -267,7 +267,7 @@ def local_save(cur_path, destination):
 
 def create_new_dir(path):
     """
-    If the path does not exist, create the directory
+    If the path does not exist, create the directory(s)
     :param path: the path to the directory to be created
     :return:
     """
@@ -287,6 +287,7 @@ def get_file_list(compressed_file, PATHstr, client_id):
     Get the list of files to be processed from a compressed file
     :param compressed_file: file containing file list to be uncompressed
     :param PATHstr: location of the file in string form
+    :param client_id: the id of the client that did the job
     :return: The list of file names in the compressed file
     """
 
