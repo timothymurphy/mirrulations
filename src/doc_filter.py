@@ -12,7 +12,7 @@ logger = logging.getLogger('tcpserver')
 r = RedisManager(redis.Redis())
 
 """
-This program does the validation of data for the doc jobs and then saves that data locally
+This program does the validation of data from the doc jobs and then saves that data locally
 """
 
 
@@ -287,6 +287,7 @@ def get_file_list(compressed_file, PATHstr, client_id):
     Get the list of files to be processed from a compressed file
     :param compressed_file: file containing file list to be uncompressed
     :param PATHstr: location of the file in string form
+    :param client_id: the id of the client that did the job
     :return: The list of file names in the compressed file
     """
 

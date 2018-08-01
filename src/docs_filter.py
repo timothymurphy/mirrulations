@@ -17,14 +17,15 @@ logger = logging.getLogger('tcpserver')
 r = RedisManager(redis.Redis())
 
 """
-This program does the validation of data for the docs jobs and then creates doc jobs using that data
+This program does the validation of data from the docs jobs and then creates doc jobs using that data
 """
 version= 'v1.2'
 
-# Validation Functions
+
+# Validation Function
 def work_file_length_checker(json_data):
     """
-    Checks the length of each workfile and the attachment count of each workfile
+    Checks the file count of each workfile and the attachment count of each workfile
     :param json_data: the json containing the work files
     :return: True if there are 1000 or less document ids and 1000 or less attachments per workfile
              False if either the ids or attachments are over 1000
@@ -72,10 +73,10 @@ def work_file_length_checker(json_data):
     return True
 
 
-# Assimilation Functions
+# Saving and Adding Functions
 def add_document_job(json_data):
     """
-    Creates a job for each workfile and then adds each to the "queue"
+    Creates a job for each workfile and then adds each job to the "queue"
     :param json_data: the json data containing all the workfiles
     :return:
     """
@@ -102,7 +103,7 @@ def create_document_job(workfile, job_id):
     Creates a job for the server to provide to clients
     :param workfile: The list of ids for the clients to retrieve
     :param job_id: The id for the job
-    :return: A dictionary in the form of a json
+    :return: A json in the form of a dictionary
     """
     logger.warning('Function Successful: % s',
                    'create_document_job: create_document_job successfully called from add_document_job', extra=d)
@@ -111,12 +112,13 @@ def create_document_job(workfile, job_id):
                    'create_document_job: returning a json dictionary', extra=d)
     return json.dumps(dict)
 
+
 def save_client_log(client_id, compressed_file):
     """
-    Get the list of files to be processed from a compressed file
-    :param compressed_file: file containing file list to be uncompressed
-    :param PATHstr: location of the file in string form
-    :return: The list of file names in the compressed file
+    Save the client log to the home directory of the server
+    :param client_id: the id of the client that did the job
+    :param compressed_file: the compressed file containing the client log
+    :return:
     """
 
     home=os.getenv("HOME")
@@ -160,6 +162,7 @@ def process_docs(json_data, compressed_file):
     """
     Main documents function, called by the server to compile list of document jobs and add them to the "queue" queue
     :param json_data: the json data for the jobs
+    :param compressed_file: the zipfile containing the client's log
     :return:
     """
     logger.warning('Function Successful: % s',
