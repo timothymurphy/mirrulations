@@ -40,7 +40,7 @@ To download the actual project, you will need to go to our [GitHub page](https:/
 
 Once you've done this, you'll need to be in the project directory to install the python requirements. Once there, typing `pip install -r requirements.txt` in your terminal window should install all of the necessary packages for you to proceed.
 
-To begin work on the project, change your working directory to the freshly cloned project and run `python3 APIKeySetup.py`. Enter your API key into the GUI that pops up. Once the key has been accepted and the configuration completes successfully, run `python3 src/client.py` to begin working.
+To begin work on the project, change your working directory to the freshly cloned project and run `python3 APIKeySetup.py`. Enter your API key into the GUI that pops up. If the config file does not already exist, which it shouldn't, you will need to manually set the ip address of the server in the `APIKeySetup.py` file as (for now:) `10.76.100.34`. Once the key has been accepted and the configuration completes successfully, run `python3 src/client.py` to begin working.
 
 
 
