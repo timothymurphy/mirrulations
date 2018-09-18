@@ -27,11 +27,10 @@ class RedisManager:
         logger.warning('Calling Function: %s', '__init__: attempting to set a lock', extra=d)
         self.lock = set_lock(self.r)
 
-
     def get_work(self):
         """
         Gets a single job from the queue
-        :return: returns the work to be done from the queue
+        :return: Returns the work to be done from the queue
         """
         logger.warning('Call Successful: %s', 'get_work: get_work call successful', extra=d)
         logger.warning('Locking: %s', 'get_work: attempting to retrieve lock', extra=d)
@@ -58,7 +57,7 @@ class RedisManager:
     def add_to_queue(self, work):
         """
         Adds work to the queue
-        :param work: the word to be added to the queue
+        :param work: The word to be added to the queue
         :return:
         """
         logger.warning('Call Successful: %s', 'add_to_queue: add_to_queue call successful', extra=d)
@@ -68,11 +67,10 @@ class RedisManager:
             logger.warning('Queue Add Attempt: %s', 'add_to_queue: attempting to push item to queue', extra=d)
             self.r.rpush("queue", work)
 
-
     def add_to_progress(self, work):
         """
         Adds work to progress queue
-        :param work: the work that is in progress
+        :param work: The work that is in progress
         :return:
         """
         logger.warning('Call Successful: %s', 'add_to_progress: add_to_progress call successful', extra=d)
@@ -85,7 +83,7 @@ class RedisManager:
     def get_all_items_in_queue(self):
         """
         Returns all the items currently in the queue
-        :return: the list of items in the queue
+        :return: The list of items in the queue
         """
         logger.warning('Call Successful: %s', 'get_all_items_in_queue: get_all_items_in_queue call successful', extra=d)
         logger.warning('Locking: %s', 'get_all_items_in_queue: attempting to retrieve lock', extra=d)
@@ -97,7 +95,7 @@ class RedisManager:
     def get_all_items_in_queue_no_lock(self):
         """
         Returns all the items currently in the queue
-        :return: the list of items in the queue
+        :return: The list of items in the queue
         """
         logger.warning('Call Successful: %s', 'get_all_items_in_queue_no_lock: get_all_items_in_queue call successful', extra=d)
         logger.warning("Returning: %s", 'get_all_items_in_queue_no_lock: returning the list of all items in queue', extra=d)
@@ -106,7 +104,7 @@ class RedisManager:
     def get_all_items_in_progress(self):
         """
         Returns all the items currently in progress
-        :return: the list of items currently in progress
+        :return: The list of items currently in progress
         """
         logger.warning('Call Successful: %s', 'get_all_items_in_progress: get_all_items_in_progress call successful', extra=d)
         logger.warning('Locking: %s', 'get_all_items_in_progress: attempting to retrieve lock', extra=d)
@@ -118,7 +116,7 @@ class RedisManager:
     def get_all_items_in_progress_no_lock(self):
         """
         Returns all the items currently in progress
-        :return: the list of items currently in progress
+        :return: The list of items currently in progress
         """
         logger.warning('Call Successful: %s', 'get_all_items_in_progress_no_lock: get_all_items_in_progress_no_lock call successful', extra=d)
         logger.warning("Returning: %s", 'get_all_items_in_progress_no_lock: returning the list of all items in progress',extra=d)
@@ -142,8 +140,6 @@ class RedisManager:
                     logger.warning('Queue Add Attempt: %s', 'find_expired: attempt to add item to queue', extra=d)
                     self.r.rpush("queue", item)
 
-
-
     def delete_all(self):
         """
         Delete everything from the database
@@ -155,8 +151,8 @@ class RedisManager:
     def get_specific_job_from_queue(self, job_id):
         """
            Gets a job from the "queue" queue using its job_id
-           :param job_id: the id for the job in question
-           :return: returns the job of the given job_id or '' if the job does not exist
+           :param job_id: The id for the job in question
+           :return: Returns the job of the given job_id or '' if the job does not exist
            """
         logger.warning('Call Successful: %s', 'get_specific_job_from_queue: get_specific_job_from_queue call successful', extra=d)
         logger.warning('Locking: %s', 'get_specific_job_from_queue: attempting to retrieve lock', extra=d)
@@ -181,8 +177,8 @@ class RedisManager:
     def get_specific_job_from_queue_no_lock(self, job_id):
         """
            Gets a job from the "queue" queue using its job_id
-           :param job_id: the id for the job in question
-           :return: returns the job of the given job_id or '' if the job does not exist
+           :param job_id: The id for the job in question
+           :return: Returns the job of the given job_id or '' if the job does not exist
            """
 
         for element in range(self.r.llen('queue')):
@@ -204,7 +200,7 @@ class RedisManager:
     def does_job_exist_in_queue(self, job_id):
         """
         Verifies that a given job is in the "queue" queue exists
-        :param job_id: the id for the job in question
+        :param job_id: The id for the job in question
         :return: True if the job is in the "queue", False if it is not in the "queue"
         """
         logger.warning('Call Successful: %s', 'does_job_exist_in_queue: call successful',extra=d)
@@ -225,7 +221,7 @@ class RedisManager:
     def remove_specific_job_from_queue(self, job_id):
         """
         Removes a job from the "queue" queue
-        :param job_id: the id for the job in question
+        :param job_id: The id for the job in question
         """
         logger.warning('Call Successful: %s', 'remove_specific_job_from_queue: call successful', extra=d)
         logger.warning('Locking: %s', 'remove_specific_job_from_queue: attempting to retrieve lock', extra=d)
@@ -242,7 +238,7 @@ class RedisManager:
     def does_job_exist_in_progress(self, job_id):
         """
         Verifies that a given job is in the "progress" queue exists
-        :param job_id: the key of the job
+        :param job_id: The key of the job
         :return: True if the job is in progress, False if it is not in progress
         """
         logger.warning('Call Successful: %s', 'does_job_exist_in_progress: call successful', extra=d)
@@ -268,7 +264,7 @@ class RedisManager:
     def get_specific_job_from_progress(self, key):
         """
         Get a specific job that is in the "progress" queue
-        :param key: the key of the job requested
+        :param key: The key of the job requested
         :return: '' if the job does not exist, otherwise returns the data for the job
         """
         logger.warning('Call Successful: %s', 'get_specific_job_from_progress: call successful', extra=d)
@@ -291,7 +287,7 @@ class RedisManager:
     def get_specific_job_from_progress_no_lock(self, key):
         """
         Get a specific job that is in the "progress" queue
-        :param key: the key of the job requested
+        :param key: The key of the job requested
         :return: '' if the job does not exist, otherwise returns the data for the job
         """
         logger.warning('Call Successful: %s', 'get_specific_job_from_progress_no_lock: call successful', extra=d)
@@ -311,7 +307,7 @@ class RedisManager:
     def get_keys_from_progress(self, job_id):
         """
         Get the key of a job that is the "progress" queue
-        :param job_id: the id of the job you want to get the key for
+        :param job_id: The id of the job you want to get the key for
         :return: '' if the job does not exist, or the key if the job does exist
         """
         logger.warning('Call Successful: %s', 'get_keys_from_progress: call successful', extra=d)
@@ -338,7 +334,7 @@ class RedisManager:
     def get_keys_from_progress_no_lock(self, job_id):
         """
         Get the key of a job that is the "progress" queue
-        :param job_id: the id of the job you want to get the key for
+        :param job_id: The id of the job you want to get the key for
         :return: '' if the job does not exist, or the key if the job does exist
         """
         logger.warning('Call Successful: %s', 'get_keys_from_progress_no_lock: call successful', extra=d)
@@ -363,7 +359,7 @@ class RedisManager:
     def remove_job_from_progress(self, key):
         """
         Removes a job from the "progress" queue
-        :param key: the key of the job that is to be removed
+        :param key: The key of the job that is to be removed
         :return: 
         """
         logger.warning('Call Successful: %s', 'remove_job_from_progress: call successful', extra=d)
@@ -378,7 +374,7 @@ class RedisManager:
         """
         Takes an expired job from the "progress" queue and adds it back into the "queue" queue. It then deletes
         the expired job from the "progress" queue
-        :param job_id: the id for the job in question
+        :param job_id: The id for the job in question
         :return:
         """
         logger.warning('Call Successful: %s', 'renew_job: call successful', extra=d)
@@ -399,22 +395,33 @@ class RedisManager:
                 self.r.hdel('progress', key)
 
 
-# Used to reset the locks
 def reset_lock(database):
+    """
+    Used to reset the locks
+    :param database: The database you are modifying
+    :return:
+    """
     logger.warning('Call Successful: %s', 'reset_lock: call successful', extra=d)
     logger.warning('Locking: %s', 'reset_lock: all locks have been reset', extra=d)
     redis_lock.reset_all(database)
 
 
-# Sets the lock for the database
 def set_lock(database):
+    """
+    Sets the lock for the database
+    :param database: The database you are modifying
+    :return: Locks the database
+    """
     logger.warning('Call Successful: %s', 'set_lock: call successful', extra=d)
     logger.warning('Locking: %s', 'set_lock: lock has been sent', extra=d)
     logger.warning('Returning: %s', 'set_lock: return the set lock', extra=d)
     return redis_lock.Lock(database, "lock72")
 
 
-# Returns the current time
 def get_curr_time():
+    """
+    Gets the current time
+    :return: Returns the current time
+    """
     logger.warning('Call Successful: %s', 'get_curr_time: call successful', extra=d)
     return float(time.time())

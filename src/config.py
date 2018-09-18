@@ -6,12 +6,13 @@ logging.basicConfig(filename='client.log', format=FORMAT)
 d = {'clientip': '192.168.0.1', 'user': 'CONFIG'}
 logger = logging.getLogger('tcpserver')
 
+
 def read_value(value):
-    '''
+    """
     Reads a file from the configuration JSON file.
     :param value: Value to be read from the JSON
     :return: Value read from the JSON
-    '''
+    """
     logger.warning('Calling Function: %s', 'read_value: Reading a value from the configuration file', extra=d)
     try:
         logger.warning("Assign Variable: %s", 'read_value: loading json from config', extra=d)

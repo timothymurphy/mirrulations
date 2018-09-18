@@ -30,6 +30,7 @@ def document_processor(doc_ids):
             logger.warning('CallFailException: %s', 'document_processor: error with doc_id ' + doc_id, extra=d)
     return dirpath
 
+
 def make_doc_url(documentId):
     """
     Given a documentId as a string append it to the end of the api call

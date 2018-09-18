@@ -9,7 +9,6 @@ import io
 import config
 
 
-
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='endpoints_log.log', format=FORMAT)
 d = {'clientip': '192.168.0.1', 'user': 'FLASK'}
@@ -22,11 +21,12 @@ r = RedisManager(redis.Redis())
 
 version = 'v1.3'
 
+
 @app.route('/')
 def default():
     """
     Default endpoint
-    :return: returns empty json
+    :return: Returns empty json
     """
     logger.warning('Successful API Call: %s', 'default: default endpoint', extra=d)
     return json.dumps({})
@@ -35,9 +35,9 @@ def default():
 @app.route('/get_work')
 def get_work():
     """
-    endpoint the user will use to get work from the queue
+    Endpoint the user will use to get work from the queue
     client_id will be one of the parameters given for logging purposes
-    :return: returns the json containing the job_id, the type of work to be done, the work that nees to be done, and
+    :return: Returns the json containing the job_id, the type of work to be done, the work that nees to be done, and
     the version number
     """
     logging.warning("Successful API Call: %s", 'get_work: get_work', extra=d)
@@ -60,8 +60,8 @@ def get_work():
 @app.route('/return_docs', methods=['POST'])
 def return_docs():
     """
-    the endpoint the client calls to return the document ids received from the regulations docs calls
-    :return: returns a string saying successful so the client knows the call was successful
+    The endpoint the client calls to return the document ids received from the regulations docs calls
+    :return: Returns a string saying successful so the client knows the call was successful
     """
     logger.warning('Successful API Call: %s', 'return_docs: return docs', extra=d)
     try:
@@ -89,8 +89,8 @@ def return_docs():
 @app.route('/return_doc', methods=['POST'])
 def return_doc():
     """
-    the endpoint the client calls to return documents they received from the individual regulations doc calls
-    :return: returns a string saying successful so the client knows the call was successful
+    The endpoint the client calls to return documents they received from the individual regulations doc calls
+    :return: Returns a string saying successful so the client knows the call was successful
     """
     logger.warning('Successful API Call: %s', 'return_doc: return_doc call successful', extra=d)
     try:
@@ -114,9 +114,9 @@ def return_doc():
 
 def generate_json(work_list):
     """
-    given a list of values, the list will be converted into json format
-    :param work_list: the list of values that will be converted into json
-    :return: returns the json formatted list
+    Given a list of values, the list will be converted into json format
+    :param work_list: The list of values that will be converted into json
+    :return: Returns the json formatted list
     """
     logger.warning('Call Successful: %s', 'generate_json: generate_json called successfully', extra=d)
     logger.warning('Assign Variable: %s', 'generate_json: assign job_id from the work_list', extra=d)
@@ -138,8 +138,6 @@ def generate_json(work_list):
     logger.warning('Variable Success: %s', 'generate_json: converted_json created', extra=d)
     logger.warning("Returning: %s", 'generate_json: returning converted_json', extra=d)
     return json.dumps(converted_json)
-
-
 
 
 if __name__ == '__main__':
