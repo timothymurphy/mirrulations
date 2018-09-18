@@ -7,4 +7,7 @@ def queue_check(r):
 
 if __name__ == '__main__':
     r = RedisManager(redis.Redis())
-    print(queue_check(r))
+    progress,queue = queue_check(r)
+    print(progress)
+    print(queue)
+    
