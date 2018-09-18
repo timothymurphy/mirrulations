@@ -12,6 +12,10 @@ r = RedisManager(redis.Redis())
 
 
 def expire():
+    """
+    Checks to see if any of the in-progress jobs have expired
+    :return:
+    """
     while(True):
         logger.warning('Awake: %s', 'expire: expire is active', extra=d)
         logger.warning('Calling Function: %s', 'expire: attempting to find expired', extra=d)

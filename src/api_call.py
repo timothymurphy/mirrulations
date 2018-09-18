@@ -11,8 +11,8 @@ logging.basicConfig(filename='api_call.log', format=FORMAT)
 d = {'clientip': '192.168.0.1', 'user': 'CLIENT'}
 logger = logging.getLogger('tcpserver')
 
-def call(url):
 
+def call(url):
     """
     Sends an API call to regulations.gov
     Raises exceptions if it is not a valid API call
@@ -45,24 +45,24 @@ def add_api_key(url):
 
 
 class TemporaryException(Exception):
+    """
+    Raise an exception if there is an error communicating with either the work server or regulations
+    """
     def __init__(self):
-        """
-        Raise an exception if there is an error communicating with either the work server or regulations
-        """
         logger.warning('EXCEPTION: %s', 'TemporaryException: There seems to be a connection error', extra=d)
 
 
 class ApiCountZeroException(Exception):
+    """
+    Raise an exception if the user is out of API calls
+    """
     def __init__(self):
-        """
-        Raise an exception if the user is out of API calls
-        """
         logger.warning('EXCEPTION: %s', 'ApiCountZeroException: You have used all of your api calls', extra=d)
 
 
 class PermanentException(Exception):
+    """
+    Raise an exception if there is an error with the API call
+    """
     def __init__(self):
-        """
-        Raise an exception if there is an error with the API call
-        """
         logger.warning('EXCEPTION: %s', 'PermanentException: There is an error with your api call', extra=d)
