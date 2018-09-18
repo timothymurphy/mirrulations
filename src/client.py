@@ -43,7 +43,6 @@ def get_work(client_id):
     return man.api_call_manager(url)
 
 
-
 def get_json_info(json_result):
     """
     Return job information from server json
@@ -66,6 +65,7 @@ def get_json_info(json_result):
     logger.warning('Returning: %s', 'get_json_info: returning job id and data from get work', extra=d)
 
     return job_id, urls
+
 
 def return_docs(json_result, client_id):
     """
@@ -171,12 +171,13 @@ def return_doc(json_result, client_id):
 
     return r
 
+
 def copy_file_safely(directory, filepath):
-    '''
+    """
     Safely copies a file to a directory; if the file isn't there to be copied, it won't be copied.
     :param directory: Directory to copy to
     :param filepath: File to copy
-    '''
+    """
 
     if Path(filepath).exists():
         if Path(directory).exists():
@@ -187,13 +188,14 @@ def copy_file_safely(directory, filepath):
     else:
         logger.warning('Exception: %s', 'copy_file_safely: No file exists. Not copying.', extra=d)
 
+
 def add_client_log_files(directory, log_directory):
-    '''
+    """
     Used to copy client log files into the temp directory to be sent to the server.
     :param directory: Directory to write files to
     :param log_directory: Directory to get files from
     :return:
-    '''
+    """
     logger.warning('Calling Function: %s', 'copy_file_safely: copying client.log to tempfile', extra=d)
     copy_file_safely(directory, log_directory + "/client.log")
     logger.warning('Calling Function: %s', 'copy_file_safely: copying document_processor.log to tempfile', extra=d)

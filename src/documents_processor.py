@@ -15,6 +15,7 @@ logging.basicConfig(filename='documents_processor.log', format=FORMAT)
 d = {'clientip': '192.168.0.1', 'user': client_id}
 logger = logging.getLogger('tcpserver')
 
+
 def documents_processor(urls, job_id, client_id):
     """
     Call each url in the list, process the results of the calls and then form a json file to send back the results
@@ -85,7 +86,9 @@ def make_docs(doc_list):
     return workfiles
 
 
-# Raised if the json is not correctly formatted or is empty
 class BadJsonException(Exception):
     def __init__(self):
+        """
+        Raised if the json is not correctly formatted or is empty
+        """
         logger.warning('EXCEPTION: %s', 'BadJsonException: Your Json appears to be formatted incorrectly', extra=d)

@@ -14,12 +14,12 @@ logger = logging.getLogger('tcpserver')
 def call(url):
 
     """
-    Sends an api call to regulations.gov
-    Raises exceptions if it is not a valid api call
-    When a 300 status code is given, return a temporary exception so the user can retry the api call
-    When a 429 status code is given, the user is out of api calls and must wait an hour to make more
-    When 400 or 500 status codes are given there is a problem with the api connection
-    :param url: the url that will be used to make the api call
+    Sends an API call to regulations.gov
+    Raises exceptions if it is not a valid API call
+    When a 300 status code is given, return a temporary exception so the user can retry the API call
+    When a 429 status code is given, the user is out of API calls and must wait an hour to make more
+    When 400 or 500 status codes are given there is a problem with the API connection
+    :param url: the url that will be used to make the API call
     :return: returns the json format information of the documents
     """
     result = requests.get(url)
@@ -35,24 +35,34 @@ def call(url):
     return result
 
 
-# The api key will not be given in the url so it must be added
 def add_api_key(url):
+    """
+    The API key will not be given in the url so it must be added
+    :param url: the url that will be used to make the API call
+    :return: returns the url containing the API key
+    """
     return url + "&api_key=" + str(key)
 
 
-# Raise an exception if there is an error communicating with either the work server or regulations
 class TemporaryException(Exception):
     def __init__(self):
+        """
+        Raise an exception if there is an error communicating with either the work server or regulations
+        """
         logger.warning('EXCEPTION: %s', 'TemporaryException: There seems to be a connection error', extra=d)
 
 
-# Raise an exception if the user is out of api calls
 class ApiCountZeroException(Exception):
     def __init__(self):
+        """
+        Raise an exception if the user is out of API calls
+        """
         logger.warning('EXCEPTION: %s', 'ApiCountZeroException: You have used all of your api calls', extra=d)
 
 
-# Raise an exception if there is an error with the API call
 class PermanentException(Exception):
     def __init__(self):
+        """
+        Raise an exception if there is an error with the API call
+        """
         logger.warning('EXCEPTION: %s', 'PermanentException: There is an error with your api call', extra=d)

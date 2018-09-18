@@ -8,13 +8,14 @@ logging.basicConfig(filename='api_call_management.log', format=FORMAT)
 d = {'clientip': '192.168.0.1', 'user': 'CLIENT'}
 logger = logging.getLogger('tcpserver')
 
+
 def api_call_manager(url):
     """
-    If there were no errors in making an api call, get the result
+    If there were no errors in making an API call, get the result
     If a Temporary error occurred, sleep for 5 minutes and try again. Do this 50 times, and if it continues to fail, raise a CallFailException
     If a Permanent error occurs, raise a CallFailException
     If the user's ApiCount is zero, sleep for one hour to refresh the calls
-    :param url: the url that will be used to make the api call
+    :param url: the url that will be used to make the API call
     :return: returns the resulting information of the documents
     """
 
@@ -40,7 +41,9 @@ def api_call_manager(url):
     raise CallFailException
 
 
-# Raise an exception is there is an error making the api call
 class CallFailException(Exception):
     def __init__(self):
+        """
+        Raise an exception is there is an error making the API call
+        """
         logger.warning('EXCEPTION: %s', 'CallFailException: There seems to be an error with your API call', extra=d)
