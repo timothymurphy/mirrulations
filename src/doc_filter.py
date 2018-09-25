@@ -344,6 +344,7 @@ def process_doc(json_data, compressed_file):
     logger.warning('Function Successful: % s',
                    'process_doc: process_doc successfully called from return_doc', extra=d)
 
+    logger.warning('FILTER JOB_ID: %s', 'process_doc: ' + json_data["job_id"], extra=d)
     if r.does_job_exist_in_progress(json_data["job_id"]) is False:
         logger.warning('Variable Failure: %s',
                        'process_doc: job_id does not exist in progress queue', extra=d)
