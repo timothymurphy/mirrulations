@@ -42,7 +42,7 @@ class RedisManager:
 
             if item_from_queue is None:
                 logger.warning('Assign Variable: %s', 'get_work: assign work to have a type of none', extra=d)
-                work = {"type":"none"}
+                work = {"type": "none"}
                 logger.warning('Variable Success: %s', 'get_work: type none assigned to work', extra=d)
             else:
                 logger.warning('Assign Variable: %s', 'get_work: assign work to the item retrieved from the queue', extra=d)
@@ -150,10 +150,10 @@ class RedisManager:
 
     def get_specific_job_from_queue(self, job_id):
         """
-           Gets a job from the "queue" queue using its job_id
-           :param job_id: The id for the job in question
-           :return: Returns the job of the given job_id or '' if the job does not exist
-           """
+        Gets a job from the "queue" queue using its job_id
+        :param job_id: The id for the job in question
+        :return: Returns the job of the given job_id or '' if the job does not exist
+        """
         logger.warning('Call Successful: %s', 'get_specific_job_from_queue: get_specific_job_from_queue call successful', extra=d)
         logger.warning('Locking: %s', 'get_specific_job_from_queue: attempting to retrieve lock', extra=d)
         with self.lock:
@@ -176,10 +176,10 @@ class RedisManager:
 
     def get_specific_job_from_queue_no_lock(self, job_id):
         """
-           Gets a job from the "queue" queue using its job_id
-           :param job_id: The id for the job in question
-           :return: Returns the job of the given job_id or '' if the job does not exist
-           """
+        Gets a job from the "queue" queue using its job_id
+        :param job_id: The id for the job in question
+        :return: Returns the job of the given job_id or '' if the job does not exist
+        """
 
         for element in range(self.r.llen('queue')):
 

@@ -49,8 +49,8 @@ def monolith():
         # Gets the max page we'll go to; each page is 1000 documents
         max_page_hit = record_count // 1000
 
-        '''This loop generates lists of URLs, sending out a job and writing them to the work server every 1000 URLs.
-           It will stop and send whatever's left if we hit the max page limit.'''
+        # This loop generates lists of URLs, sending out a job and writing them to the work server every 1000 URLs.
+        # It will stop and send whatever's left if we hit the max page limit.
         while(current_page < max_page_hit):
             url_list = []
             for i in range(1000):
