@@ -248,6 +248,7 @@ class RedisManager:
             logger.warning('Assign Variable: %s', 'does_job_exist_in_progress: get the key of a job', extra=d)
             key = self.get_keys_from_progress_no_lock(job_id)
             logger.warning('Variable Success: %s', 'does_job_exist_in_progress: key has been received', extra=d)
+            logger.warning('KEY VALUE: %s', 'does_job_exist_in_progress: ' + key, extra=d)
             if float(key) > -1:
                 logger.warning('Assign Variable: %s', 'does_job_exist_in_progress: attempt to get the job from the key', extra=d)
                 job = self.get_specific_job_from_progress_no_lock(key)
@@ -317,6 +318,8 @@ class RedisManager:
             logger.warning('Assign Variable: %s', 'get_keys_from_progress: get the list of keys from the progress hash', extra=d)
             key_list = self.r.hgetall('progress')
             logger.warning('Variable Success: %s', 'get_keys_from_progress: list of keys successfully received', extra=d)
+            logger.warning('KEY_LIST: %s', 'get_keys_from_progress: ' + key_list, extra=d)
+            logger.warning('CLIENT_JOB_ID: %s', job_id, extra=d)
             for key in key_list:
                 logger.warning('Assign Variable: %s', 'get_keys_from_progress: attempt to get the json using the key', extra=d)
                 json_info = self.get_specific_job_from_progress_no_lock(key)
@@ -341,6 +344,8 @@ class RedisManager:
         logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: get the list of keys from the progress hash',extra=d)
         key_list = self.r.hgetall('progress')
         logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: list of keys successfully received', extra=d)
+        logger.warning('KEY_LIST: %s', 'get_keys_from_progress_no_lock: ' + key_list, extra=d)
+        logger.warning('CLIENT_JOB_ID: %s', 'get_keys_from_progress_no_lock: ' + job_id, extra=d)
         for key in key_list:
             logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: attempt to get the json using the key',extra=d)
             json_info = self.get_specific_job_from_progress_no_lock(key)
