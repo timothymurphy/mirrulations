@@ -318,7 +318,7 @@ class RedisManager:
             logger.warning('Assign Variable: %s', 'get_keys_from_progress: get the list of keys from the progress hash', extra=d)
             key_list = self.r.hgetall('progress')
             logger.warning('Variable Success: %s', 'get_keys_from_progress: list of keys successfully received', extra=d)
-            logger.warning('KEY_LIST: %s', 'get_keys_from_progress: ' + key_list, extra=d)
+            logger.warning('KEY_LIST: %s', 'get_keys_from_progress: ' + json.dumps(key_list), extra=d)
             logger.warning('CLIENT_JOB_ID: %s', job_id, extra=d)
             for key in key_list:
                 logger.warning('Assign Variable: %s', 'get_keys_from_progress: attempt to get the json using the key', extra=d)
@@ -344,7 +344,7 @@ class RedisManager:
         logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: get the list of keys from the progress hash',extra=d)
         key_list = self.r.hgetall('progress')
         logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: list of keys successfully received', extra=d)
-        logger.warning('KEY_LIST: %s', 'get_keys_from_progress_no_lock: ' + key_list, extra=d)
+        logger.warning('KEY_LIST: %s', 'get_keys_from_progress_no_lock: ' + json.dumps(key_list), extra=d)
         logger.warning('CLIENT_JOB_ID: %s', 'get_keys_from_progress_no_lock: ' + job_id, extra=d)
         for key in key_list:
             logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: attempt to get the json using the key',extra=d)
