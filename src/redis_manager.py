@@ -320,6 +320,7 @@ class RedisManager:
             logger.warning('Variable Success: %s', 'get_keys_from_progress: list of keys successfully received', extra=d)
             logger.warning('CLIENT_JOB_ID: %s', job_id, extra=d)
             for key in key_list:
+                logger.warning('CURRENT_KEY: %s', key, extra=d)
                 logger.warning('Assign Variable: %s', 'get_keys_from_progress: attempt to get the json using the key', extra=d)
                 json_info = self.get_specific_job_from_progress_no_lock(key)
                 logger.warning('Variable Success: %s', 'get_keys_from_progress: json was received using the key', extra=d)
@@ -345,6 +346,7 @@ class RedisManager:
         logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: list of keys successfully received', extra=d)
         logger.warning('CLIENT_JOB_ID: %s', 'get_keys_from_progress_no_lock: ' + job_id, extra=d)
         for key in key_list:
+            logger.warning('CURRENT_KEY: %s', key, extra=d)
             logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: attempt to get the json using the key',extra=d)
             json_info = self.get_specific_job_from_progress_no_lock(key)
             logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: json was received using the key', extra=d)
