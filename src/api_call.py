@@ -24,13 +24,13 @@ def call(url):
     """
     result = requests.get(url)
     if 300 <= result.status_code < 400:
-        logger.warning('Exception: %s', 'TemporaryException for return docs', extra=d)
+        logger.debug('Exception: %s', 'TemporaryException for return docs', extra=d)
         raise TemporaryException
     if result.status_code == 429:
-        logger.warning('Exception: %s', 'ApiCountZeroException for return docs', extra=d)
+        logger.debug('Exception: %s', 'ApiCountZeroException for return docs', extra=d)
         raise ApiCountZeroException
     if 400 <= result.status_code < 600:
-        logger.warning('Exception: %s', 'PermanentException for return docs', extra=d)
+        logger.debug('Exception: %s', 'PermanentException for return docs', extra=d)
         raise PermanentException
     return result
 
@@ -49,7 +49,7 @@ class TemporaryException(Exception):
     Raise an exception if there is an error communicating with either the work server or regulations
     """
     def __init__(self):
-        logger.warning('EXCEPTION: %s', 'TemporaryException: There seems to be a connection error', extra=d)
+        logger.debug('EXCEPTION: %s', 'TemporaryException: There seems to be a connection error', extra=d)
 
 
 class ApiCountZeroException(Exception):
@@ -57,7 +57,7 @@ class ApiCountZeroException(Exception):
     Raise an exception if the user is out of API calls
     """
     def __init__(self):
-        logger.warning('EXCEPTION: %s', 'ApiCountZeroException: You have used all of your api calls', extra=d)
+        logger.debug('EXCEPTION: %s', 'ApiCountZeroException: You have used all of your api calls', extra=d)
 
 
 class PermanentException(Exception):
@@ -65,4 +65,4 @@ class PermanentException(Exception):
     Raise an exception if there is an error with the API call
     """
     def __init__(self):
-        logger.warning('EXCEPTION: %s', 'PermanentException: There is an error with your api call', extra=d)
+        logger.debug('EXCEPTION: %s', 'PermanentException: There is an error with your api call', extra=d)

@@ -17,11 +17,11 @@ def expire():
     :return:
     """
     while(True):
-        logger.warning('Awake: %s', 'expire: expire is active', extra=d)
-        logger.warning('Calling Function: %s', 'expire: attempting to find expired', extra=d)
+        logger.debug('Awake: %s', 'expire: expire is active', extra=d)
+        logger.debug('Calling Function: %s', 'expire: attempting to find expired', extra=d)
         r.find_expired()
-        logger.warning('Function Successful: %s', 'expire: find expired successfully', extra=d)
-        logger.warning('Sleep: %s', 'expire: sleep for 1 hours', extra=d)
+        logger.debug('Function Successful: %s', 'expire: find expired successfully', extra=d)
+        logger.debug('Sleep: %s', 'expire: sleep for 1 hours', extra=d)
         time.sleep(3600)
 
 
