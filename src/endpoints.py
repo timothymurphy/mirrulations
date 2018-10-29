@@ -141,7 +141,7 @@ def generate_json(work_list):
 
 
 if __name__ == '__main__':
-    app.run(config.read_value("ip"), port=int(config.read_value("port")))
+    app.run(ssl_context=('cert.pem', 'key.pem'))
 
 
 
