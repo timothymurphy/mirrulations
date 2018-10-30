@@ -26,19 +26,19 @@ def documents_processor(urls, job_id, client_id):
     """
     global workfiles
     workfiles = []
-    logger.warning('Call Successful: %s', 'documents_processor: Processing documents', extra=d)
+    logger.debug('Call Successful: %s', 'documents_processor: Processing documents', extra=d)
     for url in urls:
         try:
-            logger.warning('Call Successful: %s', 'documents_processor: Processing URL: ' + url, extra=d)
+            logger.debug('Call Successful: %s', 'documents_processor: Processing URL: ' + url, extra=d)
             result = api_call_manager(add_api_key(url))
             process_results(result)
-            logger.warning('Call Successful: %s', 'documents_processor: Done processing URL: ' + url, extra=d)
+            logger.debug('Call Successful: %s', 'documents_processor: Done processing URL: ' + url, extra=d)
         except:
-            logger.warning('Exception: %s', 'documents_processor: Error processing URL: ' + url, extra=d)
-    logger.warning('Assign Variable: %s', 'documents_processor: Load the json', extra=d)
+            logger.debug('Exception: %s', 'documents_processor: Error processing URL: ' + url, extra=d)
+    logger.debug('Assign Variable: %s', 'documents_processor: Load the json', extra=d)
     result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(client_id), "version" : version}))
-    logger.warning('Variable Success: %s', 'documents_processor: successfully loaded json', extra=d)
-    logger.warning('Returning: %s', 'documents_processor: returning the json', extra=d)
+    logger.debug('Variable Success: %s', 'documents_processor: successfully loaded json', extra=d)
+    logger.debug('Returning: %s', 'documents_processor: returning the json', extra=d)
     return result
 
 
@@ -50,13 +50,13 @@ def process_results(result):
     :param result: Result of the api call
     :return: returns True if the processing completed successfully
     """
-    logger.warning('Call Successful: %s', 'documents_processor: Processing Documents Results', extra=d)
+    logger.debug('Call Successful: %s', 'documents_processor: Processing Documents Results', extra=d)
     docs_json = json.loads(result.text)
     try:
         doc_list = docs_json["documents"]
         work = make_docs(doc_list)
     except TypeError:
-        logger.warning('Exception: %s', 'BadJsonException for return docs', extra=d)
+        logger.debug('Exception: %s', 'BadJsonException for return docs', extra=d)
 
     return True
 
@@ -91,4 +91,4 @@ class BadJsonException(Exception):
     Raised if the json is not correctly formatted or is empty
     """
     def __init__(self):
-        logger.warning('EXCEPTION: %s', 'BadJsonException: Your Json appears to be formatted incorrectly', extra=d)
+        logger.debug('EXCEPTION: %s', 'BadJsonException: Your Json appears to be formatted incorrectly', extra=d)
