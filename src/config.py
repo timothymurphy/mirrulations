@@ -13,17 +13,17 @@ def read_value(value):
     :param value: Value to be read from the JSON
     :return: Value read from the JSON
     """
-    logger.warning('Calling Function: %s', 'read_value: Reading a value from the configuration file', extra=d)
+    logger.debug('Calling Function: %s', 'read_value: Reading a value from the configuration file', extra=d)
     try:
-        logger.warning("Assign Variable: %s", 'read_value: loading json from config', extra=d)
+        logger.debug("Assign Variable: %s", 'read_value: loading json from config', extra=d)
         contents = json.loads(open("./config.json","r").read())
-        logger.warning("Variable Success: %s", 'read_value: found json from config', extra=d)
+        logger.debug("Variable Success: %s", 'read_value: found json from config', extra=d)
     except:
-        logger.warning('Exception: %s', 'read_value: Error opening/loading JSON', extra=d)
+        logger.debug('Exception: %s', 'read_value: Error opening/loading JSON', extra=d)
 
     try:
         result = contents[value]
     except KeyError:
-        logger.warning('Exception: %s', 'config: Caught KeyError, no value present for: ' + str(value) + '. Returning None.', extra=d)
+        logger.debug('Exception: %s', 'config: Caught KeyError, no value present for: ' + str(value) + '. Returning None.', extra=d)
         return None
     return result

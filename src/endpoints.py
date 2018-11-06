@@ -28,7 +28,7 @@ def default():
     Default endpoint
     :return: Returns empty json
     """
-    logger.warning('Successful API Call: %s', 'default: default endpoint', extra=d)
+    logger.debug('Successful API Call: %s', 'default: default endpoint', extra=d)
     return json.dumps({})
 
 
@@ -42,18 +42,18 @@ def get_work():
     """
     logging.warning("Successful API Call: %s", 'get_work: get_work', extra=d)
     if len(request.args) != 1:
-        logger.warning('Exception: %s', 'get_work: Get Exception for incorrect number of parameters', extra=d)
+        logger.debug('Exception: %s', 'get_work: Get Exception for incorrect number of parameters', extra=d)
         return 'Parameter Missing', 400
-    logger.warning('Assign Variable: %s', 'get_work: attempting to get client_id', extra=d)
+    logger.debug('Assign Variable: %s', 'get_work: attempting to get client_id', extra=d)
     client_id = request.args.get('client_id')
-    logger.warning('Variable Success: %s', 'get_work: successfully retrieved the client id', extra=d)
+    logger.debug('Variable Success: %s', 'get_work: successfully retrieved the client id', extra=d)
     if client_id is None:
         logging.warning("Exception: %s", 'get_work: BadParameterException, client id was none', extra=d)
         return 'Bad Parameter', 400
-    logger.warning('Assign Variable: %s', 'get_work: attempting to get json_info from get_work - Calling get_work', extra=d)
+    logger.debug('Assign Variable: %s', 'get_work: attempting to get json_info from get_work - Calling get_work', extra=d)
     json_info = r.get_work()
-    logger.warning('Variable Success: %s', 'get_work: successfully retrieved the json_info', extra=d)
-    logger.warning('Returning: %s', 'get_work: returning json_info to client from get_work', extra=d)
+    logger.debug('Variable Success: %s', 'get_work: successfully retrieved the json_info', extra=d)
+    logger.debug('Returning: %s', 'get_work: returning json_info to client from get_work', extra=d)
     return json.dumps(json_info)
 
 
@@ -63,26 +63,26 @@ def return_docs():
     The endpoint the client calls to return the document ids received from the regulations docs calls
     :return: Returns a string saying successful so the client knows the call was successful
     """
-    logger.warning('Successful API Call: %s', 'return_docs: return docs', extra=d)
+    logger.debug('Successful API Call: %s', 'return_docs: return docs', extra=d)
     try:
-        logger.warning('Assign Variable: %s', 'return_docs: attempting to get json_info from the request', extra=d)
+        logger.debug('Assign Variable: %s', 'return_docs: attempting to get json_info from the request', extra=d)
         json_info = request.form['json']
-        logger.warning('Variable Success: %s', 'return_docs: successfully retreived json_info', extra=d)
-        logger.warning('Assign Variable: %s', 'return_doc: getting the files from the file request field', extra=d)
+        logger.debug('Variable Success: %s', 'return_docs: successfully retreived json_info', extra=d)
+        logger.debug('Assign Variable: %s', 'return_doc: getting the files from the file request field', extra=d)
         files = request.files['file'].read()
-        logger.warning('Variable Success: %s', 'return_doc: files successfully retrieved from the return doc post',
+        logger.debug('Variable Success: %s', 'return_doc: files successfully retrieved from the return doc post',
                        extra=d)
     except:
-        logger.warning('Exception: %s', 'return_docs: BadParameterException for return docs', extra=d)
+        logger.debug('Exception: %s', 'return_docs: BadParameterException for return docs', extra=d)
         return 'Bad Parameter', 400
     if json_info is None:
-        logger.warning('Exception: %s', 'return_docs: PostException for return docs', extra=d)
+        logger.debug('Exception: %s', 'return_docs: PostException for return docs', extra=d)
         return 'Bad Parameter', 400
-    logger.warning('Calling Function: %s', 'return_docs: return_docs calling process_docs', extra=d)
+    logger.debug('Calling Function: %s', 'return_docs: return_docs calling process_docs', extra=d)
     files = io.BytesIO(files)
     process_docs(json.loads(json_info), files)
-    logger.warning('Function Successful: %s', 'return_docs: process_docs successfully called from return_docs', extra=d)
-    logger.warning('Returning: %s', 'return_docs: returning success from return_docs', extra=d)
+    logger.debug('Function Successful: %s', 'return_docs: process_docs successfully called from return_docs', extra=d)
+    logger.debug('Returning: %s', 'return_docs: returning success from return_docs', extra=d)
     return 'Successful!'
 
 
@@ -92,23 +92,23 @@ def return_doc():
     The endpoint the client calls to return documents they received from the individual regulations doc calls
     :return: Returns a string saying successful so the client knows the call was successful
     """
-    logger.warning('Successful API Call: %s', 'return_doc: return_doc call successful', extra=d)
+    logger.debug('Successful API Call: %s', 'return_doc: return_doc call successful', extra=d)
     try:
-        logger.warning('Assign Variable: %s', 'return_doc: getting the files from the file request field', extra=d)
+        logger.debug('Assign Variable: %s', 'return_doc: getting the files from the file request field', extra=d)
         files = request.files['file'].read()
-        logger.warning('Variable Success: %s', 'return_doc: files successfully retrieved from the return doc post', extra=d)
-        logger.warning('Assign Variable: %s', 'return_doc: get the json_info from the post request', extra=d)
+        logger.debug('Variable Success: %s', 'return_doc: files successfully retrieved from the return doc post', extra=d)
+        logger.debug('Assign Variable: %s', 'return_doc: get the json_info from the post request', extra=d)
         json_info= request.form['json']
-        logger.warning('Variable Success: %s', 'return_doc: json retrieved from the doc post call', extra=d)
+        logger.debug('Variable Success: %s', 'return_doc: json retrieved from the doc post call', extra=d)
     except:
-        logger.warning('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
+        logger.debug('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
         return 'Bad Parameter', 400
     files = io.BytesIO(files)
-    logger.warning('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
-    logger.warning('Calling Function: %s', 'return_doc: call process_docs with the json and files posted to return_doc endpoint', extra=d)
+    logger.debug('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
+    logger.debug('Calling Function: %s', 'return_doc: call process_docs with the json and files posted to return_doc endpoint', extra=d)
     process_doc(json.loads(json_info), files)
-    logger.warning('Function Successful: %s', 'return_doc: success from return_doc', extra=d)
-    logger.warning('Returning: %s', 'return_doc: returning success from return_doc', extra=d)
+    logger.debug('Function Successful: %s', 'return_doc: success from return_doc', extra=d)
+    logger.debug('Returning: %s', 'return_doc: returning success from return_doc', extra=d)
     return 'Successful!'
 
 
@@ -118,30 +118,30 @@ def generate_json(work_list):
     :param work_list: The list of values that will be converted into json
     :return: Returns the json formatted list
     """
-    logger.warning('Call Successful: %s', 'generate_json: generate_json called successfully', extra=d)
-    logger.warning('Assign Variable: %s', 'generate_json: assign job_id from the work_list', extra=d)
+    logger.debug('Call Successful: %s', 'generate_json: generate_json called successfully', extra=d)
+    logger.debug('Assign Variable: %s', 'generate_json: assign job_id from the work_list', extra=d)
     job_id = work_list[0]
-    logger.warning('Variable Success: %s', 'generate_json: jod_id assigned', extra=d)
-    logger.warning('Assign Variable: %s', 'generate_json: assign type from the work_list', extra=d)
+    logger.debug('Variable Success: %s', 'generate_json: jod_id assigned', extra=d)
+    logger.debug('Assign Variable: %s', 'generate_json: assign type from the work_list', extra=d)
     type = work_list[1]
-    logger.warning('Variable Success: %s', 'generate_json: type assigned', extra=d)
-    logger.warning('Assign Variable: %s', 'generate_json: assign data from the work_list', extra=d)
+    logger.debug('Variable Success: %s', 'generate_json: type assigned', extra=d)
+    logger.debug('Assign Variable: %s', 'generate_json: assign data from the work_list', extra=d)
     data = work_list[2]
-    logger.warning('Variable Success: %s', 'generate_json: data assigned', extra=d)
-    logger.warning('Assign Variable: %s', 'generate_json: assign converted_json from the combination of job_id, type, and data', extra=d)
+    logger.debug('Variable Success: %s', 'generate_json: data assigned', extra=d)
+    logger.debug('Assign Variable: %s', 'generate_json: assign converted_json from the combination of job_id, type, and data', extra=d)
     converted_json = {
         "job_id": job_id,
         "type": type,
         "data": data,
         "version": version
     }
-    logger.warning('Variable Success: %s', 'generate_json: converted_json created', extra=d)
-    logger.warning("Returning: %s", 'generate_json: returning converted_json', extra=d)
+    logger.debug('Variable Success: %s', 'generate_json: converted_json created', extra=d)
+    logger.debug("Returning: %s", 'generate_json: returning converted_json', extra=d)
     return json.dumps(converted_json)
 
 
 if __name__ == '__main__':
-    app.run(config.read_value("ip"), port=int(config.read_value("port")))
+    app.run('35.184.234.83', '8080', ssl_context=('cert.pem', 'key.pem'))
 
 
 

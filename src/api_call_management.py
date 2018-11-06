@@ -19,7 +19,7 @@ def api_call_manager(url):
     :return: returns the resulting information of the documents
     """
 
-    logger.warning('Call Successful: %s', 'api_call_mangement: starting API Call Manager', extra=d)
+    logger.debug('Call Successful: %s', 'api_call_mangement: starting API Call Manager', extra=d)
 
     pause = 0
     while pause < 51:
@@ -27,17 +27,17 @@ def api_call_manager(url):
             result = call(url)
             return result
         except TemporaryException:
-            logger.warning('Exception: %s', 'api_call_mangement: Caught TemporaryException, waiting 5 minutes. Current pause: ' + str(pause), extra=d)
+            logger.debug('Exception: %s', 'api_call_mangement: Caught TemporaryException, waiting 5 minutes. Current pause: ' + str(pause), extra=d)
             time.sleep(300)
             pause += 1
         except PermanentException:
-            logger.warning('Exception: %s', 'api_call_mangement: Caught PermanentException', extra=d)
+            logger.debug('Exception: %s', 'api_call_mangement: Caught PermanentException', extra=d)
             break
         except ApiCountZeroException:
-            logger.warning('Exception: %s', 'api_call_mangement: Caught ApiCountZeroException. Waiting 1 hour.', extra=d)
+            logger.debug('Exception: %s', 'api_call_mangement: Caught ApiCountZeroException. Waiting 1 hour.', extra=d)
             time.sleep(3600)
-    logger.warning('Exception: %s', 'api_call_mangement: CallFailException for return docs', extra=d)
-    logger.warning('Incomplete: %s', url, extra=d)
+    logger.debug('Exception: %s', 'api_call_mangement: CallFailException for return docs', extra=d)
+    logger.debug('Incomplete: %s', url, extra=d)
     raise CallFailException
 
 
@@ -46,4 +46,4 @@ class CallFailException(Exception):
     Raise an exception is there is an error making the API call
     """
     def __init__(self):
-        logger.warning('EXCEPTION: %s', 'CallFailException: There seems to be an error with your API call', extra=d)
+        logger.debug('EXCEPTION: %s', 'CallFailException: There seems to be an error with your API call', extra=d)
