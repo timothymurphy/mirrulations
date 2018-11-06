@@ -8,6 +8,8 @@ import os
 import zipfile
 import tempfile
 import shutil
+import re
+import doc_filter as df
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='docs_filter.log', format=FORMAT)
@@ -23,16 +25,16 @@ version= 'v1.3'
 
 
 # Validation Function
-def work_file_length_checker(json_data):
+def workfile_length_checker(json_data):
     """
-    Checks the file count and attachment count of each work file
-    :param json_data: the json containing the work files
-    :return: True if there are 1000 or less document ids and 1000 or less attachments per work file
-             False if either the ids or attachments are over 1000
-    """
+        Checks the file count and attachment count of each work file
+        :param json_data: the json containing the work files
+        :return: True if there are 1000 or less document ids and 1000 or less attachments per work file
+                 False if either the ids or attachments are over 1000
+        """
 
     logger.warning('Function Successful: % s',
-                   'work_file_length_checker: work_file_length_checker successfully called from process_docs', extra=d)
+                   'workfile_length_checker: workfile_length_checker successfully called from process_docs', extra=d)
 
     file_count = 0
     attachment_count = 0
@@ -46,31 +48,88 @@ def work_file_length_checker(json_data):
         if fc or ac:
 
             logger.warning('Variable Failure: %s',
-                           'work_file_length_checker: Something went wrong in work_file_length_checker', extra=d)
+                           'workfile_length_checker: Something went wrong in workfile_length_checker', extra=d)
             if fc is False:
                 logger.warning('Variable Failure: %s',
-                               'work_file_length_checker: fc is False', extra=d)
+                               'workfile_length_checker: fc is False', extra=d)
             else:
                 logger.warning('Variable Success: %s',
-                               'work_file_length_checker: fc is True', extra=d)
+                               'workfile_length_checker: fc is True', extra=d)
             if ac is False:
                 logger.warning('Variable Failure: %s',
-                               'work_file_length_checker: ac is False', extra=d)
+                               'workfile_length_checker: ac is False', extra=d)
             else:
                 logger.warning('Variable Success: %s',
-                               'work_file_length_checker: ac is True', extra=d)
+                               'workfile_length_checker: ac is True', extra=d)
 
             logger.warning('Returning: %s',
-                           'work_file_length_checker: returning False', extra=d)
+                           'workfile_length_checker: returning False', extra=d)
             return False
         else:
             logger.warning('Variable Success: %s',
-                           'work_file_length_checker: fc and ac are True', extra=d)
+                           'workfile_length_checker: fc and ac are True', extra=d)
             file_count = 0
             attachment_count = 0
     logger.warning('Returning: %s',
-                   'work_file_length_checker: returning True', extra=d)
+                   'workfile_length_checker: returning True', extra=d)
     return True
+
+
+def check_document_exists(json_data):
+    """
+    Checks to see if a document was already downloaded or already in one of the queues.
+    If the document has already been downloaded it will be removed from its workfile.
+    If a workfile were to become empty it will be removed to prevent empty doc jobs from existing.
+    :param json_data: the json containing the work files
+    :return:
+    """
+
+    logger.warning('Function Successful: % s',
+                   'workfile_length_checker: workfile_length_checker successfully called from process_docs', extra=d)
+
+    home = os.getenv("HOME")
+    path = home + "/regulations_data/"
+    for workfile in json_data["data"]:
+        count = 0
+        for line in workfile:
+            document = line["id"]
+            alpha_doc_org,docket_id,document_id = df.get_doc_attributes("doc." + document + ".json")
+            full_path = path + alpha_doc_org + "/" + docket_id + "/" + document_id + "/" + "doc." + document + ".json"
+
+            count, local_verdict = local_files_check(full_path, count)
+            #redis_verdict = redis_files_check
+
+            if local_verdict: #and redis_verdict:
+                workfile.pop(count)
+
+    json_data = remove_empty_lists(json_data)
+    return json_data
+
+
+def local_files_check(full_path, count):
+    """
+    Checks to see if the document exists.
+    If the document does not, then the counter is increased
+    If the document does exist, the workfile will remove the document
+    :param full_path: The path to the document.json
+    :param count: The current count of the workfile
+    :return: Returns the count and True if the file does exist, else it will return False
+    """
+    if os.path.isfile(full_path):
+        return count, True
+    else:
+        count += 1
+        return count, False
+
+
+def remove_empty_lists(json_data):
+    """
+    Removes any empty workfiles from the data field in the json data
+    :param json_data: The json data being looked over
+    :return: Returns the empty free json data
+    """
+    json_data["data"] = [workfile for workfile in json_data["data"] if workfile != []]
+    return json_data
 
 
 # Saving and Adding Functions
@@ -179,14 +238,18 @@ def process_docs(json_data, compressed_file):
                        'process_docs: job does exist in progress queue', extra=d)
 
         logger.warning('Calling Function: % s',
-                       'process_docs: process_docs calling work_file_length_checker', extra=d)
-        wklc = work_file_length_checker(json_data)
+                       'process_docs: process_docs calling workfile_length_checker', extra=d)
+        wklc = workfile_length_checker(json_data)
         logger.warning('Function Successful: % s',
-                       'process_docs: process_docs successfully called work_file_length_checker', extra=d)
+                       'process_docs: process_docs successfully called workfile_length_checker', extra=d)
 
         job_type = json_data["type"] == "docs"
 
         if wklc and job_type:
+
+            logger.warning('Calling Function: % s',
+                           'process_docs: process_docs calling check_document_exists', extra=d)
+            json_data = check_document_exists(json_data)
 
             logger.warning('Calling Function: % s',
                            'process_docs: process_docs calling add_document_job', extra=d)
@@ -211,10 +274,10 @@ def process_docs(json_data, compressed_file):
                            'process_docs: Something went wrong in validation', extra=d)
             if wklc is False:
                 logger.warning('Variable Failure: %s',
-                               'process_docs: work_file_length_checker is False', extra=d)
+                               'process_docs: workfile_length_checker is False', extra=d)
             else:
                 logger.warning('Variable Success: %s',
-                               'process_docs: work_file_length_checker is True', extra=d)
+                               'process_docs: workfile_length_checker is True', extra=d)
             if job_type is False:
                 logger.warning('Variable Failure: %s',
                                'process_docs: job_type is not docs', extra=d)
