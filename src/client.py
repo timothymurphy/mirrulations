@@ -36,10 +36,14 @@ def get_work(client_id):
     logger.debug('Call Successful: %s', 'get_work: call made successfully', extra=d)
     logger.debug('Assign Variable: %s', 'get_work: create the url for getting work', extra=d)
 
+    logger.info('Attempting to retrieve work...')
+
     url = serverurl+"/get_work?client_id="+str(client_id)
 
     logger.debug('Variable Success: %s', 'get_work: url created successfully for get work', extra=d)
     logger.debug('Returning: %s', 'get_work: the respond from the api call to get_work', extra=d)
+    logger.info('Work successfully retrieved')
+
     return man.api_call_manager(url)
 
 
@@ -54,6 +58,8 @@ def get_json_info(json_result):
     logger.debug('Call Successful: %s', 'get_json_info: call made successfully', extra=d)
     logger.debug('Assign Variable: %s', 'get_json_info: get the job id from ', extra=d)
 
+    logger.info('Collecting job information...')
+
     job_id = json_result["job_id"]
 
     logger.debug('Variable Success: %s', 'get_json_info: job_id retrieved from result json', extra=d)
@@ -63,6 +69,8 @@ def get_json_info(json_result):
 
     logger.debug('Variable Success: %s', 'get_json_info: data retrieved from result json', extra=d)
     logger.debug('Returning: %s', 'get_json_info: returning job id and data from get work', extra=d)
+
+    logger.info('Job information retrieved')
 
     return job_id, urls
 
@@ -76,8 +84,10 @@ def return_docs(json_result, client_id):
     :return: result from calling /return_docs
     """
     global d
-    logger.debug('Call Successful: %s', 'return_docs: call made successfully', extra=d)
 
+    logger.info('Returning documents data to server...')
+
+    logger.debug('Call Successful: %s', 'return_docs: call made successfully', extra=d)
     logger.debug('Calling Function: %s','return_docs: call get_json_info for job id and urls',extra=d)
 
     job_id, urls = get_json_info(json_result)
@@ -109,6 +119,7 @@ def return_docs(json_result, client_id):
     r.raise_for_status()
 
     logger.debug('Returning: %s', 'return_docs: returning information from the call to /return_docs', extra=d)
+    logger.info('Documents data returned')
 
     return r
 
@@ -122,6 +133,8 @@ def return_doc(json_result, client_id):
     :return: result from calling /return_doc
     """
     global d
+
+    logger.info('Returning document data to server...')
 
     logger.debug('Call Successful: %s', 'return_doc: call made successfully', extra=d)
     logger.debug('Calling Function: %s','return_doc: call get_json_info for job id and urls',extra=d)
@@ -151,6 +164,8 @@ def return_doc(json_result, client_id):
     logger.debug('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
 
     logger.debug('File Create Attempt: %s', 'return_doc: attempting to create the zip file', extra=d)
+    logger.info('Attempting to create doc file...')
+
     shutil.make_archive("result", "zip", path.name)
     logger.debug('File Creation Successful: %s', "return_doc: successfully created the zip file", extra=d)
     logger.debug('Assign Variable: %s', 'return_doc: opening the zip', extra=d)
@@ -162,12 +177,16 @@ def return_doc(json_result, client_id):
                       data={'json':json.dumps({"job_id" : job_id, "type" : "doc",
                                                "client_id": client_id, "version" : version })})
 
+    logger.info('Doc file created')
+
     logger.debug('Function Successful: %s', 'return_doc: successful call to /return_doc', extra=d)
     logger.debug('Calling Function: %s','return_doc: Raise Exception for bad status code',extra=d)
 
     r.raise_for_status()
 
     logger.debug('Returning: %s', 'return_doc: returning information from the call to /return_docs', extra=d)
+
+    logger.info('Document data returned')
 
     return r
 
@@ -179,14 +198,18 @@ def copy_file_safely(directory, filepath):
     :param filepath: File to copy
     """
 
+    logger.info('Copying file...')
     if Path(filepath).exists():
         if Path(directory).exists():
             shutil.copy(filepath, directory)
-            logger.debug('Call Successfuly: %s', 'copy_file_safely: File copied.', extra=d)
+            logger.debug('Call Successful: %s', 'copy_file_safely: File copied.', extra=d)
+            logger.info('File copied')
         else:
             logger.debug('Exception: %s', 'copy_file_safely: Directory does not exist. Not copying.', extra=d)
+            logger.warning('File not copied, directory does not exist')
     else:
         logger.debug('Exception: %s', 'copy_file_safely: No file exists. Not copying.', extra=d)
+        logger.warning('File not copied, file does not exist')
 
 
 def add_client_log_files(directory, log_directory):
@@ -196,6 +219,8 @@ def add_client_log_files(directory, log_directory):
     :param log_directory: Directory to get files from
     :return:
     """
+    logger.info('Copying log files...')
+
     logger.debug('Calling Function: %s', 'copy_file_safely: copying client.log to tempfile', extra=d)
     copy_file_safely(directory, log_directory + "/client.log")
     logger.debug('Calling Function: %s', 'copy_file_safely: copying document_processor.log to tempfile', extra=d)
@@ -207,6 +232,7 @@ def add_client_log_files(directory, log_directory):
     logger.debug('Calling Function: %s', 'copy_file_safely: copying api_call_management.log to tempfile', extra=d)
     copy_file_safely(directory, log_directory + "/api_call_management.log")
 
+    logger.info('Log files copied')
 
 def do_work():
     """
@@ -216,10 +242,12 @@ def do_work():
     :return:
     """
     logger.debug('Call Successful: %s', 'do_work: called successfully', extra=d)
+    logger.info('Beginning "do-work" process...')
 
     while True:
 
         logger.debug('Calling Function: %s', 'do_work: call to get_work function', extra=d)
+        logger.info('Getting work...')
         try:
             work = get_work(client_id)
 
@@ -235,6 +263,7 @@ def do_work():
         if work_json["type"] == "doc":
 
             logger.debug('Calling Function: %s', 'do_work: call return_doc', extra=d)
+            logger.info('Work is Doc job')
 
             r = return_doc(work_json, client_id)
 
@@ -243,6 +272,7 @@ def do_work():
         elif work_json["type"] == "docs":
 
             logger.debug('Calling Function: %s', 'do_work: call return_docs', extra=d)
+            logger.info('Work is Docs job')
 
             r = return_docs(work_json, client_id)
 
@@ -251,13 +281,17 @@ def do_work():
         elif work_json["type"] == "none":
 
             logger.debug('Function Successful: %s', 'do_work: sleep due to no work', extra=d)
+            logger.info('No work, sleeping...')
 
             time.sleep(3600)
 
         else:
 
             logger.debug('Exception: %s', 'do_work: type specified in json object was not in - doc, docs, none')
+            logger.error('Job type unexpected')
+
         logger.debug('Function Successful: %s', 'do_work: successful iteration in do work', extra=d)
+        logger.info('Work completed')
 
 
 if __name__ == '__main__':
