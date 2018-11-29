@@ -316,7 +316,7 @@ def get_file_list(compressed_file, PATHstr, client_id):
     :return: The list of file names in the compressed file
     """
 
-    home=os.getenv("HOME")
+    home = os.getenv("HOME")
     client_path = home + '/client-logs/' + str(client_id) + '/'
     logger.debug('Function Successful: % s',
                    'get_file_list: get_file_list successfully called from process_doc', extra=d)

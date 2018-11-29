@@ -24,6 +24,8 @@ logging.basicConfig(filename='client.log', format=FORMAT)
 d = {'clientip': '192.168.0.1', 'user': client_id}
 logger = logging.getLogger('tcpserver')
 
+client_health_url = "https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08"
+
 
 def get_work(client_id):
     """
@@ -250,13 +252,14 @@ def do_work():
         logger.info('Getting work...')
         try:
             work = get_work(client_id)
-
             logger.debug('Function Successful: %s', 'do_work: get_work call successful', extra=d)
+
+            requests.get(client_health_url)
+
             logger.debug('Assign Variable: %s', 'do_work: decode the json variable from get_work', extra=d)
-
             work_json = json.loads(work.content.decode('utf-8'))
-
             logger.debug('Variable Success: %s', 'do_work: decode the json of work successfully', extra=d)
+
         except man.CallFailException:
             time.sleep(3600)
 
@@ -269,6 +272,8 @@ def do_work():
 
             logger.debug('Function Successful: %s', 'do_work: return_doc call successful', extra=d)
 
+            requests.get(client_health_url)
+
         elif work_json["type"] == "docs":
 
             logger.debug('Calling Function: %s', 'do_work: call return_docs', extra=d)
@@ -278,6 +283,8 @@ def do_work():
 
             logger.debug('Function Successful: %s', 'do_work: return_docs call successful', extra=d)
 
+            requests.get(client_health_url)
+
         elif work_json["type"] == "none":
 
             logger.debug('Function Successful: %s', 'do_work: sleep due to no work', extra=d)
@@ -285,11 +292,15 @@ def do_work():
 
             time.sleep(3600)
 
-        else:
+            requests.get(client_health_url)
 
+        else:
             logger.debug('Exception: %s', 'do_work: type specified in json object was not in - doc, docs, none')
+
             logger.error('Job type unexpected')
 
+
+            requests.get(client_health_url + "/fail")
         logger.debug('Function Successful: %s', 'do_work: successful iteration in do work', extra=d)
         logger.info('Work completed')
 
