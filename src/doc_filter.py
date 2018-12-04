@@ -25,9 +25,13 @@ def get_document_id(file_name):
     """
     logger.debug('Function Successful: % s',
                    'get_document_id: get_document_id successfully called from get_doc_attributes', extra=d)
+    logger.info('Retrieving document ID...')
+
     doc,id,ending = file_name.split(".")
+
     logger.debug('Returning: %s',
                    'get_document_id: returning document_id', extra=d)
+    logger.info('Document ID successfully retrieved')
     return id
 
 
@@ -39,10 +43,15 @@ def get_file_name(path):
     """
     logger.debug('Function Successful: % s',
                    'get_file_name: get_file_name successfully called from local_save', extra=d)
+    logger.info('Extracting file name...')
+
     split_path = path.split("/")
     file_name = split_path[len(split_path) - 1]
+
     logger.debug('Returning: %s',
                    'get_file_name: returning the file name', extra=d)
+    logger.info('File name extracted')
+
     return file_name
 
 
@@ -126,6 +135,7 @@ def add_hyphens(list):
     """
     logger.debug('Function Successful: % s',
                    'add_hyphens: add_hyphens successfully called from get_doc_attributes', extra=d)
+    logger.info('Hyphenating strings...')
 
     hyphened_string = ""
     for x in range(len(list)):
@@ -144,6 +154,8 @@ def add_hyphens(list):
 
     logger.debug('Returning: %s',
                    'add_hyphens: returning the hyphened_string', extra=d)
+    logger.info('Strings hyphenated')
+
     return hyphened_string
 
 
@@ -156,6 +168,7 @@ def ending_is_number(document_id):
     """
     logger.debug('Function Successful: % s',
                    'ending_is_number: ending_is_number successfully called from process_doc', extra=d)
+    logger.info('Ensuring document ID ends in a number...')
 
     logger.debug('Calling Function: % s',
                    'ending_is_number: ending_is_number calling split', extra=d)
@@ -167,6 +180,8 @@ def ending_is_number(document_id):
 
     logger.debug('Returning: %s',
                    'ending_is_number: returning the number', extra=d)
+    logger.info('The ending of the document ID is, in fact, a number')
+
     return number.isdigit()
 
 
@@ -179,6 +194,7 @@ def id_matches(path, doc_id):
     """
     logger.debug('Function Successful: % s',
                    'id_matches: id_matches successfully called from process_doc', extra=d)
+    logger.info('Ensuring that the document IDs match...')
 
     logger.debug('Calling Function: % s',
                    'id_matches: id_matches calling open', extra=d)
@@ -198,10 +214,12 @@ def id_matches(path, doc_id):
     if result is True:
         logger.debug('Returning: %s',
                        'id_matches: returning True', extra=d)
+        logger.info('Document IDs match')
         return True
     else:
         logger.debug('Returning: %s',
                        'id_matches: returning False', extra=d)
+        logger.warning('Document IDs do not match')
         return False
 
 
@@ -213,17 +231,19 @@ def beginning_is_letter(document_id):
     """
     logger.debug('Function Successful: % s',
                    'beginning_is_letter: beginning_is_letter successfully called from process_doc', extra=d)
-
+    logger.info('Ensuring that document ID begins with a letter...')
     letter = document_id[0]
 
     result = letter.isalpha()
     if result is True:
         logger.debug('Returning: %s',
                        'beginning_is_letter: returning True', extra=d)
+        logger.info('Docuemnt ID begins with a letter')
         return True
     else:
         logger.debug('Returning: %s',
                        'beginning_is_letter: returning False', extra=d)
+        logger.warning('Document ID does not begin with a letter')
         return False
 
 
@@ -237,6 +257,7 @@ def local_save(cur_path, destination):
     """
     logger.debug('Function Successful: % s',
                    'local_save: local_save successfully called from process_doc', extra=d)
+    logger.info('Saving file locally...')
 
     logger.debug('Calling Function: % s',
                    'local_save: local_save calling get_file_name', extra=d)
@@ -263,6 +284,7 @@ def local_save(cur_path, destination):
     shutil.copy(cur_path, destination_path + '/' + file_name)
     logger.debug('Function Successful: % s',
                    'local_save: local_save successfully called copy', extra=d)
+    logger.info('File saved locally')
 
 
 def create_new_dir(path):
@@ -277,9 +299,12 @@ def create_new_dir(path):
     if not os.path.exists(path):
         logger.debug('Calling Function: % s',
                        'create_new_dir: create_new_dir calling makedirs', extra=d)
+        logger.info('Creating a new directory...')
+
         os.makedirs(path)
         logger.debug('Function Successful: % s',
                        'create_new_dir: create_new_dir successfully called makedirs', extra=d)
+        logger.info('Directory created')
 
 
 def get_file_list(compressed_file, PATHstr, client_id):
@@ -295,6 +320,7 @@ def get_file_list(compressed_file, PATHstr, client_id):
     client_path = home + '/client-logs/' + str(client_id) + '/'
     logger.debug('Function Successful: % s',
                    'get_file_list: get_file_list successfully called from process_doc', extra=d)
+    logger.info('Retrieving files to be processed...')
 
     logger.debug('Calling Function: % s',
                    'get_file_list: get_file_list calling ZipFile', extra=d)
@@ -330,6 +356,7 @@ def get_file_list(compressed_file, PATHstr, client_id):
 
     logger.debug('Returning: %s',
                    'get_file_list: returning list of files', extra=d)
+    logger.info('Files retrieved and ready for processing')
     return final_list, PATHstr
 
 
@@ -343,11 +370,13 @@ def process_doc(json_data, compressed_file):
     """
     logger.debug('Function Successful: % s',
                    'process_doc: process_doc successfully called from return_doc', extra=d)
+    logger.info('Processing Jobs...')
 
     logger.debug('FILTER JOB_ID: %s', 'process_doc: ' + json_data["job_id"], extra=d)
     if r.does_job_exist_in_progress(json_data["job_id"]) is False:
         logger.debug('Variable Failure: %s',
                        'process_doc: job_id does not exist in progress queue', extra=d)
+        logger.warning('Job does not exist in progress queue')
 
     else:
         logger.debug('Calling Function: % s',
@@ -366,6 +395,7 @@ def process_doc(json_data, compressed_file):
 
         renew = False
         for file in file_list:
+            logger.info('Still processing...')
             logger.debug('Calling Function: % s',
                            'process_doc: process_doc calling get_doc_attributes', extra=d)
             org, docket_id, document_id = get_doc_attributes(file)
@@ -474,3 +504,5 @@ def process_doc(json_data, compressed_file):
             r.remove_job_from_progress(key)
             logger.debug('Function Successful: % s',
                            'process_doc: process_doc successfully called remove_job_from_progress', extra=d)
+
+    logger.info('Processing complete')

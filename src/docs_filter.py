@@ -33,7 +33,8 @@ def workfile_length_checker(json_data):
                  False if either the ids or attachments are over 1000
         """
     logger.debug('Function Successful: % s',
-                   'workfile_length_checker: work_file_length_checker successfully called from process_docs', extra=d)
+                   'work_file_length_checker: work_file_length_checker successfully called from process_docs', extra=d)
+    logger.info('Workfile length being checked...')
 
     file_count = 0
     attachment_count = 0
@@ -53,10 +54,10 @@ def workfile_length_checker(json_data):
                                'workfile_length_checker: fc is False', extra=d)
             else:
                 logger.debug('Variable Success: %s',
-                               'workfile_length_checker: fc is True', extra=d)
+                               'work_file_length_checker: fc is True', extra=d)
             if ac is False:
                 logger.debug('Variable Failure: %s',
-                               'workfile_length_checker: ac is False', extra=d)
+                               'work_file_length_checker: ac is False', extra=d)
             else:
                 logger.debug('Variable Success: %s',
                                'workfile_length_checker: ac is True', extra=d)
@@ -70,7 +71,8 @@ def workfile_length_checker(json_data):
             file_count = 0
             attachment_count = 0
     logger.debug('Returning: %s',
-                   'workfile_length_checker: returning True', extra=d)
+                 'work_file_length_checker: returning True', extra=d)
+    logger.warning('Workfile length check completed')
     return True
 
 
@@ -140,6 +142,8 @@ def add_document_job(json_data):
     """
     logger.debug('Function Successful: % s',
                    'add_document_job: add_document_job successfully called from process_docs', extra=d)
+    logger.warning('Adding document job to the queue...')
+
     for work_file in json_data["data"]:
         random_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
 
@@ -154,6 +158,7 @@ def add_document_job(json_data):
         r.add_to_queue(job)
         logger.debug('Function Successful: % s',
                        'add_document_job: successfully add_document_job called add_to_queue', extra=d)
+        logger.warning('Document job successfully added to queue')
 
 
 def create_document_job(work_file, job_id):
@@ -165,9 +170,12 @@ def create_document_job(work_file, job_id):
     """
     logger.debug('Function Successful: % s',
                    'create_document_job: create_document_job successfully called from add_document_job', extra=d)
+    logger.warning('Creating document job...')
+
     dict = {"job_id": job_id, "type": "doc", "data": work_file, "version": version}
     logger.debug('Returning: %s',
                    'create_document_job: returning a json dictionary', extra=d)
+    logger.info('Document job created...')
     return json.dumps(dict)
 
 
@@ -183,6 +191,7 @@ def save_client_log(client_id, compressed_file):
     client_path = home + '/client-logs/' + str(client_id) + '/'
     logger.debug('Function Successful: % s',
                    'get_file_list: get_file_list successfully called from process_doc', extra=d)
+    logger.info('Saving client log...')
 
     logger.debug('Calling Function: % s',
                    'get_file_list: get_file_list calling ZipFile', extra=d)
@@ -213,6 +222,7 @@ def save_client_log(client_id, compressed_file):
             else:
                 shutil.copy(PATHstr + file, client_path)
     logger.debug('Loop Successful: %s', 'get_file_list: loop successful', extra=d)
+    logger.info('Log successfully saved')
 
 
 # Final Function
@@ -224,7 +234,8 @@ def process_docs(json_data, compressed_file):
     :return:
     """
     logger.debug('Function Successful: % s',
-                 'process_docs: process_docs successfully called from return_docs', extra=d)
+                   'process_docs: process_docs successfully called from return_docs', extra=d)
+    logger.info('Processing Jobs...')
 
     if r.does_job_exist_in_progress(json_data["job_id"]) is False:
 
@@ -291,4 +302,5 @@ def process_docs(json_data, compressed_file):
                          'process_docs: process_docs calling renew_job', extra=d)
             r.renew_job(json_data["job_id"])
             logger.debug('Function Successful: % s',
-                         'process_docs: process_docs successfully called renew_job', extra=d)
+                           'process_docs: process_docs successfully called renew_job', extra=d)
+            logger.info('Jobs successfully processed')

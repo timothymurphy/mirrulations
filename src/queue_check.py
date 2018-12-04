@@ -1,8 +1,14 @@
-import redis
+import redis, logging
 from redis_manager import RedisManager
+
+FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
+logging.basicConfig(filename='redis_log.log', format=FORMAT)
+d = {'clientip': '192.168.0.1', 'user': 'REDIS'}
+logger = logging.getLogger('tcpserver')
 
 
 def queue_check(r):
+    logger.info('Checking queue...')
     return r.get_all_items_in_progress_no_lock() , r.get_all_items_in_queue_no_lock()
 
 
