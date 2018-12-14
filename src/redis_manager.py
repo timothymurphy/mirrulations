@@ -376,6 +376,18 @@ class RedisManager:
             logger.debug('Queue Remove Attempt: %s', 'remove_job_from_progress: attempting to remove job from progress', extra=d)
             self.r.hdel('progress', key)
 
+    def get_all_keys(self):
+        """
+        Gets all the keys from Queue and Progress
+        :return: return complete list of all the keys in redis
+        """
+        queue = self.r.lrange("queue", 0, -1)
+        queue_list = []
+        progress_keys = self.r.hgetall('progress')
+        for item in queue:
+            queue_list.append(item)
+        return queue_list, progress_keys
+
     # Combined Functions
     def renew_job(self, job_id):
         """
