@@ -141,7 +141,7 @@ def generate_json(work_list):
 
 
 if __name__ == '__main__':
-    app.run('35.184.234.83', '8080')
+    app.run('0.0.0.0', '8080')
 
 
 
