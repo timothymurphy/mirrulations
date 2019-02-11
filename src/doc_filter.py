@@ -46,10 +46,10 @@ def get_file_name(path):
     return file_name
 
 
-def get_doc_attributes(file_name):
+def get_doc_attributes(document_id):
     """
     Get the organization(s), the docket_id and the document_id from a file name
-    :param file_name: name of the file to extract attributes of the document name
+    :param document_id: name of the file to extract attributes of the document name
     :return: orgs: The organizations(s),
              docket_id: the docket_id,
              document_id: the document_id
@@ -60,11 +60,12 @@ def get_doc_attributes(file_name):
 
     logger.debug('Calling Function: % s',
                    'get_doc_attributes: get_doc_attributes calling get_document_id', extra=d)
-    document_id = get_document_id(file_name)
     logger.debug('Function Successful: % s',
                    'get_doc_attributes: get_doc_attributes successfully called get_document_id', extra=d)
+    if "-" not in document_id:
+        return "","",""
 
-    if "_" in document_id:
+    elif "_" in document_id:
         logger.debug('Calling Function: % s',
                        'get_doc_attributes: get_doc_attributes calling split', extra=d)
         split_name = re.split("[-_]", document_id)
@@ -368,7 +369,8 @@ def process_doc(json_data, compressed_file):
         for file in file_list:
             logger.debug('Calling Function: % s',
                            'process_doc: process_doc calling get_doc_attributes', extra=d)
-            org, docket_id, document_id = get_doc_attributes(file)
+            doc_id = get_document_id(file)
+            org, docket_id, document_id = get_doc_attributes(doc_id)
             logger.debug('Function Successful: % s',
                            'process_doc: process_doc successfully called get_doc_attributes', extra=d)
 
