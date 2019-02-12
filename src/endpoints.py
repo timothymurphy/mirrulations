@@ -41,19 +41,23 @@ def get_work():
     the version number
     """
     logging.warning("Successful API Call: %s", 'get_work: get_work', extra=d)
+    logger.info('Calling API to get work...')
     if len(request.args) != 1:
         logger.debug('Exception: %s', 'get_work: Get Exception for incorrect number of parameters', extra=d)
+        logger.error('Error - number of parameters incorrect')
         return 'Parameter Missing', 400
     logger.debug('Assign Variable: %s', 'get_work: attempting to get client_id', extra=d)
     client_id = request.args.get('client_id')
     logger.debug('Variable Success: %s', 'get_work: successfully retrieved the client id', extra=d)
     if client_id is None:
         logging.warning("Exception: %s", 'get_work: BadParameterException, client id was none', extra=d)
+        logger.error('Error - no client ID')
         return 'Bad Parameter', 400
     logger.debug('Assign Variable: %s', 'get_work: attempting to get json_info from get_work - Calling get_work', extra=d)
     json_info = r.get_work()
     logger.debug('Variable Success: %s', 'get_work: successfully retrieved the json_info', extra=d)
     logger.debug('Returning: %s', 'get_work: returning json_info to client from get_work', extra=d)
+    logger.info('Work retrieved')
     return json.dumps(json_info)
 
 
@@ -64,6 +68,7 @@ def return_docs():
     :return: Returns a string saying successful so the client knows the call was successful
     """
     logger.debug('Successful API Call: %s', 'return_docs: return docs', extra=d)
+    logger.info('Attempting to return docs to server...')
     try:
         logger.debug('Assign Variable: %s', 'return_docs: attempting to get json_info from the request', extra=d)
         json_info = request.form['json']
@@ -74,15 +79,18 @@ def return_docs():
                        extra=d)
     except:
         logger.debug('Exception: %s', 'return_docs: BadParameterException for return docs', extra=d)
+        logger.error('Error - bad parameter')
         return 'Bad Parameter', 400
     if json_info is None:
         logger.debug('Exception: %s', 'return_docs: PostException for return docs', extra=d)
+        logger.error('Error - could not post docs')
         return 'Bad Parameter', 400
     logger.debug('Calling Function: %s', 'return_docs: return_docs calling process_docs', extra=d)
     files = io.BytesIO(files)
     process_docs(json.loads(json_info), files)
     logger.debug('Function Successful: %s', 'return_docs: process_docs successfully called from return_docs', extra=d)
     logger.debug('Returning: %s', 'return_docs: returning success from return_docs', extra=d)
+    logger.info('Docs returned to server')
     return 'Successful!'
 
 
@@ -93,6 +101,8 @@ def return_doc():
     :return: Returns a string saying successful so the client knows the call was successful
     """
     logger.debug('Successful API Call: %s', 'return_doc: return_doc call successful', extra=d)
+    logger.info('Attempting to return doc to server...')
+
     try:
         logger.debug('Assign Variable: %s', 'return_doc: getting the files from the file request field', extra=d)
         files = request.files['file'].read()
@@ -102,6 +112,7 @@ def return_doc():
         logger.debug('Variable Success: %s', 'return_doc: json retrieved from the doc post call', extra=d)
     except:
         logger.debug('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
+        logger.error('Error - bad parameter')
         return 'Bad Parameter', 400
     files = io.BytesIO(files)
     logger.debug('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
@@ -109,6 +120,7 @@ def return_doc():
     process_doc(json.loads(json_info), files)
     logger.debug('Function Successful: %s', 'return_doc: success from return_doc', extra=d)
     logger.debug('Returning: %s', 'return_doc: returning success from return_doc', extra=d)
+    logger.info('Doc returned to server')
     return 'Successful!'
 
 
@@ -118,6 +130,7 @@ def generate_json(work_list):
     :param work_list: The list of values that will be converted into json
     :return: Returns the json formatted list
     """
+    logger.info('Converting into JSON...')
     logger.debug('Call Successful: %s', 'generate_json: generate_json called successfully', extra=d)
     logger.debug('Assign Variable: %s', 'generate_json: assign job_id from the work_list', extra=d)
     job_id = work_list[0]
@@ -137,6 +150,7 @@ def generate_json(work_list):
     }
     logger.debug('Variable Success: %s', 'generate_json: converted_json created', extra=d)
     logger.debug("Returning: %s", 'generate_json: returning converted_json', extra=d)
+    logger.info('JSON conversion successful')
     return json.dumps(converted_json)
 
 

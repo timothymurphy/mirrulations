@@ -6,12 +6,18 @@ import string
 import redis
 import redis_manager
 import endpoints
+import logging
+
+FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
+logging.basicConfig(filename='redis_log.log', format=FORMAT)
+d = {'clientip': '192.168.0.1', 'user': 'REDIS'}
+logger = logging.getLogger('tcpserver')
 
 
 def monolith():
     """
     Runs the script. This is one monolithic function (aptly named) as the script just needs to be run; however, there is a certain
-    point where I we need to break out of the program if an error occurs, and I wasn't sure how exactly sys.exit() would work and whether
+    point where I need to break out of the program if an error occurs, and I wasn't sure how exactly sys.exit() would work and whether
     or not it would mess with things outside of / calling this script, so I just made one giant method so I can return when needed.
     :return:
     """
@@ -29,8 +35,10 @@ def monolith():
     if regulations_key != "":
         # Gets number of documents available to download
         try:
-            record_count = requests.get("https://api.data.gov/regulations/v3/documents.json?api_key=" + regulations_key + "&countsOnly=1").json()["totalNumRecords"]
+            record_count = requests.get("https://api.data.gov/regulations/v3/documents.json?api_key=" + regulations_key
+                                        + "&countsOnly=1").json()["totalNumRecords"]
         except:
+            logger.error('Error occured with API request')
             print("Error occurred with docs_work_gen regulations API request.")
             return 0
 
