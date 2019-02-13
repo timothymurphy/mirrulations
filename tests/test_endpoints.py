@@ -1,8 +1,7 @@
 import pytest
 import requests_mock
 import fakeredis
-from endpoints import *
-import endpoints
+from mirrulations.endpoints import *
 import mock
 import json
 from ast import literal_eval

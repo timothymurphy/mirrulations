@@ -2,8 +2,8 @@ import pytest
 import requests_mock
 import mock
 import fakeredis
-from queue_check import queue_check
-from redis_manager import RedisManager
+from mirrulations.queue_check import queue_check
+from mirrulations.redis_manager import RedisManager
 
 @mock.patch('redis_manager.reset_lock')
 @mock.patch('redis_manager.set_lock')

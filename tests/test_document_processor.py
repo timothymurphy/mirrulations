@@ -1,9 +1,9 @@
-from document_processor import *
-from documents_processor import *
+from mirrulations.document_processor import *
+from mirrulations.documents_processor import *
 import pytest
 import requests_mock
 
-from api_call import add_api_key
+from mirrulations.api_call import add_api_key
 
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:

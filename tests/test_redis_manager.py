@@ -3,7 +3,7 @@ import fakeredis
 import json
 import redis
 import mock
-from redis_manager import RedisManager
+from mirrulations.redis_manager import RedisManager
 from ast import literal_eval
 import time
 

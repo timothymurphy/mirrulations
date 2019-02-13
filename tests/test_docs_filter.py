@@ -1,10 +1,10 @@
 import pytest
 import json
 import mock
-import docs_filter as dsf
+import mirrulations.docs_filter as dsf
 import fakeredis
 import redis
-from redis_manager import RedisManager
+from mirrulations.redis_manager import RedisManager
 from ast import literal_eval
 import os
 

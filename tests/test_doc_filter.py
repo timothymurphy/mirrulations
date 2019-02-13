@@ -3,7 +3,7 @@ import requests_mock
 import tempfile
 import os
 import fakeredis
-import doc_filter as df
+import mirrulations.doc_filter as df
 
 
 PATH = 'test_files/'
