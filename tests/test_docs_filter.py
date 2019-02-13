@@ -8,7 +8,7 @@ from mirrulations.redis_manager import RedisManager
 from ast import literal_eval
 import os
 
-PATH = 'test_files/'
+PATH = 'tests/test_files/'
 
 r = RedisManager(redis.Redis())
 

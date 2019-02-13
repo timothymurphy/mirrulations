@@ -6,7 +6,7 @@ import fakeredis
 import mirrulations.doc_filter as df
 
 
-PATH = 'test_files/'
+PATH = 'tests/test_files/'
 
 
 def setUp():

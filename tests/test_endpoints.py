@@ -93,7 +93,7 @@ def test_generate_json():
 
 @mock.patch('mirrulations.endpoints.process_docs')
 def test_return_docs_call_success(docs, client):
-    result = client.post("/return_docs", data={'file':open('test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
+    result = client.post("/return_docs", data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
@@ -104,7 +104,7 @@ def test_return_docs_no_parameter(client):
 
 @mock.patch('mirrulations.endpoints.process_doc', return_value=True)
 def test_return_doc_call_success(doc,client):
-    result = client.post('/return_doc', data={'file':open('test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
+    result = client.post('/return_doc', data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
@@ -114,7 +114,7 @@ def test_return_doc_no_file_parameter(client):
 
 
 def test_return_doc_no_json_parameter(client):
-    result = client.post('/return_doc', data=dict(file=open('test_files/filename.txt', 'rb')))
+    result = client.post('/return_doc', data=dict(file=open('tests/test_files/filename.txt', 'rb')))
     assert result.status_code == 400
 
 
