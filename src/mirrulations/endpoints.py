@@ -1,12 +1,12 @@
 from flask import Flask, request, Response
 import redis
 import json
-from docs_filter import process_docs
-from doc_filter import process_doc
-from redis_manager import RedisManager
+from mirrulations.docs_filter import process_docs
+from mirrulations.doc_filter import process_doc
+from mirrulations.redis_manager import RedisManager
 import logging
 import io
-import config
+import mirrulations.config as config
 
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'

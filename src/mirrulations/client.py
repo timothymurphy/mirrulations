@@ -1,13 +1,13 @@
-import document_processor as doc
-import documents_processor as docs
-import api_call_management as man
+import mirrulations.document_processor as doc
+import mirrulations.documents_processor as docs
+import mirrulations.api_call_management as man
 import requests
 import json
 import os
 import time
 import logging
 import shutil
-import config
+import mirrulations.config as config
 import tempfile
 from pathlib import Path
 
