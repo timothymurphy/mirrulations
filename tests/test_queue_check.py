@@ -5,7 +5,7 @@ import fakeredis
 from mirrulations.queue_check import queue_check
 from mirrulations.redis_manager import RedisManager
 
-@mock.patch('mirrulations.edis_manager.reset_lock')
+@mock.patch('mirrulations.redis_manager.reset_lock')
 @mock.patch('mirrulations.redis_manager.set_lock')
 def emptydatabase(reset, lock):
     r = RedisManager(fakeredis.FakeRedis())
