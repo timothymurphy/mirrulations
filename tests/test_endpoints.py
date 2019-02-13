@@ -2,6 +2,7 @@ import pytest
 import requests_mock
 import fakeredis
 from mirrulations.endpoints import *
+import mirrulations.endpoints as endpoints
 import mock
 import json
 from ast import literal_eval
