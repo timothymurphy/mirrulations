@@ -141,7 +141,7 @@ def generate_json(work_list):
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', '8080', ssl_context=('cert.pem', 'key.pem'))
+    app.run('0.0.0.0', '8080')
 
 
 
