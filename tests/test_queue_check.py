@@ -2,6 +2,7 @@ import pytest
 import requests_mock
 import mock
 import fakeredis
+import json
 from mirrulations.queue_check import queue_check
 from mirrulations.redis_manager import RedisManager
 
@@ -16,9 +17,9 @@ def emptydatabase(reset, lock):
 def make_database(reset, lock):
     r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()
-    list = {"A":"a", "B":["b", "c"]}
-    list2 = {"D":"d", "E":["e", "f"]}
-    list3 = {"G":"g", "H":["h", "i"]}
+    list = json.dumps({"A":"a", "B":["b", "c"]})
+    list2 = json.dumps({"D":"d", "E":["e", "f"]})
+    list3 = json.dumps({"G":"g", "H":["h", "i"]})
     r.add_to_queue(list)
     r.add_to_queue(list2)
     r.add_to_progress(list3)

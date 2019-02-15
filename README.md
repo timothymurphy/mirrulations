@@ -32,17 +32,28 @@ With the API limiting that is in place, it would take us months to download all 
 ## Getting Started
 
 
+If you are interested in becoming a developer, see `docs/developers.md`.
+
 To get started, you'll need to have the latest version of Python3 so you can actually run the software, which you can download [here](https://docs.python-guide.org/starting/install3/osx/) for Mac OS and [here](https://docs.python-guide.org/starting/install3/win/) for Windows.
 
 You will also need a valid API key from Regulations.gov to participate. To apply for a key, you must simply [contact the Regulations Help Desk](regulations@erulemakinghelpdesk.com) and provide your name, email address, organization, and intended use of the API. If you are not with any organizations, just say so in your message. They will email you with a key once they've verified you and activated the key.
 
 To download the actual project, you will need to go to our [GitHub page](https://github.com/MoravianCollege/mirrulations) and [clone](https://help.github.com/articles/cloning-a-repository/) the project to your computer.
 
-Once you've done this, you'll need to be in the project directory to install the python requirements. Once there, typing `pip install -r requirements.txt` in your terminal window should install all of the necessary packages for you to proceed.
+From your terminal, in the directory, set up a virtual environment by
 
-To begin work on the project, change your working directory to the freshly cloned project and run `python3 APIKeySetup.py`. Enter your API key into the GUI that pops up. If the config file does not already exist, which it shouldn't, you will need to manually set the ip address of the server in the `APIKeySetup.py` file as (for now:) `10.76.100.34`. Once the key has been accepted and the configuration completes successfully, run `python3 src/client.py` to begin working.
+		python3 -m venv .env`
+		source .env/bin/activate`
+		
+Next, install all the requirements by
 
+		pip install -r requirements.txt
+		pip install -e .
 
+After this, you can run `python setup.py install` to get everything recognized, and run `python src/mirrulations/APIKeySetup.py` to connect to the server.
+In the GUI, you can use the IP 10.76.100.34 and port 8080.
+The API key itself is the one you received earlier.
+Lastly, run `python3 src/client.py` to begin working.
 
 ### Disclaimers
 --------
