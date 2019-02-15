@@ -35,7 +35,7 @@ Python 3.7 or greater
 4. Run the preliminary files:
 
 		python setup.py install
-		python src/mirrulations/APIKeySetup.py`
+		python src/mirrulations/APIKeySetup.py
 		- IP: 0.0.0.0
 		- Port:  8080
 		- API Key:  [Get from here.](https://www.data.gov)
@@ -46,6 +46,3 @@ Python 3.7 or greater
 		pytest
 
 6. Open PyCharm CE.
-
-At this moment, ignore the remaining three errors.
-We're working on that.
