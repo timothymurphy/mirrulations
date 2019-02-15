@@ -32,7 +32,7 @@ With the API limiting that is in place, it would take us months to download all 
 ## Getting Started
 
 
-If you are a developer, see `docs/developers.md`.
+If you are interested in becoming a developer, see `docs/developers.md`.
 
 To get started, you'll need to have the latest version of Python3 so you can actually run the software, which you can download [here](https://docs.python-guide.org/starting/install3/osx/) for Mac OS and [here](https://docs.python-guide.org/starting/install3/win/) for Windows.
 
@@ -40,8 +40,15 @@ You will also need a valid API key from Regulations.gov to participate. To apply
 
 To download the actual project, you will need to go to our [GitHub page](https://github.com/MoravianCollege/mirrulations) and [clone](https://help.github.com/articles/cloning-a-repository/) the project to your computer.
 
-From your terminal, in the directory, set up a virtual environment by `python3 -m venv .env` and then `source .env/bin/activate`.
-Next, install all the requirements by `pip install -r requirements.txt` and `pip install -e .`.
+From your terminal, in the directory, set up a virtual environment by
+
+		python3 -m venv .env`
+		source .env/bin/activate`
+		
+Next, install all the requirements by
+
+		pip install -r requirements.txt
+		pip install -e .
 
 After this, you can run `python setup.py install` to get everything recognized, and run `python src/mirrulations/APIKeySetup.py` to connect to the server.
 In the GUI, you can use the IP 10.76.100.34 and port 8080.
