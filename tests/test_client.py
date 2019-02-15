@@ -3,8 +3,10 @@ import pytest
 import requests_mock
 from mirrulations.api_call import add_api_key
 from mirrulations.api_call_management import CallFailException
+import mirrulations.config as config
 
-server_url = "http://10.76.100.45:5000"
+
+serverurl = "http://" + config.read_value("ip") + ":" + config.read_value("port")
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
 
 home = os.getenv("HOME")
@@ -19,7 +21,7 @@ def mock_req():
 
 
 def test_get_work(mock_req):
-    url = "http://10.76.100.34:5000/get_work?client_id=" + str(client_id)
+    url = serverurl+"/get_work?client_id=" + str(client_id)
     mock_req.get(url, status_code=200, text='RANDOM')
     result = get_work(str(client_id))
     assert result.status_code == 200
