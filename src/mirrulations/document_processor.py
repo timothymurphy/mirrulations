@@ -1,5 +1,5 @@
 import tempfile
-from documents_processor import *
+from mirrulations.documents_processor import *
 
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
 home = os.getenv("HOME")
