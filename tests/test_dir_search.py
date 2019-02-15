@@ -13,10 +13,15 @@ def test_search_document():
 
 
 def test_search_document_test_directory_good_document():
+    full_path = ds.search_for_document_test_directory("CMS-2019-0006-10896", TEMPATH)
+    assert full_path == TEMPATH + "CMS/CMS-2019-0006/CMS-2019-0006-10896"
+
+
+def test_search_document_test_directory_good_document_special_case():
     full_path = ds.search_for_document_test_directory("AHRQ_FRDOC_0001-0036", TEMPATH)
     assert full_path == TEMPATH + "AHRQ_FRDOC/AHRQ_FRDOC_0001/AHRQ_FRDOC_0001-0036"
 
 
-def test_search_document_test_directory_bad_document():
+def test_search_document_test_directory_bad_document_special_case():
     full_path = ds.search_for_document_test_directory("AHRQ_FRDOC_0001-0037", TEMPATH)
     assert full_path == ""

@@ -41,8 +41,6 @@ def search_for_document_test_directory(document_id, dir):
     full_path = dir + orgs + "/" + dock_id + "/" + doc_id
     doc_json = "doc." + doc_id + ".json"
 
-    print("This is the full temp path:" + full_path)
-
     if os.path.isfile(full_path + "/" + doc_json):
         return full_path
     else:
