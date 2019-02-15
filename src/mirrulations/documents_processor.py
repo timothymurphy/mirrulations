@@ -1,4 +1,4 @@
-from api_call_management import *
+from mirrulations.api_call_management import *
 import json
 import logging
 

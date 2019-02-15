@@ -2,7 +2,7 @@
 import os, os.path, tempfile, json, shutil, re, zipfile
 import redis
 import logging
-from redis_manager import RedisManager
+from mirrulations.redis_manager import RedisManager
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='doc_filter.log', format=FORMAT)

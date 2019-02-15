@@ -1,11 +1,11 @@
 from json import JSONDecodeError
 
-from documents_processor import *
+from mirrulations.documents_processor import *
 import tempfile
 import pytest
 import requests_mock
 
-from api_call import *
+from mirrulations.api_call import *
 
 home = os.getenv("HOME")
 with open(home + '/.env/regulationskey.txt') as f:

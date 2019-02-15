@@ -4,8 +4,8 @@ import os
 import random
 import string
 import redis
-import redis_manager
-import endpoints
+import mirrulations.redis_manager as redis_manager
+import mirrulations.endpoints as endpoints
 import logging
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'

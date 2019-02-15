@@ -1,14 +1,14 @@
 import pytest
 import json
 import mock
-import docs_filter as dsf
+import mirrulations.docs_filter as dsf
 import fakeredis
 import redis
-from redis_manager import RedisManager
+from mirrulations.redis_manager import RedisManager
 from ast import literal_eval
 import os
 
-PATH = 'test_files/'
+PATH = 'tests/test_files/'
 
 r = RedisManager(redis.Redis())
 
@@ -19,8 +19,8 @@ def generate_json_data(file_name):
     return test_data
 
 
-@mock.patch('redis_manager.reset_lock')
-@mock.patch('redis_manager.set_lock')
+@mock.patch('mirrulations.redis_manager.reset_lock')
+@mock.patch('mirrulations.redis_manager.set_lock')
 def make_database(reset, lock):
     r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()
@@ -107,35 +107,35 @@ def test_check_document_exists_part_1():
 
 
 # Validation Tests
-@mock.patch("docs_filter.RedisManager")
+@mock.patch("mirrulations.docs_filter.RedisManager")
 def test_file_checker_500_lines(redis):
     test_data = generate_json_data(PATH + '500_lines.json')
     assert dsf.workfile_length_checker(test_data) is True
     assert test_data["type"] == "docs"
 
 
-@mock.patch("docs_filter.RedisManager")
+@mock.patch("mirrulations.docs_filter.RedisManager")
 def test_file_checker_1000_lines(redis):
     test_data = generate_json_data(PATH + '1000_lines.json')
     assert dsf.workfile_length_checker(test_data) is True
     assert test_data["type"] == "docs"
 
 
-@mock.patch("docs_filter.RedisManager")
+@mock.patch("mirrulations.docs_filter.RedisManager")
 def test_file_checker_2_workfiles(redis):
     test_data = generate_json_data(PATH + '2_workfiles.json')
     assert dsf.workfile_length_checker(test_data) is True
     assert test_data["type"] == "docs"
 
 
-@mock.patch("docs_filter.RedisManager")
+@mock.patch("mirrulations.docs_filter.RedisManager")
 def test_file_checker_1001_lines(redis):
     test_data = generate_json_data(PATH + '1001_lines.json')
     assert dsf.workfile_length_checker(test_data) is False
     assert test_data["type"] == "docs"
 
 
-@mock.patch("docs_filter.RedisManager")
+@mock.patch("mirrulations.docs_filter.RedisManager")
 def test_file_checker_too_many_attachments(redis):
     test_data = generate_json_data(PATH + 'too_many_attachments.json')
     assert dsf.workfile_length_checker(test_data) is False
@@ -143,7 +143,7 @@ def test_file_checker_too_many_attachments(redis):
 
 
 # Assimilation Tests
-@mock.patch("docs_filter.RedisManager")
+@mock.patch("mirrulations.docs_filter.RedisManager")
 def test_create_job(redis):
     test_data = generate_json_data(PATH + '500_lines.json')
     job_id = "1"

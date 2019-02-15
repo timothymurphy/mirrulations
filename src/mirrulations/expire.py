@@ -1,5 +1,5 @@
 import redis
-from redis_manager import RedisManager
+from mirrulations.redis_manager import RedisManager
 import time
 import logging
 
