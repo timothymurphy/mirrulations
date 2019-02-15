@@ -57,10 +57,48 @@ def test_remove_empty_lists_save_others():
 def test_file_doesnt_exists_local():
     home = os.getenv("HOME")
     path = home + "/regulations_data/AHRQ_FRDOC/AHRQ_FRDOC_0001/AHRQ_FRDOC_0001-0037/doc.AHRQ_FRDOC_0001-0037.json"
-    count = 0
-    count, verdict = dsf.local_files_check(path, count)
-    assert count == 1
+    verdict = dsf.local_files_check(path)
     assert verdict is False
+
+
+# Queue Files Check Tests
+def test_files_exists_redis_queue():
+    r = make_database()
+    r.delete_all()
+    data = generate_json_data(PATH + "queue_jobs.json")
+    for x in data["data"]:
+        for line in x:
+            r.add_to_queue(line)
+    queue, progress = r.get_all_keys()
+    verdict = dsf.redis_queue_check("AHRQ_FRDOC_0001-0036", queue)
+    assert verdict is True
+
+
+def test_files_does_not_exists_redis_queue():
+    r = make_database()
+    r.delete_all()
+    data = generate_json_data(PATH + "queue_jobs.json")
+    for x in data["data"]:
+        for line in x:
+            r.add_to_queue(line)
+    queue, progress = r.get_all_keys()
+    verdict = dsf.redis_queue_check("AHRQ_FRDOC_0001-0039", queue)
+    assert verdict is False
+
+
+# Progress Files Check Tests
+def test_files_exists_redis_progress():
+    r = make_database()
+    r.delete_all()
+    data = generate_json_data(PATH + "queue_jobs.json")
+    for x in data["data"]:
+        for line in x:
+            r.add_to_progress(line)
+    queue, progress = r.get_all_keys()
+    #verdict = dsf.redis_progress_check("AHRQ_FRDOC_0001-0036", progress)
+    for key in progress:
+        print(r.get_specific_job_from_progress_no_lock(key))
+   # assert verdict is True
 
 
 # Full Files Check Tests

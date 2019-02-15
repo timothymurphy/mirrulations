@@ -1,0 +1,12 @@
+{
+  "job_id": "1",
+  "type": "docs",
+  "data":
+    [
+      [{"job_id": "1", "type": "docs", "data": [[{"id": "AHRQ_FRDOC_0001-0036", "count": 1}]], "version": "1.0", "client_id": "123"}],
+      [{"job_id": "2", "type": "docs", "data": [[{"id": "AHRQ_FRDOC_0001-0037", "count": 1}]], "version": "1.0", "client_id": "123"}],
+      [{"job_id": "3", "type": "docs", "data": [[{"id": "AHRQ_FRDOC_0001-0038", "count": 1}]], "version": "1.0", "client_id": "123"}]
+    ],
+  "version": "1.0",
+  "client_id": "123"
+}

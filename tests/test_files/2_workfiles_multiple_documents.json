@@ -4,20 +4,11 @@
   "data":
   [
     [
-      {
-        "id" : "AHRQ_FRDOC_0001-0036",
-        "count": 1
-      }
+      {"id" : "AHRQ_FRDOC_0001-0036", "count": 1}
     ],
     [
-      {
-        "id" : "AHRQ_FRDOC_0001-0037",
-        "count": 1
-      },
-      {
-        "id" : "AHRQ_FRDOC_0001-0036",
-        "count": 1
-      }
+      {"id" : "AHRQ_FRDOC_0001-0037", "count": 1},
+      {"id" : "AHRQ_FRDOC_0001-0038", "count": 1}
     ]
   ],
   "version" : "1.0",
