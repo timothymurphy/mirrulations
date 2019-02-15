@@ -1,6 +1,6 @@
 import logging
 import os.path
-import doc_filter as df
+import mirrulations.doc_filter as df
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='doc_filter.log', format=FORMAT)
