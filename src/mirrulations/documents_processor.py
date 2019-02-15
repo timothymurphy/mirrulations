@@ -1,4 +1,4 @@
-from api_call_management import *
+from mirrulations.api_call_management import *
 import json
 import logging
 
@@ -27,6 +27,7 @@ def documents_processor(urls, job_id, client_id):
     global workfiles
     workfiles = []
     logger.debug('Call Successful: %s', 'documents_processor: Processing documents', extra=d)
+    logger.info('Processing documents into JSON...')
     for url in urls:
         try:
             logger.debug('Call Successful: %s', 'documents_processor: Processing URL: ' + url, extra=d)
@@ -35,10 +36,12 @@ def documents_processor(urls, job_id, client_id):
             logger.debug('Call Successful: %s', 'documents_processor: Done processing URL: ' + url, extra=d)
         except:
             logger.debug('Exception: %s', 'documents_processor: Error processing URL: ' + url, extra=d)
+            logger.error('Error - URL processing failed')
     logger.debug('Assign Variable: %s', 'documents_processor: Load the json', extra=d)
     result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(client_id), "version" : version}))
     logger.debug('Variable Success: %s', 'documents_processor: successfully loaded json', extra=d)
     logger.debug('Returning: %s', 'documents_processor: returning the json', extra=d)
+    logger.info('Documents processed into JSON')
     return result
 
 
@@ -51,13 +54,16 @@ def process_results(result):
     :return: returns True if the processing completed successfully
     """
     logger.debug('Call Successful: %s', 'documents_processor: Processing Documents Results', extra=d)
+    logger.info('Processing JSON results...')
     docs_json = json.loads(result.text)
     try:
         doc_list = docs_json["documents"]
         work = make_docs(doc_list)
     except TypeError:
         logger.debug('Exception: %s', 'BadJsonException for return docs', extra=d)
+        logger.error('Error - bad JSON')
 
+    logger.info('JSON processed')
     return True
 
 
@@ -69,6 +75,7 @@ def make_docs(doc_list):
     :return: the global workfiles variable that contains all of the work in list
     """
     global workfiles
+    logger.info('Extracting IDs to create calls...')
     size = 0
     work_list = []
     for doc in doc_list:
@@ -83,6 +90,7 @@ def make_docs(doc_list):
         work_list.append(document)
     if size != 0:
         workfiles.append(work_list)
+    logger.info('IDs extracted, call list ready')
     return workfiles
 
 
@@ -92,3 +100,4 @@ class BadJsonException(Exception):
     """
     def __init__(self):
         logger.debug('EXCEPTION: %s', 'BadJsonException: Your Json appears to be formatted incorrectly', extra=d)
+        logger.info('Error - bad JSON')

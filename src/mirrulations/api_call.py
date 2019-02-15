@@ -22,16 +22,21 @@ def call(url):
     :param url: the url that will be used to make the API call
     :return: returns the json format information of the documents
     """
+    logger.warning('Making API call...')
     result = requests.get(url)
     if 300 <= result.status_code < 400:
         logger.debug('Exception: %s', 'TemporaryException for return docs', extra=d)
+        logger.warning('API call failed')
         raise TemporaryException
     if result.status_code == 429:
         logger.debug('Exception: %s', 'ApiCountZeroException for return docs', extra=d)
+        logger.warning('API call failed')
         raise ApiCountZeroException
     if 400 <= result.status_code < 600:
         logger.debug('Exception: %s', 'PermanentException for return docs', extra=d)
+        logger.warning('API call failed')
         raise PermanentException
+    logger.warning('API call successfully made')
     return result
 
 
@@ -50,6 +55,7 @@ class TemporaryException(Exception):
     """
     def __init__(self):
         logger.debug('EXCEPTION: %s', 'TemporaryException: There seems to be a connection error', extra=d)
+        logger.error('Error connecting to API')
 
 
 class ApiCountZeroException(Exception):
@@ -58,6 +64,7 @@ class ApiCountZeroException(Exception):
     """
     def __init__(self):
         logger.debug('EXCEPTION: %s', 'ApiCountZeroException: You have used all of your api calls', extra=d)
+        logger.error('Error - ran out of API calls')
 
 
 class PermanentException(Exception):
@@ -66,3 +73,4 @@ class PermanentException(Exception):
     """
     def __init__(self):
         logger.debug('EXCEPTION: %s', 'PermanentException: There is an error with your api call', extra=d)
+        logger.error('Error with the API call')

@@ -2,17 +2,17 @@ import pytest
 import requests_mock
 import mock
 import fakeredis
-from queue_check import queue_check
-from redis_manager import RedisManager
+from mirrulations.queue_check import queue_check
+from mirrulations.redis_manager import RedisManager
 
-@mock.patch('redis_manager.reset_lock')
-@mock.patch('redis_manager.set_lock')
+@mock.patch('mirrulations.redis_manager.reset_lock')
+@mock.patch('mirrulations.redis_manager.set_lock')
 def emptydatabase(reset, lock):
     r = RedisManager(fakeredis.FakeRedis())
     return r
 
-@mock.patch('redis_manager.reset_lock')
-@mock.patch('redis_manager.set_lock')
+@mock.patch('mirrulations.redis_manager.reset_lock')
+@mock.patch('mirrulations.redis_manager.set_lock')
 def make_database(reset, lock):
     r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()

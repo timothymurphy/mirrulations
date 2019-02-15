@@ -3,15 +3,15 @@ import fakeredis
 import json
 import redis
 import mock
-from redis_manager import RedisManager
+from mirrulations.redis_manager import RedisManager
 from ast import literal_eval
 import time
 
+
 PATH = 'test_files/'
 
-
-@mock.patch('redis_manager.reset_lock')
-@mock.patch('redis_manager.set_lock')
+@mock.patch('mirrulations.redis_manager.reset_lock')
+@mock.patch('mirrulations.redis_manager.set_lock')
 def make_database(reset, lock):
     r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()
@@ -80,7 +80,7 @@ def test_delete_all():
     assert len(r.get_all_items_in_progress()) == 0
 
 
-@mock.patch('redis_manager.get_curr_time', return_value=1531911498)
+@mock.patch('mirrulations.redis_manager.get_curr_time', return_value=1531911498)
 def test_find_expired(time):#time):
     r = make_database()
     r.delete_all()
@@ -139,7 +139,7 @@ def test_remove_specific_job_from_queue_no_item():
     assert len(r.get_all_items_in_queue()) == 2
 
 
-@mock.patch('redis_manager.get_curr_time', return_value=15)
+@mock.patch('mirrulations.redis_manager.get_curr_time', return_value=15)
 def test_get_keys_progress(time):
     r = make_database()
     r.delete_all()
@@ -148,7 +148,7 @@ def test_get_keys_progress(time):
     assert r.get_keys_from_progress("d") == "15"
 
 
-@mock.patch('redis_manager.get_curr_time', return_value=15)
+@mock.patch('mirrulations.redis_manager.get_curr_time', return_value=15)
 def test_does_job_exist_in_progress(time):
     r = make_database()
     r.delete_all()
@@ -156,7 +156,7 @@ def test_does_job_exist_in_progress(time):
     assert r.does_job_exist_in_progress("c")
 
 
-@mock.patch('redis_manager.get_curr_time', return_value=15)
+@mock.patch('mirrulations.redis_manager.get_curr_time', return_value=15)
 def test_delete_from_progress(time):
     r = make_database()
     r.delete_all()
@@ -166,7 +166,7 @@ def test_delete_from_progress(time):
     assert len(r.get_all_items_in_progress()) == 0
 
 
-@mock.patch('redis_manager.get_curr_time', return_value=15)
+@mock.patch('mirrulations.redis_manager.get_curr_time', return_value=15)
 def test_renew_job(time):
     r = make_database()
     r.delete_all()
