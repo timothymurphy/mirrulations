@@ -17,24 +17,34 @@ Python 3.7 or greater
 ### Setup
 
 1. Get the repository:
-	1. Fork `MoravianCollege/mirrulations`
-	2. `git clone <yourforkurl>.git`
-	3. `cd mirrulations`
+
+		Fork MoravianCollege/mirrulations
+		git clone https://github.com/your_username/mirrulations.git
+		cd mirrulations
+	
 2. Set up your virtual environment:
-	1. `python3 -m venv .env`
-	2. `source .env/bin/activate/`
+			
+			python3 -m venv .env
+			source .env/bin/activate/
+			
 3. Install packages:
-	1. `pip install -r requirements.txt`
-	2. `pip install -e .`
+
+		pip install -r requirements.txt
+		pip install -e .
+		
 4. Run the preliminary files:
-	1. `python setup.py install`
-	2. `python src/mirrulations/APIKeySetup.py`
-		* IP: 10.76.100.34
-		* Port:  8080
-		* API Key:  Ask someone!
+
+		python setup.py install
+		python src/mirrulations/APIKeySetup.py`
+		- IP: 0.0.0.0
+		- Port:  8080
+		- API Key:  [Get from here.](https://www.data.gov)
+
 5. Run the tests:
-	1. In another terminal window, `redis-server`
-	2. `pytest`
+
+		(in another terminal window) redis-server
+		pytest
+
 6. Open PyCharm CE.
 
 At this moment, ignore the remaining three errors.
