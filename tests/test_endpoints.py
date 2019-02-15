@@ -44,7 +44,7 @@ def make_json():
 def make_databse():
     r = fakeredis.FakeRedis()
     r.flushall()
-    test_list = ["a", ["b", "c"]]
+    test_list = json.dumps(["a", ["b", "c"]])
     r.lpush("queue", test_list)
     return r
 

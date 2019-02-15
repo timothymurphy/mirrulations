@@ -44,11 +44,14 @@ def test_remove_empty_lists_save_others():
 
 
 # Local Files Check Tests
-def test_file_exists_local():
-    home = os.getenv("HOME")
-    path = home + "/regulations_data/AHRQ_FRDOC/AHRQ_FRDOC_0001/AHRQ_FRDOC_0001-0036/doc.AHRQ_FRDOC_0001-0036.json"
-    verdict = dsf.local_files_check(path)
-    assert verdict is True
+# CURRENTLY SERVER ONLY TEST
+# def test_file_exists_local():
+#     home = os.getenv("HOME")
+#     path = home + "/regulations_data/AHRQ_FRDOC/AHRQ_FRDOC_0001/AHRQ_FRDOC_0001-0036/doc.AHRQ_FRDOC_0001-0036.json"
+#     count = 0
+#     count, verdict = dsf.local_files_check(path, count)
+#     assert count == 0
+#     assert verdict is True
 
 
 def test_file_doesnt_exists_local():
@@ -99,11 +102,11 @@ def test_files_exists_redis_progress():
 
 
 # Full Files Check Tests
-def test_check_document_exists_part_1():
-    r.delete_all()
-    test_data = generate_json_data(PATH + "1_workfile_2_documents.json")
-    test_data = dsf.check_document_exists(test_data)
-    assert test_data["data"] == [[{"id": "AHRQ_FRDOC_0001-0037", "count": 1}]]
+# CURRENTLY SERVER ONLY TEST
+# def test_check_document_exists_part_1():
+#     test_data = generate_json_data(PATH + "1_workfile_2_documents.json")
+#     test_data = dsf.check_document_exists(test_data)
+#     assert test_data["data"] == [[{"id": "AHRQ_FRDOC_0001-0037", "count": 1}]]
 
 
 # Validation Tests
