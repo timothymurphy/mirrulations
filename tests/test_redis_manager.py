@@ -7,6 +7,9 @@ from mirrulations.redis_manager import RedisManager
 from ast import literal_eval
 import time
 
+
+PATH = 'test_files/'
+
 @mock.patch('mirrulations.redis_manager.reset_lock')
 @mock.patch('mirrulations.redis_manager.set_lock')
 def make_database(reset, lock):
@@ -31,6 +34,12 @@ def ignore_test_iterate():
         else:
             print(int(time.time()) - item[2])
             print("Still Good!")
+
+
+def generate_json_data(file_name):
+    file = open(file_name, 'r')
+    test_data = json.load(file)
+    return test_data
 
 
 def test_get_all_item_in_queue():
@@ -167,6 +176,17 @@ def test_renew_job(time):
     r.renew_job("c")
     assert len(r.get_all_items_in_queue()) == 1
     assert len(r.get_all_items_in_progress()) == 0
+
+
+def test_get_all_items_queue():
+    r = make_database()
+    r.delete_all()
+    data = generate_json_data(PATH + "queue_jobs.json")
+    for x in data["data"]:
+        for line in x:
+            r.add_to_queue(line)
+    queue,progress = r.get_all_keys()
+    assert len(queue) == 3
 
 
 

@@ -11,6 +11,7 @@ import shutil
 import re
 import mirrulations.doc_filter as df
 
+
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='docs_filter.log', format=FORMAT)
 d = { 'clientip': '192.168.0.1', 'user': 'FILTERS'}
@@ -90,6 +91,7 @@ def check_document_exists(json_data):
 
     home = os.getenv("HOME")
     path = home + "/regulations_data/"
+    queue, progress_keys = r.get_all_keys()
     for workfile in json_data["data"]:
         count = 0
         for line in workfile:
@@ -97,30 +99,61 @@ def check_document_exists(json_data):
             alpha_doc_org,docket_id,document_id = df.get_doc_attributes("doc." + document + ".json")
             full_path = path + alpha_doc_org + "/" + docket_id + "/" + document_id + "/" + "doc." + document + ".json"
 
-            count, local_verdict = local_files_check(full_path, count)
-            #redis_verdict = redis_files_check
+            local_verdict = local_files_check(full_path)
+            redis_queue_verdict = redis_queue_check(document_id, queue)
 
-            if local_verdict: #and redis_verdict:
+            if local_verdict or redis_queue_verdict:
                 workfile.pop(count)
+            else:
+                count += 1
 
     json_data = remove_empty_lists(json_data)
     return json_data
 
 
-def local_files_check(full_path, count):
+def local_files_check(full_path):
     """
     Checks to see if the document exists.
     If the document does not, then the counter is increased
     If the document does exist, the workfile will remove the document
     :param full_path: The path to the document.json
-    :param count: The current count of the workfile
     :return: Returns the count and True if the file does exist, else it will return False
     """
     if os.path.isfile(full_path):
-        return count, True
+        return True
     else:
-        count += 1
-        return count, False
+        return False
+
+
+def redis_queue_check(document_id, queue):
+    """
+
+    :param document_id:
+    :param queue:
+    :return:
+    """
+    for job in queue:
+        if document_id in job.decode("utf-8"):
+            return True
+
+    return False
+
+
+def redis_progress_check(document_id, progress_keys):
+    """
+
+    :param document_id:
+    :param progress_keys:
+    :return:
+    """
+    print(progress_keys)
+    for key in progress_keys:
+        job = r.get_specific_job_from_progress_no_lock(key)
+        job = json.dumps(job)
+        if document_id in job["data"]:
+            return True
+
+    return False
 
 
 def remove_empty_lists(json_data):
