@@ -9,3 +9,5 @@ dump.rdb
 *.log
 result.zip
 config.json
+build/
+dist/
