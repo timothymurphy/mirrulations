@@ -1,8 +1,8 @@
-from client import *
+from mirrulations.client import *
 import pytest
 import requests_mock
-from api_call import add_api_key
-from api_call_management import CallFailException
+from mirrulations.api_call import add_api_key
+from mirrulations.api_call_management import CallFailException
 
 server_url = "http://10.76.100.45:5000"
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='

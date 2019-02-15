@@ -3,13 +3,13 @@ import json
 import redis
 import string
 import logging
-from redis_manager import RedisManager
+from mirrulations.redis_manager import RedisManager
 import os
 import zipfile
 import tempfile
 import shutil
 import re
-import doc_filter as df
+import mirrulations.doc_filter as df
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='docs_filter.log', format=FORMAT)

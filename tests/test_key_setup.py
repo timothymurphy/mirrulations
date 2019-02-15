@@ -2,7 +2,7 @@ import pytest
 import os
 
 import tempfile
-from APIKeySetup import writeAPIKey
+from mirrulations.APIKeySetup import writeAPIKey
 
 def test_no_dir():
     temp_dir = tempfile.TemporaryDirectory()
