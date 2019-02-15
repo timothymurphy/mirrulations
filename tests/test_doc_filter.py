@@ -49,38 +49,31 @@ def test_get_file_name():
 
 
 def test_get_doc_attributes():
-    org, docket, document = df.get_doc_attributes('mesd-2018-234234-0001')
+    org, docket, document = df.get_doc_attributes('doc.mesd-2018-234234-0001.json')
     assert org == "mesd"
     assert docket == "mesd-2018-234234"
     assert document == "mesd-2018-234234-0001"
 
 
 def test_get_doc_attributes_multiple_agencies():
-    org, docket, document = df.get_doc_attributes('mesd-abcd-2018-234234-0001')
+    org, docket, document = df.get_doc_attributes('doc.mesd-abcd-2018-234234-0001.json')
     assert org == "abcd-mesd"
     assert docket == "mesd-abcd-2018-234234"
     assert document == "mesd-abcd-2018-234234-0001"
 
 
 def test_get_doc_attributes_special():
-    org, docket, document = df.get_doc_attributes('AHRQ_FRDOC_0001-0001')
+    org, docket, document = df.get_doc_attributes('doc.AHRQ_FRDOC_0001-0001.json')
     assert org == "AHRQ_FRDOC"
     assert docket == "AHRQ_FRDOC_0001"
     assert document == "AHRQ_FRDOC_0001-0001"
 
 
 def test_get_doc_attributes_other_special():
-    org, docket, document = df.get_doc_attributes('FDA-2018-N-0073-0002')
+    org, docket, document = df.get_doc_attributes('doc.FDA-2018-N-0073-0002.json')
     assert org == "FDA"
     assert docket == "FDA-2018-N-0073"
     assert document == "FDA-2018-N-0073-0002"
-
-
-def test_bad_input():
-    orgs, dockID, docID = df.get_doc_attributes('zgdfgsadg')
-    assert orgs == ""
-    assert dockID == ""
-    assert docID == ""
 
 
 # Validation Tests
@@ -131,8 +124,7 @@ def test_get_file_list_and_work(workfile_tempdir, savefile_tempdir):
 
     condition = True
     for file in file_list[0]:
-        doc_id = df.get_document_id(file)
-        org, docket_id, document_id = df.get_doc_attributes(doc_id)
+        org, docket_id, document_id = df.get_doc_attributes(file)
 
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
             pass
