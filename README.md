@@ -38,7 +38,13 @@ You will also need a valid API key from Regulations.gov to participate. To apply
 
 To download the actual project, you will need to go to our [GitHub page](https://github.com/MoravianCollege/mirrulations) and [clone](https://help.github.com/articles/cloning-a-repository/) the project to your computer.
 
-Once this is completed, look at `docs/run.md` for how to run it in terminal.
+From your terminal, in the directory, set up a virtual environment by `python3 -m venv .env` and then `source .env/bin/activate`.
+Next, install all the requirements by `pip install -r requirements.txt` and `pip install -e .`.
+
+After this, you can run `python setup.py install` to get everything recognized, and run `python src/mirrulations/APIKeySetup.py` to connect to the server.
+In the GUI, you can use the IP 10.76.100.34 and port 8080.
+The API key itself is the one you received earlier.
+Lastly, run `python3 src/client.py` to begin working.
 
 ### Disclaimers
 --------
