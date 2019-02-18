@@ -189,14 +189,13 @@ def test_get_file_list_and_bad_number_work(savefile_tempdir):
 
 def test_local_save(workfile_tempdir, savefile_tempdir):
     filename = "doc.FMCSA-1997-2350-21654.json"
+    full_path = "/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21654/doc.FMCSA-1997-2350-21654.json"
+
     path = workfile_tempdir + '/' + filename
     with open(path, 'w') as f:
         f.write("Stuff was written here")
 
-    doc_id = df.get_document_id(filename)
-    org, docket_id, document_id = df.get_doc_attributes(doc_id)
-
     df.local_save(path, savefile_tempdir + '/')
-    final_path = savefile_tempdir + '/' + org + '/' + docket_id + '/' + document_id + '/' + filename
+    final_path = savefile_tempdir + full_path
 
     assert os.path.exists(final_path)
