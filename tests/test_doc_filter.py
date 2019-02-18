@@ -124,9 +124,7 @@ def test_get_file_list_and_work(workfile_tempdir, savefile_tempdir):
 
     condition = True
     for file in file_list[0]:
-        doc_id = df.get_document_id(file)
-        org, docket_id, document_id = df.get_doc_attributes(doc_id)
-
+        document_id = df.get_document_id(file)
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
             pass
         else:
@@ -143,8 +141,7 @@ def test_get_file_list_and_bad_work(savefile_tempdir):
 
     condition = True
     for file in file_list[0]:
-        org, docket_id, document_id = df.get_doc_attributes(file)
-
+        document_id = df.get_document_id(file)
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
             pass
         else:
@@ -160,8 +157,7 @@ def test_get_file_list_and_more_bad_work(savefile_tempdir):
 
     condition = True
     for file in file_list[0]:
-        org, docket_id, document_id = df.get_doc_attributes(file)
-
+        document_id = df.get_document_id(file)
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
             pass
         else:
@@ -177,8 +173,7 @@ def test_get_file_list_and_bad_number_work(savefile_tempdir):
 
     condition = True
     for file in file_list[0]:
-        org, docket_id, document_id = df.get_doc_attributes(file)
-
+        document_id = df.get_document_id(file)
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
             pass
         else:
