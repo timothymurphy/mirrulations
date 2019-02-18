@@ -204,15 +204,12 @@ class RedisManager:
         """
         logger.info('Retrieving specific job (no lock)...')
         for element in range(self.r.llen('queue')):
-
             logger.debug('Assign Variable: %s', 'get_specific_job_from_queue_no_lock: get a certain item from queue', extra=d)
             current = (self.r.lindex('queue', element)).decode("utf-8")
             logger.debug('Variable Success: %s', 'get_specific_job_from_queue_no_lock: item retrieved', extra=d)
-
             logger.debug('Assign Variable: %s', 'get_specific_job_from_queue_no_lock: load the json information', extra=d)
             info = json.loads(current)
             logger.debug('Variable Success: %s', 'get_specific_job_from_queue_no_lock: json successfully loaded', extra=d)
-
             if job_id == info['job_id']:
                 logger.debug("Returning: %s", 'get_specific_job_from_queue_no_lock: returning json information as a string',extra=d)
                 logger.info('Specific job found')
@@ -255,13 +252,11 @@ class RedisManager:
         logger.debug('Locking: %s', 'remove_specific_job_from_queue: attempting to retrieve lock', extra=d)
         with self.lock:
             logger.debug('Locking: %s', 'remove_specific_job_from_queue: lock retrieved successful', extra=d)
-
             logger.debug('Assign Variable: %s', 'remove_specific_job_from_queue: assign job a specific item from queue',extra=d)
             job = self.get_specific_job_from_queue_no_lock(job_id)
             logger.debug('Variable Success: %s', 'remove_specific_job_from_queue: job assignment successful', extra=d)
-
             logger.debug('Queue Remove Attempt: %s', 'remove_specific_job_from_queue: attmept to remove item from queue',extra=d)
-            self.r.lrem('queue', 1, job)
+            self.r.lrem('queue', job, 1)
             logger.info('Job removed from queue')
 
     def does_job_exist_in_progress(self, job_id):
