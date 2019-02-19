@@ -256,7 +256,7 @@ class RedisManager:
             job = self.get_specific_job_from_queue_no_lock(job_id)
             logger.debug('Variable Success: %s', 'remove_specific_job_from_queue: job assignment successful', extra=d)
             logger.debug('Queue Remove Attempt: %s', 'remove_specific_job_from_queue: attmept to remove item from queue',extra=d)
-            self.r.lrem('queue', job, 1)
+            self.r.lrem('queue', 1, job)
             logger.info('Job removed from queue')
 
     def does_job_exist_in_progress(self, job_id):
