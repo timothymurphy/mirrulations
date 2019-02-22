@@ -42,8 +42,8 @@ To download the actual project, you will need to go to our [GitHub page](https:/
 
 From your terminal, in the directory, set up a virtual environment by
 
-		python3 -m venv .env`
-		source .env/bin/activate`
+		python3 -m venv .env
+		source .env/bin/activate
 		
 Next, install all the requirements by
 
