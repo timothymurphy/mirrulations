@@ -24,8 +24,8 @@ Python 3.7 or greater
 	
 2. Set up your virtual environment:
 			
-			python3 -m venv .env
-			source .env/bin/activate/
+		python3 -m venv .env
+		ssource .env/bin/activate/
 			
 3. Install packages:
 
