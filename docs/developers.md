@@ -38,7 +38,7 @@ Python 3.7 or greater
 		python src/mirrulations/APIKeySetup.py
 		- IP: 0.0.0.0
 		- Port:  8080
-		- API Key:  [Get from here.](https://www.data.gov)
+		- API Key:  Get from https://www.data.gov
 
 5. Run the tests:
 
