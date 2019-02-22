@@ -22,20 +22,19 @@ We prefer to do our development in PyCharm CE.
 		Fork MoravianCollege/mirrulations
 		git clone https://github.com/your_username/mirrulations.git
 		cd mirrulations
-	
+
 2. Set up your virtual environment:
-			
+
 		python3 -m venv .env
 		source .env/bin/activate/
-			
+
 3. Install packages:
 
 		pip install -r requirements.txt
 		pip install -e .
-		
+
 4. Run the preliminary files:
 
-		python setup.py install
 		python src/mirrulations/APIKeySetup.py
 		- IP:  0.0.0.0
 		- Port:  8080
