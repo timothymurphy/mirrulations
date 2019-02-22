@@ -12,7 +12,8 @@ We prefer to do our development in PyCharm CE.
 
 ### Prerequisites
 
-Python 3.7 or greater
+1. Python 3.7 or greater
+2. Redis-server
 
 ### Setup
 
