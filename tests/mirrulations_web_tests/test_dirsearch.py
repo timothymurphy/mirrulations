@@ -1,5 +1,5 @@
 import os
-from mirrulations import dir_search as ds
+from mirrulations_web import dir_search as ds
 
 PATH = os.getenv("HOME")+"/regulations_data/"
 TEMPATH = os.getenv("HOME")+"/mirrulations/tests/test_files/regulations-data/"
