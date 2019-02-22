@@ -53,7 +53,7 @@ Next, install all the requirements by
 After this, you can run `python setup.py install` to get everything recognized, and run `python src/mirrulations/APIKeySetup.py` to connect to the server.
 In the GUI, you can use the IP 10.76.100.34 and port 8080.
 The API key itself is the one you received earlier.
-Lastly, run `python3 src/client.py` to begin working.
+Lastly, run `python src/client.py` to get it working.
 
 ### Disclaimers
 --------
