@@ -12,7 +12,8 @@ We prefer to do our development in PyCharm CE.
 
 ### Prerequisites
 
-Python 3.7 or greater
+1. Python 3.7 or greater
+2. Redis-server
 
 ### Setup
 
@@ -24,8 +25,8 @@ Python 3.7 or greater
 	
 2. Set up your virtual environment:
 			
-			python3 -m venv .env
-			source .env/bin/activate/
+		python3 -m venv .env
+		source .env/bin/activate/
 			
 3. Install packages:
 
@@ -36,9 +37,9 @@ Python 3.7 or greater
 
 		python setup.py install
 		python src/mirrulations/APIKeySetup.py
-		- IP: 0.0.0.0
+		- IP:  0.0.0.0
 		- Port:  8080
-		- API Key:  [Get from here.](https://www.data.gov)
+		- API Key:  Get from https://www.data.gov
 
 5. Run the tests:
 
