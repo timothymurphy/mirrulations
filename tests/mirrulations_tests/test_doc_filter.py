@@ -76,13 +76,6 @@ def test_get_doc_attributes_other_special():
     assert document == "FDA-2018-N-0073-0002"
 
 
-def test_bad_input():
-    orgs, dockID, docID = df.get_doc_attributes('zgdfgsadg')
-    assert orgs == ""
-    assert dockID == ""
-    assert docID == ""
-
-
 # Validation Tests
 def test_is_document_ending_a_number():
     assert df.ending_is_number("FDA-2018-N-0073-0002") is True
@@ -131,9 +124,7 @@ def test_get_file_list_and_work(workfile_tempdir, savefile_tempdir):
 
     condition = True
     for file in file_list[0]:
-        doc_id = df.get_document_id(file)
-        org, docket_id, document_id = df.get_doc_attributes(doc_id)
-
+        document_id = df.get_document_id(file)
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
             pass
         else:
@@ -150,8 +141,7 @@ def test_get_file_list_and_bad_work(savefile_tempdir):
 
     condition = True
     for file in file_list[0]:
-        org, docket_id, document_id = df.get_doc_attributes(file)
-
+        document_id = df.get_document_id(file)
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
             pass
         else:
@@ -167,8 +157,7 @@ def test_get_file_list_and_more_bad_work(savefile_tempdir):
 
     condition = True
     for file in file_list[0]:
-        org, docket_id, document_id = df.get_doc_attributes(file)
-
+        document_id = df.get_document_id(file)
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
             pass
         else:
@@ -184,8 +173,7 @@ def test_get_file_list_and_bad_number_work(savefile_tempdir):
 
     condition = True
     for file in file_list[0]:
-        org, docket_id, document_id = df.get_doc_attributes(file)
-
+        document_id = df.get_document_id(file)
         if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
             pass
         else:
@@ -194,11 +182,16 @@ def test_get_file_list_and_bad_number_work(savefile_tempdir):
     assert condition is False
 
 
-def test_local_save(workfile_tempdir, savefile_tempdir):
+def test_save_single_file_locally(workfile_tempdir, savefile_tempdir):
     filename = "doc.FMCSA-1997-2350-21654.json"
+    full_path = "/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21654/doc.FMCSA-1997-2350-21654.json"
+
     path = workfile_tempdir + '/' + filename
     with open(path, 'w') as f:
         f.write("Stuff was written here")
-    org, docket_id, document_id = df.get_doc_attributes(filename)
+
     df.save_single_file_locally(path, savefile_tempdir + '/')
-    assert os.path.exists(savefile_tempdir + '/' + org + '/' + docket_id + '/' + document_id + '/' + filename)
+    final_path = savefile_tempdir + full_path
+
+    assert os.path.exists(final_path)
+

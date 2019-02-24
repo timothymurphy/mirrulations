@@ -24,7 +24,7 @@ The objective of the Mirrulations project is to make the data on Regulations.gov
 
 #### The Solution
 ------
-The Mirrulations project endeavors to create a mirror of the regulatory data on Regulations.gov to make it more accessible to the general public. Our goal is to collect all of the data from the site and store it in a database/cloud for users to search for at their leisure. The only problem with that is that there are currently over 9.6 million regulations documents (and counting!) to be downloaded. 
+The Mirrulations project endeavors to create a mirror of the regulatory data on Regulations.gov to make it more accessible to the general public. Our goal is to collect all of the data from the site and store it in a database/cloud for users to search for at their leisure. The only problem with that is that there are currently over 9.6 million regulations documents (and counting!) to be downloaded.
 
 With the API limiting that is in place, it would take us months to download all of the data by ourselves so we are creating a volunteer computing system that allows other people to contribute to the expedition of the downloading process. Through this project users can apply for an API key and volunteer their computer's CPU for downloading data and sending it to our server. If you choose to volunteer, the instructions below will help you to help us get up and running.
 
@@ -42,18 +42,18 @@ To download the actual project, you will need to go to our [GitHub page](https:/
 
 From your terminal, in the directory, set up a virtual environment by
 
-		python3 -m venv .env`
-		source .env/bin/activate`
-		
+		python3 -m venv .env
+		source .env/bin/activate
+
 Next, install all the requirements by
 
 		pip install -r requirements.txt
 		pip install -e .
 
-After this, you can run `python setup.py install` to get everything recognized, and run `python src/mirrulations/APIKeySetup.py` to connect to the server.
+After this, you can run `python src/mirrulations/APIKeySetup.py` to connect to the server.
 In the GUI, you can use the IP 10.76.100.34 and port 8080.
 The API key itself is the one you received earlier.
-Lastly, run `python3 src/client.py` to begin working.
+Lastly, run `python src/client.py` to get it working.
 
 ### Disclaimers
 --------
@@ -65,5 +65,3 @@ This product uses the Regulations.gov Data API but is neither endorsed nor certi
 
 --------
 This project is currently being developed by a student research team at Moravian College in association with Careset under Fred Trotter.
-
-
