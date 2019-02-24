@@ -369,7 +369,6 @@ def process_doc(json_data, compressed_file):
         # Unzip the zipfile and then remove the tar file and create a list of all the files in the directory
         file_list, path = get_file_list(compressed_file, PATHstr, json_data['client_id'])
 
-        ifRenew = False
         for file in file_list:
             ifRenew = check_single_document(file, json_data, path)
             if ifRenew is True:
