@@ -12,25 +12,20 @@ from pathlib import Path
  API Key, and generate a random ClientID.
 '''
 
+app = gui('Mirrulations Login', geom='300x50')
 
-def login_window():
-
-    app.startSubWindow('Login', title='Login Window')
-
-    app.addLabel('IPv4 Address:', column=0, row=0)
-    app.addEntry('IP1', column=1, row=0)
-    app.addLabel('.', column=2, row=0)
-    app.addEntry('IP1', column=3, row=0)
-    app.addLabel('.', column=4, row=0)
-    app.addEntry('IP1', column=5, row=0)
-    app.addLabel('.', column=6, row=0)
-    app.addEntry('IP1', column=7, row=0)
-    app.addLabel(':', column=8, row=0)
-    app.addLabelEntry('Port', column=9, row=0, label='Port')
-    app.addLabel('API Key:', column=0, row=1)
-    app.addEntry('API Key', column=1, row=1)
-
-
-app = gui('Mirrulations')
+app.addLabel('IPv4 Address', text='IPv4 Address:', column=0, row=0)
+app.addNumericEntry('IP1', column=1, row=0)
+app.addLabel('.1', text='.', column=2, row=0)
+app.addNumericEntry('IP2', column=3, row=0)
+app.addLabel('.2', text='.', column=4, row=0)
+app.addNumericEntry('IP3', column=5, row=0)
+app.addLabel('.3', text='.', column=6, row=0)
+app.addNumericEntry('IP4', column=7, row=0)
+app.addLabel('.4', text=':', column=8, row=0)
+app.addNumericEntry('Port', column=9, row=0)
+app.setEntryDefault('Port', 'Port')
+app.addLabel('API Key:', column=0, row=1)
+app.addEntry('API Key', column=1, row=1, colspan=9)
 
 app.go()
