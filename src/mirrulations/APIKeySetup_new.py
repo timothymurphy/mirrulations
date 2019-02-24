@@ -12,6 +12,25 @@ from pathlib import Path
  API Key, and generate a random ClientID.
 '''
 
-app = gui("Mirrulations")
+
+def login_window():
+
+    app.startSubWindow('Login', title='Login Window')
+
+    app.addLabel('IPv4 Address:', column=0, row=0)
+    app.addEntry('IP1', column=1, row=0)
+    app.addLabel('.', column=2, row=0)
+    app.addEntry('IP1', column=3, row=0)
+    app.addLabel('.', column=4, row=0)
+    app.addEntry('IP1', column=5, row=0)
+    app.addLabel('.', column=6, row=0)
+    app.addEntry('IP1', column=7, row=0)
+    app.addLabel(':', column=8, row=0)
+    app.addLabelEntry('Port', column=9, row=0, label='Port')
+    app.addLabel('API Key:', column=0, row=1)
+    app.addEntry('API Key', column=1, row=1)
+
+
+app = gui('Mirrulations')
 
 app.go()
