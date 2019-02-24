@@ -182,7 +182,7 @@ def test_get_file_list_and_bad_number_work(savefile_tempdir):
     assert condition is False
 
 
-def test_local_save(workfile_tempdir, savefile_tempdir):
+def test_save_single_file_locally(workfile_tempdir, savefile_tempdir):
     filename = "doc.FMCSA-1997-2350-21654.json"
     full_path = "/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21654/doc.FMCSA-1997-2350-21654.json"
 
@@ -190,7 +190,8 @@ def test_local_save(workfile_tempdir, savefile_tempdir):
     with open(path, 'w') as f:
         f.write("Stuff was written here")
 
-    df.local_save(path, savefile_tempdir + '/')
+    df.save_single_file_locally(path, savefile_tempdir + '/')
     final_path = savefile_tempdir + full_path
 
     assert os.path.exists(final_path)
+

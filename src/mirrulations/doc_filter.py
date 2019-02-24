@@ -242,7 +242,7 @@ def beginning_is_letter(document_id):
 
 
 # Saving Functions
-def local_save(cur_path, destination):
+def save_single_file_locally(cur_path, destination):
     """
     Save the file located at the current path to the destination location
     :param cur_path: location of the file to be saved
@@ -250,36 +250,34 @@ def local_save(cur_path, destination):
     :return:
     """
     logger.debug('Function Successful: % s',
-                   'local_save: local_save successfully called from process_doc', extra=d)
-    logger.info('Saving file locally...')
+                   'save_single_file_locally: save_single_file_locally successfully called from process_doc', extra=d)
 
     logger.debug('Calling Function: % s',
-                   'local_save: local_save calling get_file_name', extra=d)
+                   'save_single_file_locally: save_single_file_locally calling get_file_name', extra=d)
     file_name = get_file_name(cur_path)
     logger.debug('Function Successful: % s',
-                   'local_save: local_save successfully called get_file_name', extra=d)
+                   'save_single_file_locally: save_single_file_locally successfully called get_file_name', extra=d)
 
     logger.debug('Calling Function: % s',
-                   'local_save: local_save calling get_doc_attributes', extra=d)
+                   'save_single_file_locally: save_single_file_locally calling get_doc_attributes', extra=d)
     doc_id = get_document_id(file_name)
     org, docket_id, document_id = get_doc_attributes(doc_id)
     logger.debug('Function Successful: % s',
-                   'local_save: local_save successfully called get_doc_attributes', extra=d)
+                   'save_single_file_locally: save_single_file_locally successfully called get_doc_attributes', extra=d)
 
     destination_path = destination + org + "/" + docket_id + "/" + document_id + "/"
 
     logger.debug('Calling Function: % s',
-                   'local_save: local_save calling create_new_dir', extra=d)
+                   'save_single_file_locally: save_single_file_locally calling create_new_dir', extra=d)
     create_new_dir(destination_path)
     logger.debug('Function Successful: % s',
-                   'local_save: local_save successfully called create_new_dir', extra=d)
+                   'save_single_file_locally: save_single_file_locally successfully called create_new_dir', extra=d)
 
     logger.debug('Calling Function: % s',
-                   'local_save: local_save calling copy', extra=d)
+                   'save_single_file_locally: save_single_file_locally calling copy', extra=d)
     shutil.copy(cur_path, destination_path + '/' + file_name)
     logger.debug('Function Successful: % s',
-                   'local_save: local_save successfully called copy', extra=d)
-    logger.info('File saved locally')
+                   'save_single_file_locally: save_single_file_locally successfully called copy', extra=d)
 
 
 def create_new_dir(path):
@@ -289,17 +287,14 @@ def create_new_dir(path):
     :return:
     """
     logger.debug('Function Successful: % s',
-                   'create_new_dir: create_new_dir successfully called from local_save', extra=d)
+                   'create_new_dir: create_new_dir successfully called from save_single_file_locally', extra=d)
 
     if not os.path.exists(path):
         logger.debug('Calling Function: % s',
                        'create_new_dir: create_new_dir calling makedirs', extra=d)
-        logger.info('Creating a new directory...')
-
         os.makedirs(path)
         logger.debug('Function Successful: % s',
                        'create_new_dir: create_new_dir successfully called makedirs', extra=d)
-        logger.info('Directory created')
 
 
 def get_file_list(compressed_file, PATHstr, client_id):
@@ -315,7 +310,6 @@ def get_file_list(compressed_file, PATHstr, client_id):
     client_path = home + '/client-logs/' + str(client_id) + '/'
     logger.debug('Function Successful: % s',
                    'get_file_list: get_file_list successfully called from process_doc', extra=d)
-    logger.info('Retrieving files to be processed...')
 
     logger.debug('Calling Function: % s',
                    'get_file_list: get_file_list calling ZipFile', extra=d)
@@ -351,7 +345,6 @@ def get_file_list(compressed_file, PATHstr, client_id):
 
     logger.debug('Returning: %s',
                    'get_file_list: returning list of files', extra=d)
-    logger.info('Files retrieved and ready for processing')
     return final_list, PATHstr
 
 
@@ -363,142 +356,102 @@ def process_doc(json_data, compressed_file):
     :param compressed_file: compressed file of document data
     :return:
     """
-    logger.debug('Function Successful: % s',
-                   'process_doc: process_doc successfully called from return_doc', extra=d)
-    logger.info('Processing Jobs...')
-
     logger.debug('FILTER JOB_ID: %s', 'process_doc: ' + json_data["job_id"], extra=d)
     if r.does_job_exist_in_progress(json_data["job_id"]) is False:
         logger.debug('Variable Failure: %s',
                        'process_doc: job_id does not exist in progress queue', extra=d)
-        logger.warning('Job does not exist in progress queue')
 
     else:
-        logger.debug('Calling Function: % s',
-                       'process_doc: process_doc calling mkdtemp', extra=d)
+
         PATH = tempfile.mkdtemp()
-        logger.debug('Function Successful: % s',
-                       'process_doc: process_doc successfully called mkdtemp', extra=d)
         PATHstr = str(PATH + "/")
 
         # Unzip the zipfile and then remove the tar file and create a list of all the files in the directory
-        logger.debug('Calling Function: % s',
-                       'process_doc: process_doc calling mkdtemp', extra=d)
         file_list, path = get_file_list(compressed_file, PATHstr, json_data['client_id'])
-        logger.debug('Function Successful: % s',
-                       'process_doc: process_doc successfully called mkdtemp', extra=d)
 
-        renew = False
         for file in file_list:
-            logger.info('Still processing...')
-            logger.debug('Calling Function: % s',
-                           'process_doc: process_doc calling get_doc_attributes', extra=d)
-            doc_id = get_document_id(file)
-            org, docket_id, document_id = get_doc_attributes(doc_id)
-            logger.debug('Function Successful: % s',
-                           'process_doc: process_doc successfully called get_doc_attributes', extra=d)
-
-            logger.debug('Calling Function: % s',
-                           'process_doc: process_doc calling startswith', extra=d)
-            fsw = file.startswith("doc.")
-            logger.debug('Function Successful: % s',
-                           'process_doc: process_doc successfully called startswith', extra=d)
-
-            logger.debug('Calling Function: % s',
-                           'process_doc: process_doc calling beginning_is_letter', extra=d)
-            bil = beginning_is_letter(document_id)
-            logger.debug('Function Successful: % s',
-                           'process_doc: process_doc successfully called beginning_is_letter', extra=d)
-
-            logger.debug('Calling Function: % s',
-                           'process_doc: process_doc calling ending_is_number', extra=d)
-            ein = ending_is_number(document_id)
-            logger.debug('Function Successful: % s',
-                           'process_doc: process_doc successfully called ending_is_number', extra=d)
-
-            logger.debug('Calling Function: % s',
-                           'process_doc: process_doc calling endswith', extra=d)
-            few = file.endswith(".json")
-            logger.debug('Function Successful: % s',
-                           'process_doc: process_doc successfully called endswith', extra=d)
-
-            job_type = json_data["type"] == "doc"
-
-            if fsw and bil and ein and few and job_type:
+            ifRenew = check_single_document(file, json_data, path)
+            if ifRenew is True:
                 logger.debug('Calling Function: % s',
-                               'process_doc: process_doc calling id_matches', extra=d)
-                if id_matches(path + file, document_id):
-                    logger.debug('Variable Success: %s',
-                                   'process_doc: fsw, bil, ein, and job_type are True', extra=d)
-                    logger.debug('Function Successful: % s',
-                                   'process_doc: process_doc successfully called id_matches', extra=d)
-                else:
-                    logger.debug('Variable Success: %s',
-                                   'process_doc: fsw, bil, ein, and job_type are True', extra=d)
-                    logger.debug('Function Successful: % s',
-                                   'process_doc: process_doc successfully called id_matches', extra=d)
-                    logger.debug('Variable Failure: %s',
-                                   'process_doc: id_matches is False', extra=d)
-                    renew = True
-                    break
-
-            elif fsw and bil and ein and job_type:
-                logger.debug('Variable Success: %s',
-                               'process_doc: fsw, bil, ein, and job_type are True', extra=d)
-            else:
-                if fsw is False:
-                    logger.debug('Variable Failure: %s',
-                                   'process_doc: fsw is False', extra=d)
-                else:
-                    logger.debug('Variable Success: %s',
-                                   'process_doc: fsw is True', extra=d)
-                if bil is False:
-                    logger.debug('Variable Failure: %s',
-                                   'process_doc: bil is False', extra=d)
-                else:
-                    logger.debug('Variable Success: %s',
-                                   'process_doc: bil is True', extra=d)
-                if ein is False:
-                    logger.debug('Variable Failure: %s',
-                                   'process_doc: ein is False', extra=d)
-                else:
-                    logger.debug('Variable Success: %s',
-                                   'process_doc: ein is True', extra=d)
-                if job_type is False:
-                    logger.debug('Variable Failure: %s',
-                                   'process_doc: job_type is not doc', extra=d)
-                else:
-                    logger.debug('Variable Success: %s',
-                                   'process_doc: job_type is doc', extra=d)
-                renew = True
-                break
-
-        if renew is True:
-            logger.debug('Calling Function: % s',
-                           'process_doc: process_doc calling renew_job', extra=d)
-            r.renew_job(json_data)
-            logger.debug('Function Successful: % s',
-                           'process_doc: process_doc successfully called renew_job', extra=d)
+                             'process_doc: process_doc calling renew_job', extra=d)
+                r.renew_job(json_data)
+                logger.debug('Function Successful: % s',
+                             'process_doc: process_doc successfully called renew_job', extra=d)
 
         else:
-            for file in file_list:
-                logger.debug('Calling Function: % s',
-                               'process_doc: process_doc calling local_save', extra=d)
-                home = os.getenv("HOME")
-                local_save(path + file, home + "/regulations-data/")
-                logger.debug('Function Successful: % s',
-                               'process_doc: process_doc successfully called local_save', extra=d)
-
+            save_all_files_locally(file_list, path)
             logger.debug('Calling Function: % s',
-                           'process_doc: process_doc calling get_keys_from_progress', extra=d)
-            key = r.get_keys_from_progress(json_data["job_id"])
+                         'process_doc: process_doc calling remove_job_from_progress', extra=d)
+            remove_job(json_data)
             logger.debug('Function Successful: % s',
-                           'process_doc: process_doc successfully called get_keys_from_progress', extra=d)
+                         'process_doc: process_doc successfully called remove_job_from_progress', extra=d)
 
-            logger.debug('Calling Function: % s',
-                           'process_doc: process_doc calling remove_job_from_progress', extra=d)
-            r.remove_job_from_progress(key)
-            logger.debug('Function Successful: % s',
-                           'process_doc: process_doc successfully called remove_job_from_progress', extra=d)
 
-    logger.info('Processing complete')
+def check_single_document(file, json_data, path):
+    """
+    Checks to see if a document conforms to our naming conventions
+    :param file:
+    :param json_data:
+    :param path:
+    :return:
+    """
+    org, docket_id, document_id = get_doc_attributes(file)
+    ifFileStartsWithDoc = file.startswith("doc.")
+    ifBeginWithDocLetter = beginning_is_letter(document_id)
+    ifEndIsDocNum = ending_is_number(document_id)
+    ifFileEndsWithJson = file.endswith(".json")
+    job_type = json_data["type"] == "doc"
+    ifDocumentsChecks = ifFileStartsWithDoc and ifBeginWithDocLetter and ifEndIsDocNum and job_type
+    ifDocumentsChecksAndJson = ifDocumentsChecks and ifFileEndsWithJson
+
+    if ifDocumentsChecksAndJson:
+        if id_matches(path + file, document_id):
+            logger.debug('Variable Success: %s',
+                         'process_doc: ifFileStartsWithDoc, ifBeginWithDocLetter, ifEndIsDocNum, '
+                         'and job_type are True', extra=d)
+        else:
+            logger.debug('Variable Failure: %s',
+                         'process_doc: id_matches is False', extra=d)
+            return True
+
+    write_documents_checks_into_logger(ifBeginWithDocLetter, ifEndIsDocNum, ifFileStartsWithDoc, job_type)
+    return ifDocumentsChecks
+
+
+def remove_job(json_data):
+    """
+    Removes a specified job from the progress queue
+    :param json_data:
+    :return:
+    """
+    key = r.get_keys_from_progress(json_data["job_id"])
+    r.remove_job_from_progress(key)
+
+
+def save_all_files_locally(file_list, path):
+    """
+    Saves all the files in a list locally
+    :param file_list:
+    :param path:
+    :return:
+    """
+    for file in file_list:
+        home = os.getenv("HOME")
+        save_single_file_locally(path + file, home + "/regulations-data/")
+
+
+def write_documents_checks_into_logger(ifBeginWithDocLetter, ifEndIsDocNum, ifFileStartsWithDoc, job_type):
+    """
+    Writes the results of a document's individual checks into the log
+    :param ifBeginWithDocLetter:
+    :param ifEndIsDocNum:
+    :param ifFileStartsWithDoc:
+    :param job_type:
+    :return:
+    """
+    list = [ifBeginWithDocLetter, ifEndIsDocNum, ifFileStartsWithDoc, job_type]
+    listNames = ["ifBeginWithDocLetter", "ifEndIsDocNum", "ifFileStartsWithDoc", "job_type"]
+
+    for x in range(4):
+        logger.debug('Variable Failure: %s',
+                     'process_doc: ' + listNames[x] + " is " + str(list[x]), extra=d)
