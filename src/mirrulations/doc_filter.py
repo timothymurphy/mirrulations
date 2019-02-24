@@ -455,4 +455,4 @@ def write_documents_checks_into_logger(ifBeginWithDocLetter, ifEndIsDocNum, ifFi
 
     for x in range(4):
         logger.debug('Variable Failure: %s',
-                     'process_doc: ' + listNames[x] + " is " + list[x], extra=d)
+                     'process_doc: ' + listNames[x] + " is " + str(list[x]), extra=d)
