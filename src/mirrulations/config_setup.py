@@ -62,7 +62,7 @@ def press():
 
 with gui('Mirrulations Login') as app:
 
-    app.setSize('700x100')
+    app.setSize('750x100')
     app.setFont(size=20, family="Gill Sans")
     app.resizable = False
 
