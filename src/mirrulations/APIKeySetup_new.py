@@ -15,15 +15,41 @@ from pathlib import Path
 
 def press(button):
 
+    if button == 'Cancel':
+        app.stop()
+
     ip = app.getEntry('IP1') + '.' + app.getEntry('IP2') + '.' + app.getEntry('IP3') + '.' + app.getEntry('IP4')
     port = app.getEntry('Port')
     key = app.getEntry('API Key')
+    user = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+
+    if True:
+        app.errorBox("Unable to connect!",
+                     "We weren't able to connect to regulations.gov.\n"
+                     "Please try again later.")
+    elif True:
+        app.errorBox("Invalid API key!",
+                     "Your API key is invalid.\n"
+                     "Please visit\n"
+                     "https://regulationsgov.github.io/developers/\n"
+                     "for an API key.")
+    else:
+        with open("config.json", "w") as file:
+            file.write(json.dumps({
+                "ip": ip,
+                "port": port,
+                "key": key,
+                "user": user
+            }, indent=4))
+            file.close()
+            app.stop()
 
 
 with gui('Mirrulations Login') as app:
 
-    app.setSize('500x100')
+    app.setSize('700x100')
     app.setFont(size=20, family="Gill Sans")
+    app.resizable = False
 
     app.addLabel('IPv4 Address', text='IPv4 Address:', column=0, row=0)
     app.setLabelWidth('IPv4 Address', 20)
@@ -31,26 +57,26 @@ with gui('Mirrulations Login') as app:
     app.addEntry('IP1', column=1, row=0)
     app.setEntryWidth('IP1', 12)
 
-    app.addLabel('.1', text='.', column=2, row=0)
-    app.setLabelWidth('.1', 4)
+    app.addLabel('stop1', text='.', column=2, row=0)
+    app.setLabelWidth('stop1', 4)
 
     app.addEntry('IP2', column=3, row=0)
     app.setEntryWidth('IP2', 12)
 
-    app.addLabel('.2', text='.', column=4, row=0)
-    app.setLabelWidth('.2', 4)
+    app.addLabel('stop2', text='.', column=4, row=0)
+    app.setLabelWidth('stop2', 4)
 
     app.addEntry('IP3', column=5, row=0)
     app.setEntryWidth('IP3', 12)
 
-    app.addLabel('.3', text='.', column=6, row=0)
-    app.setLabelWidth('.3', 4)
+    app.addLabel('stop3', text='.', column=6, row=0)
+    app.setLabelWidth('stop3', 4)
 
     app.addEntry('IP4', column=7, row=0)
     app.setEntryWidth('IP4', 12)
 
-    app.addLabel('.4', text=':', column=8, row=0)
-    app.setLabelWidth('.4', 4)
+    app.addLabel('colon', text=':', column=8, row=0)
+    app.setLabelWidth('colon', 4)
 
     app.addEntry('Port', column=9, row=0)
     app.setEntryWidth('Port', 16)
@@ -60,6 +86,6 @@ with gui('Mirrulations Login') as app:
     app.addEntry('API Key', column=1, row=1, colspan=9)
 
     app.addButton('Submit', press, column=1, row=2, colspan=3)
-    app.addButton('Cancel', app.stop, column=5, row=2, colspan=3)
+    app.addButton('Cancel', press, column=5, row=2, colspan=3)
 
     app.go()
