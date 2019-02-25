@@ -66,7 +66,7 @@ with gui('Mirrulations Login') as app:
     app.setFont(size=20, family="Gill Sans")
     app.resizable = False
 
-    app.addLabel('IPv4 Address', text='IPv4 Address:', column=0, row=0)
+    app.addLabel('IPv4 Address', text='Server IPv4 Address:', column=0, row=0)
     app.setLabelWidth('IPv4 Address', 20)
 
     app.addEntry('IP1', column=1, row=0)
