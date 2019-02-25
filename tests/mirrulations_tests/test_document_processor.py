@@ -2,6 +2,7 @@ from mirrulations.document_processor import *
 from mirrulations.documents_processor import *
 import pytest
 import requests_mock
+import os
 
 from mirrulations.api_call import add_api_key
 
