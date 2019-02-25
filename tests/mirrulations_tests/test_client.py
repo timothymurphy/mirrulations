@@ -21,7 +21,7 @@ def mock_req():
 
 
 def test_get_work(mock_req):
-    url = serverurl+"/get_work?client_id=" + str(client_id)
+    url = serverurl+"/get_work?user=" + str(client_id)
     mock_req.get(url, status_code=200, text='RANDOM')
     result = get_work(str(client_id))
     assert result.status_code == 200
