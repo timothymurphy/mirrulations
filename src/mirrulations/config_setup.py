@@ -25,13 +25,13 @@ def invalid_key_error():
                  "for an API key.")
 
 
-def successful_login(ip, port, key, user):
+def successful_login(ip, port, key, client_id):
     with open("config.json", "wt") as file:
         file.write(json.dumps({
             "ip": ip,
             "port": port,
             "key": key,
-            "user": user
+            "client_id": client_id
         }, indent=4))
         file.close()
 
@@ -45,7 +45,7 @@ def press():
     ip = app.getEntry('IP1') + '.' + app.getEntry('IP2') + '.' + app.getEntry('IP3') + '.' + app.getEntry('IP4')
     port = app.getEntry('Port')
     key = app.getEntry('API Key')
-    user = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+    client_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
 
     try:
         r = requests.get("https://api.data.gov/regulations/v3/documents.json?api_key=" + key)

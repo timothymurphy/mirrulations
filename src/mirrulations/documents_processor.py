@@ -7,20 +7,20 @@ workfiles = []
 version = "v1.3"
 
 key = config.read_value('key')
-user = config.read_value('user')
+client_id = config.read_value('client_id')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='documents_processor.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': user}
+d = {'clientip': '192.168.0.1', 'user': client_id}
 logger = logging.getLogger('tcpserver')
 
 
-def documents_processor(urls, job_id, user):
+def documents_processor(urls, job_id, client_id):
     """
     Call each url in the list, process the results of the calls and then form a json file to send back the results
     :param urls: list of urls that have to be called
     :param job_id: the id of the job that is being worked on currently
-    :param user: id of the client calling this function
+    :param client_id: id of the client calling this function
     :return result: the json to be returned to the server after each call is processed
     """
     global workfiles
@@ -37,7 +37,7 @@ def documents_processor(urls, job_id, user):
             logger.debug('Exception: %s', 'documents_processor: Error processing URL: ' + url, extra=d)
             logger.error('Error - URL processing failed')
     logger.debug('Assign Variable: %s', 'documents_processor: Load the json', extra=d)
-    result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(user), "version" : version}))
+    result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(client_id), "version" : version}))
     logger.debug('Variable Success: %s', 'documents_processor: successfully loaded json', extra=d)
     logger.debug('Returning: %s', 'documents_processor: returning the json', extra=d)
     logger.info('Documents processed into JSON')

@@ -5,11 +5,11 @@ import mirrulations.config as config
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
 
 key = config.read_value('key')
-user = config.read_value('user')
+client_id = config.read_value('client_id')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='document_processor.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': user}
+d = {'clientip': '192.168.0.1', 'user': client_id}
 logger = logging.getLogger('tcpserver')
 
 

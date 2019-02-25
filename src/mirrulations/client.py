@@ -19,20 +19,20 @@ port = config.read_value('port')
 serverurl = "http://" + ip + ":" + port
 
 key = config.read_value('key')
-user = config.read_value('user')
+client_id = config.read_value('client_id')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='client.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': user}
+d = {'clientip': '192.168.0.1', 'user': client_id}
 logger = logging.getLogger('tcpserver')
 
 client_health_url = "https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08"
 
 
-def get_work(user):
+def get_work(client_id):
     """
     Calls the /get_work endpoint of the server to fetch work to process
-    :param user: the id of the client calling /get_work
+    :param client_id: the id of the client calling /get_work
     :return: the result of making a call to get work
     """
     global d
@@ -42,7 +42,7 @@ def get_work(user):
 
     logger.info('Attempting to retrieve work...')
 
-    url = serverurl+"/get_work?user="+str(user)
+    url = serverurl+"/get_work?user="+str(client_id)
 
     logger.debug('Variable Success: %s', 'get_work: url created successfully for get work', extra=d)
     logger.debug('Returning: %s', 'get_work: the respond from the api call to get_work', extra=d)
@@ -79,12 +79,12 @@ def get_json_info(json_result):
     return job_id, urls
 
 
-def return_docs(json_result, user):
+def return_docs(json_result, client_id):
     """
     Handles the documents processing necessary for a job
     Calls the /return_docs endpoint of the server to return data for the job it completed
     :param json_result: the json received from the /get_work endpoint
-    :param user: the id of the client that is processing the documents job
+    :param client_id: the id of the client that is processing the documents job
     :return: result from calling /return_docs
     """
     global d
@@ -99,7 +99,7 @@ def return_docs(json_result, user):
     logger.debug('Function Successful: %s', 'return_docs: job_id and urls retrieved successfully', extra=d)
     logger.debug('Calling Function: %s','return_docs: call documents_processor',extra=d)
 
-    json_info = docs.documents_processor(urls, job_id, user)
+    json_info = docs.documents_processor(urls, job_id, client_id)
 
     logger.debug('Function Successful: %s', 'return_docs: successful call to documents processor', extra=d)
 
@@ -128,12 +128,12 @@ def return_docs(json_result, user):
     return r
 
 
-def return_doc(json_result, user):
+def return_doc(json_result, client_id):
     """
     Handles the document processing necessary for a job
     Calls the /return_doc endpoint of the server to return data for the job it completed
     :param json_result: the json received from the /get_work endpoint
-    :param user: the id of the client that is processing the documents job
+    :param client_id: the id of the client that is processing the documents job
     :return: result from calling /return_doc
     """
     global d
@@ -179,7 +179,7 @@ def return_doc(json_result, user):
     r = requests.post(serverurl+"/return_doc",
                       files={'file':('result.zip', fileobj)},
                       data={'json':json.dumps({"job_id" : job_id, "type" : "doc",
-                                               "user": user, "version" : version })})
+                                               "user": client_id, "version" : version })})
 
     logger.info('Doc file created')
 
@@ -253,7 +253,7 @@ def do_work():
         logger.debug('Calling Function: %s', 'do_work: call to get_work function', extra=d)
         logger.info('Getting work...')
         try:
-            work = get_work(user)
+            work = get_work(client_id)
             logger.debug('Function Successful: %s', 'do_work: get_work call successful', extra=d)
 
             requests.get(client_health_url)
@@ -270,7 +270,7 @@ def do_work():
             logger.debug('Calling Function: %s', 'do_work: call return_doc', extra=d)
             logger.info('Work is Doc job')
 
-            r = return_doc(work_json, user)
+            r = return_doc(work_json, client_id)
 
             logger.debug('Function Successful: %s', 'do_work: return_doc call successful', extra=d)
 
@@ -281,7 +281,7 @@ def do_work():
             logger.debug('Calling Function: %s', 'do_work: call return_docs', extra=d)
             logger.info('Work is Docs job')
 
-            r = return_docs(work_json, user)
+            r = return_docs(work_json, client_id)
 
             logger.debug('Function Successful: %s', 'do_work: return_docs call successful', extra=d)
 

@@ -24,8 +24,8 @@ def mock_req():
 
 def test_documents_processor_basic():
     urls = []
-    docs = documents_processor(urls, 'JobID', user)
-    assert docs == {'client_id': user, "type":"docs",
+    docs = documents_processor(urls, 'JobID', client_id)
+    assert docs == {'client_id': client_id, "type": "docs",
                     'data': [],
                     'job_id': 'JobID',
                     'version': version}
@@ -50,8 +50,8 @@ def test_make_docs_complex():
 
 def test_documents_processor_empty():
     urls = []
-    docs = documents_processor(urls, 'JobID', user)
-    assert docs == {'client_id': user,
+    docs = documents_processor(urls, 'JobID', client_id)
+    assert docs == {'client_id': client_id,
                     'type':'docs',
                     'data': [],
                     'job_id': 'JobID',
@@ -83,12 +83,12 @@ def test_documents_processor(mock_req):
     mock_req.get(add_api_key(base_url2), status_code=200, text='{"documents": '
                                                               '[{"documentId": "CMS-2005-0001-0003", "attachmentCount": 88},\
                                                                 {"documentId": "CMS-2005-0001-0004", "attachmentCount": 666}]}')
-    docs = documents_processor(urls, 'Job ID', user)
+    docs = documents_processor(urls, 'Job ID', client_id)
     assert docs == ({'job_id': 'Job ID', 'type':'docs', 'data': [[{'id': 'CMS-2005-0001-0001', 'count': 5}],
                                                   [{'id': 'CMS-2005-0001-0002', 'count': 1000}],
                                                   [{'id': 'CMS-2005-0001-0003', 'count': 89}, {'id': 'CMS-2005-0001-0004', 'count': 667}]
                                                   ],
-                                                    'version': version, 'client_id': str(user)})
+                                                    'version': version, 'client_id': str(client_id)})
 
 
 def test_valid_results(mock_req):
