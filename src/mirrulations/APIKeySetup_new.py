@@ -1,10 +1,8 @@
 import requests
-import os
 import random
 import string
 import json
 from appJar import gui
-from pathlib import Path
 
 ''' 
  This program will prompt the user for their regulations.gov API Key, as well as the IP and port
@@ -13,36 +11,53 @@ from pathlib import Path
 '''
 
 
-def press(button):
+def connection_error():
+    app.errorBox("Unable to connect!",
+                 "We weren't able to connect to regulations.gov.\n"
+                 "Please try again later.")
 
-    if button == 'Cancel':
-        app.stop()
+
+def invalid_key_error():
+    app.errorBox("Invalid API key!",
+                 "Your API key is invalid.\n"
+                 "Please visit\n"
+                 "https://regulationsgov.github.io/developers/\n"
+                 "for an API key.")
+
+
+def successful_login(ip, port, key, user):
+    with open("config.json", "w") as file:
+        file.write(json.dumps({
+            "ip": ip,
+            "port": port,
+            "key": key,
+            "user": user
+        }, indent=4))
+        file.close()
+
+    app.errorBox("Success!",
+                 "You are successfully logged in!")
+    app.stop()
+
+
+def press():
 
     ip = app.getEntry('IP1') + '.' + app.getEntry('IP2') + '.' + app.getEntry('IP3') + '.' + app.getEntry('IP4')
     port = app.getEntry('Port')
     key = app.getEntry('API Key')
     user = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
 
-    if True:
-        app.errorBox("Unable to connect!",
-                     "We weren't able to connect to regulations.gov.\n"
-                     "Please try again later.")
-    elif True:
-        app.errorBox("Invalid API key!",
-                     "Your API key is invalid.\n"
-                     "Please visit\n"
-                     "https://regulationsgov.github.io/developers/\n"
-                     "for an API key.")
+    try:
+        r = requests.get("https://api.data.gov/regulations/v3/documents.json?api_key=" + key)
+    except requests.ConnectionError:
+        connection_error()
     else:
-        with open("config.json", "w") as file:
-            file.write(json.dumps({
-                "ip": ip,
-                "port": port,
-                "key": key,
-                "user": user
-            }, indent=4))
-            file.close()
-            app.stop()
+        if r.status_code == 403:
+            invalid_key_error()
+        elif r.status_code > 299 and r.status_code != 429:
+            connection_error()
+        else:
+            successful_login(ip, port, key, user)
 
 
 with gui('Mirrulations Login') as app:
@@ -86,6 +101,6 @@ with gui('Mirrulations Login') as app:
     app.addEntry('API Key', column=1, row=1, colspan=9)
 
     app.addButton('Submit', press, column=1, row=2, colspan=3)
-    app.addButton('Cancel', press, column=5, row=2, colspan=3)
+    app.addButton('Cancel', app.stop, column=5, row=2, colspan=3)
 
     app.go()
