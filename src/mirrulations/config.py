@@ -20,15 +20,19 @@ def read_value(value):
         contents = json.loads(open("./config.json","r").read())
         logger.debug("Variable Success: %s", 'read_value: found json from config', extra=d)
         logger.info('Config file read successful...')
-    except:
-        logger.debug('Exception: %s', 'read_value: Error opening/loading JSON', extra=d)
-        logger.error('Error reading JSON...')
-
-    try:
         result = contents[value]
+    except IOError:
+        logger.debug('Exception: %s', 'read_value: Error opening JSON', extra=d)
+        logger.error('Input/Output Error')
+        return None
+    except json.JSONDecodeError:
+        logger.debug('Exception: %s', 'read_value: Error loading JSON', extra=d)
+        logger.error('JSON Decode Error')
+        return None
     except KeyError:
         logger.debug('Exception: %s', 'config: Caught KeyError, no value present for: ' + str(value) +
                      '. Returning None.', extra=d)
-        logger.error('Key error')
+        logger.error('Key Error')
         return None
-    return result
+    else:
+        return result
