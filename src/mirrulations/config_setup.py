@@ -26,7 +26,7 @@ def invalid_key_error():
 
 
 def successful_login(ip, port, key, user):
-    with open("config.json", "w") as file:
+    with open("config.json", "wt") as file:
         file.write(json.dumps({
             "ip": ip,
             "port": port,

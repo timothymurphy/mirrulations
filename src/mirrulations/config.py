@@ -17,7 +17,7 @@ def read_value(value):
     logger.info('Reading config file...')
     try:
         logger.debug("Assign Variable: %s", 'read_value: loading json from config', extra=d)
-        contents = json.loads(open("./config.json","r").read())
+        contents = json.loads(open("./config.json", "rt").read())
         logger.debug("Variable Success: %s", 'read_value: found json from config', extra=d)
         logger.info('Config file read successful...')
         result = contents[value]
