@@ -5,10 +5,9 @@ import requests_mock
 
 from mirrulations.api_call import add_api_key
 
-home = os.getenv("HOME")
-with open(home + '/.env/regulationskey.txt') as f:
-    key = f.readline().strip()
-    client_id = f.readline().strip()
+import mirrulations.config as config
+
+key = config.read_value('key')
 
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
 
