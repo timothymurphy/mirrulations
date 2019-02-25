@@ -12,6 +12,14 @@ from pathlib import Path
  API Key, and generate a random ClientID.
 '''
 
+
+def press(button):
+
+    info_dictionary = app.getAllEntries()
+
+    print(json.dumps(info_dictionary))
+
+
 with gui('Mirrulations Login') as app:
 
     app.setSize('500x100')
@@ -20,38 +28,38 @@ with gui('Mirrulations Login') as app:
     app.addLabel('IPv4 Address', text='IPv4 Address:', column=0, row=0)
     app.setLabelWidth('IPv4 Address', 20)
 
-    app.addNumericEntry('IP1', column=1, row=0)
+    app.addEntry('IP1', column=1, row=0)
     app.setEntryWidth('IP1', 12)
 
     app.addLabel('.1', text='.', column=2, row=0)
     app.setLabelWidth('.1', 4)
 
-    app.addNumericEntry('IP2', column=3, row=0)
+    app.addEntry('IP2', column=3, row=0)
     app.setEntryWidth('IP2', 12)
 
     app.addLabel('.2', text='.', column=4, row=0)
     app.setLabelWidth('.2', 4)
 
-    app.addNumericEntry('IP3', column=5, row=0)
+    app.addEntry('IP3', column=5, row=0)
     app.setEntryWidth('IP3', 12)
 
     app.addLabel('.3', text='.', column=6, row=0)
     app.setLabelWidth('.3', 4)
 
-    app.addNumericEntry('IP4', column=7, row=0)
+    app.addEntry('IP4', column=7, row=0)
     app.setEntryWidth('IP4', 12)
 
     app.addLabel('.4', text=':', column=8, row=0)
     app.setLabelWidth('.4', 4)
 
-    app.addNumericEntry('Port', column=9, row=0)
+    app.addEntry('Port', column=9, row=0)
     app.setEntryWidth('Port', 16)
     app.setEntryDefault('Port', 'Port')
 
     app.addLabel('API Key:', column=0, row=1)
     app.addEntry('API Key', column=1, row=1, colspan=9)
 
-    app.addButton('Submit', None, column=1, row=2, colspan=3)
-    app.addButton('Cancel', None, column=5, row=2, colspan=3)
+    app.addButton('Submit', press, column=1, row=2, colspan=3)
+    app.addButton('Cancel', app.stop, column=5, row=2, colspan=3)
 
     app.go()
