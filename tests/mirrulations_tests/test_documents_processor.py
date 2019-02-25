@@ -1,7 +1,4 @@
-from json import JSONDecodeError
-
 from mirrulations.documents_processor import *
-import tempfile
 import pytest
 import requests_mock
 
@@ -9,7 +6,7 @@ from mirrulations.api_call import *
 import mirrulations.config as config
 
 key = config.read_value('key')
-user = config.read_value('user')
+client_id = config.read_value('client_id')
 
 base_url = 'https://api.data.gov:443/regulations/v3/documents.json?'
 base_url2 = 'https://www.website.com/regulations/v3/documents.json?'
