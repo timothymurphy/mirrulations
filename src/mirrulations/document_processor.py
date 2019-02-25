@@ -1,15 +1,15 @@
 import tempfile
 from mirrulations.documents_processor import *
+import mirrulations.config as config
 
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
-home = os.getenv("HOME")
-with open(home + '/.env/regulationskey.txt') as f:
-    key = f.readline().strip()
-    client_id = f.readline().strip()
+
+key = config.read_value('key')
+user = config.read_value('user')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='document_processor.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': client_id}
+d = {'clientip': '192.168.0.1', 'user': user}
 logger = logging.getLogger('tcpserver')
 
 
