@@ -35,10 +35,10 @@ We prefer to do our development in PyCharm CE.
 
 4. Run the preliminary files:
 
-		python src/mirrulations/APIKeySetup.py
+		python src/mirrulations/config_setup.py
 		- IP:  0.0.0.0
 		- Port:  8080
-		- API Key:  Get from https://www.data.gov
+		- API Key:  Get from https://regulationsgov.github.io/developers/
 
 5. Run the tests:
 
