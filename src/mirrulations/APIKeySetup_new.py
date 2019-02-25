@@ -15,9 +15,9 @@ from pathlib import Path
 
 def press(button):
 
-    info_dictionary = app.getAllEntries()
-
-    print(json.dumps(info_dictionary))
+    ip = app.getEntry('IP1') + '.' + app.getEntry('IP2') + '.' + app.getEntry('IP3') + '.' + app.getEntry('IP4')
+    port = app.getEntry('Port')
+    key = app.getEntry('API Key')
 
 
 with gui('Mirrulations Login') as app:
