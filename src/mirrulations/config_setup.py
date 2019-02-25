@@ -102,5 +102,3 @@ with gui('Mirrulations Login') as app:
 
     app.addButton('Submit', press, column=1, row=2, colspan=3)
     app.addButton('Cancel', app.stop, column=5, row=2, colspan=3)
-
-    app.go()
