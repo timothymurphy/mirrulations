@@ -1,9 +1,9 @@
 import pytest
 import requests_mock
-import fakeredis
-from mirrulations.endpoints import *
-import mirrulations.endpoints as endpoints
 import mock
+import fakeredis
+import mirrulations.endpoints as endpoints
+from mirrulations.redis_manager import RedisManager
 import json
 import os
 from ast import literal_eval
@@ -11,6 +11,10 @@ from ast import literal_eval
 PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test_files/filename.txt")
 
 version = 'v1.3'
+
+endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
+
+
 @pytest.fixture
 def mock_req():
     with requests_mock.Mocker() as m:
@@ -44,7 +48,7 @@ def make_json():
     }
 
 
-def make_databse():
+def make_database():
     r = fakeredis.FakeRedis()
     r.flushall()
     test_list = json.dumps(["a", ["b", "c"]])
@@ -62,41 +66,34 @@ def test_non_existent_endpoint(client):
     assert result.status_code == 404
 
 
-@mock.patch('mirrulations.redis_manager.RedisManager.get_work', return_value='{}')
-@mock.patch('mirrulations.endpoints.generate_json', return_value='Okay')
-def test_get_work_success(mock_work, mock_json, client):
+def test_get_work_success(client):
     result = client.get('/get_work', query_string={'client_id': '1'})
     assert result.status_code == 200
 
 
-@mock.patch('mirrulations.redis_manager.RedisManager.get_work')
-@mock.patch('mirrulations.endpoints.generate_json')
-def test_get_work_throws_exception_if_no_client_id(mock_work,mock_json, client):
+def test_get_work_throws_exception_if_no_client_id(client):
     result = client.get('/get_work')
     assert result.status_code == 400
 
 
-@mock.patch('mirrulations.redis_manager.RedisManager.get_work')
-@mock.patch('mirrulations.endpoints.generate_json')
-def test_get_work_wrong_parameter(mock_work,mock_json, client):
+def test_get_work_wrong_parameter(client):
     result = client.get('/get_work', query_string={'clientid': '1'})
     assert result.status_code == 400
 
 
 def test_get_queue_item(client):
-    r = make_databse()
+    r = make_database()
     list = literal_eval(r.lpop("queue").decode("utf-8"))
     assert list == ['a', ['b', 'c']]
 
 
 def test_generate_json():
     list = ["a", "b", ["a", "b"]]
-    json1 = generate_json(list)
+    json1 = endpoints.generate_json(list)
     assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version": version})
 
 
-@mock.patch('mirrulations.endpoints.process_docs')
-def test_return_docs_call_success(docs, client):
+def test_return_docs_call_success(client):
     result = client.post("/return_docs", data={'file':open(PATH, 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
@@ -106,8 +103,7 @@ def test_return_docs_no_parameter(client):
     assert result.status_code == 400
 
 
-@mock.patch('mirrulations.endpoints.process_doc', return_value=True)
-def test_return_doc_call_success(doc,client):
+def test_return_doc_call_success(client):
     result = client.post('/return_doc', data={'file':open(PATH, 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
@@ -120,6 +116,3 @@ def test_return_doc_no_file_parameter(client):
 def test_return_doc_no_json_parameter(client):
     result = client.post('/return_doc', data=dict(file=open(PATH, 'rb')))
     assert result.status_code == 400
-
-
-

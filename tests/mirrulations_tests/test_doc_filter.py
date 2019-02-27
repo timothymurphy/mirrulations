@@ -2,16 +2,10 @@ import pytest
 import requests_mock
 import tempfile
 import os
-import fakeredis
 import mirrulations.doc_filter as df
 
 
 PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../tests/test_files/")
-
-
-def setUp():
-    # Setup fake redis for testing.
-    return fakeredis.FakeStrictRedis()
 
 @pytest.fixture
 def mock_req():
