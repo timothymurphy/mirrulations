@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='client.log', format=FORMAT)
@@ -17,7 +18,8 @@ def read_value(value):
     logger.info('Reading config file...')
     try:
         logger.debug("Assign Variable: %s", 'read_value: loading json from config', extra=d)
-        contents = json.loads(open("./config.json","r").read())
+        configurationpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../config.json")
+        contents = json.loads(open(configurationpath, "r").read())
         logger.debug("Variable Success: %s", 'read_value: found json from config', extra=d)
         logger.info('Config file read successful...')
     except:
