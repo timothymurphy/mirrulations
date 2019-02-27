@@ -278,7 +278,7 @@ class RedisManager:
             logger.debug('Assign Variable: %s', 'does_job_exist_in_progress: get the key of a job', extra=d)
             key = self.get_keys_from_progress_no_lock(job_id)
             logger.debug('Variable Success: %s', 'does_job_exist_in_progress: key has been received', extra=d)
-            logger.debug('KEY VALUE: %s', 'does_job_exist_in_progress: ' + key, extra=d)
+            logger.debug('KEY VALUE: %s', 'does_job_exist_in_progress: ' + str(key), extra=d)
             if float(key) > -1:
                 logger.debug('Assign Variable: %s', 'does_job_exist_in_progress: attempt to get the job from the key', extra=d)
                 job = self.get_specific_job_from_progress_no_lock(key)
@@ -388,7 +388,7 @@ class RedisManager:
         logger.debug('Assign Variable: %s', 'get_keys_from_progress_no_lock: get the list of keys from the progress hash',extra=d)
         key_list = self.r.hgetall('progress')
         logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: list of keys successfully received', extra=d)
-        logger.warning('CLIENT_JOB_ID: %s', 'get_keys_from_progress_no_lock: ' + job_id, extra=d)
+        logger.warning('CLIENT_JOB_ID: %s', 'get_keys_from_progress_no_lock: ' + str(job_id), extra=d)
         for key in key_list:
             logger.warning('CURRENT_KEY: %s', key, extra=d)
             logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: attempt to get the json using the key',extra=d)
