@@ -42,7 +42,7 @@ def get_work(client_id):
 
     logger.info('Attempting to retrieve work...')
 
-    url = serverurl+"/get_work?user="+str(client_id)
+    url = serverurl+"/get_work?client_id="+str(client_id)
 
     logger.debug('Variable Success: %s', 'get_work: url created successfully for get work', extra=d)
     logger.debug('Returning: %s', 'get_work: the respond from the api call to get_work', extra=d)
