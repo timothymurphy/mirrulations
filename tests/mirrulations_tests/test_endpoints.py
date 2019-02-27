@@ -8,6 +8,13 @@ import json
 from ast import literal_eval
 
 version = 'v1.3'
+
+
+@pytest.fixture
+def redis_server():
+    return RedisManager(fakeredis.FakeStrictRedis())
+
+
 @pytest.fixture
 def mock_req():
     with requests_mock.Mocker() as m:
