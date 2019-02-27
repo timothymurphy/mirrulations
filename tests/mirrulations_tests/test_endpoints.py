@@ -3,7 +3,6 @@ import requests_mock
 import fakeredis
 from mirrulations.endpoints import *
 import mirrulations.endpoints as endpoints
-import mock
 import json
 from ast import literal_eval
 
@@ -66,23 +65,17 @@ def test_non_existent_endpoint(client):
     assert result.status_code == 404
 
 
-@mock.patch('mirrulations.redis_manager.RedisManager.get_work', return_value='{}')
-@mock.patch('mirrulations.endpoints.generate_json', return_value='Okay')
-def test_get_work_success(mock_work, mock_json, client):
+def test_get_work_success(client):
     result = client.get('/get_work', query_string={'client_id': '1'})
     assert result.status_code == 200
 
 
-@mock.patch('mirrulations.redis_manager.RedisManager.get_work')
-@mock.patch('mirrulations.endpoints.generate_json')
-def test_get_work_throws_exception_if_no_client_id(mock_work,mock_json, client):
+def test_get_work_throws_exception_if_no_client_id(client):
     result = client.get('/get_work')
     assert result.status_code == 400
 
 
-@mock.patch('mirrulations.redis_manager.RedisManager.get_work')
-@mock.patch('mirrulations.endpoints.generate_json')
-def test_get_work_wrong_parameter(mock_work,mock_json, client):
+def test_get_work_wrong_parameter(client):
     result = client.get('/get_work', query_string={'clientid': '1'})
     assert result.status_code == 400
 
@@ -99,8 +92,7 @@ def test_generate_json():
     assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version": version})
 
 
-@mock.patch('mirrulations.endpoints.process_docs')
-def test_return_docs_call_success(docs, client):
+def test_return_docs_call_success(client):
     result = client.post("/return_docs", data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
@@ -110,8 +102,7 @@ def test_return_docs_no_parameter(client):
     assert result.status_code == 400
 
 
-@mock.patch('mirrulations.endpoints.process_doc', return_value=True)
-def test_return_doc_call_success(doc,client):
+def test_return_doc_call_success(client):
     result = client.post('/return_doc', data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
