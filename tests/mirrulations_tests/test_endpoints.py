@@ -5,7 +5,10 @@ import fakeredis
 import mirrulations.endpoints as endpoints
 from mirrulations.redis_manager import RedisManager
 import json
+import os
 from ast import literal_eval
+
+PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test_files/filename.txt")
 
 version = 'v1.3'
 
@@ -91,7 +94,7 @@ def test_generate_json():
 
 
 def test_return_docs_call_success(client):
-    result = client.post("/return_docs", data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
+    result = client.post("/return_docs", data={'file':open(PATH, 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
@@ -101,7 +104,7 @@ def test_return_docs_no_parameter(client):
 
 
 def test_return_doc_call_success(client):
-    result = client.post('/return_doc', data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
+    result = client.post('/return_doc', data={'file':open(PATH, 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
@@ -111,8 +114,5 @@ def test_return_doc_no_file_parameter(client):
 
 
 def test_return_doc_no_json_parameter(client):
-    result = client.post('/return_doc', data=dict(file=open('tests/test_files/filename.txt', 'rb')))
+    result = client.post('/return_doc', data=dict(file=open(PATH, 'rb')))
     assert result.status_code == 400
-
-
-

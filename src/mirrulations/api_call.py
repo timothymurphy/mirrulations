@@ -1,10 +1,8 @@
 import requests
-import os
 import logging
+import mirrulations.config as config
 
-home = os.getenv("HOME")
-with open(home + '/.env/regulationskey.txt') as f:
-    key = f.readline().strip()
+key = config.read_value('key')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='api_call.log', format=FORMAT)

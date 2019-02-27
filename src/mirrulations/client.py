@@ -3,21 +3,23 @@ import mirrulations.documents_processor as docs
 import mirrulations.api_call_management as man
 import requests
 import json
-import os
 import time
 import logging
 import shutil
-import mirrulations.config as config
 import tempfile
 from pathlib import Path
+import mirrulations.config as config
 
 # These variables are specific to the current implementation
 version = "v1.3"
-serverurl = "http://" + config.read_value("ip") + ":" + config.read_value("port")
-home = os.getenv("HOME")
-with open(home + '/.env/regulationskey.txt') as f:
-    key = f.readline().strip()
-    client_id = f.readline().strip()
+
+ip = config.read_value('ip')
+port = config.read_value('port')
+
+serverurl = "http://" + ip + ":" + port
+
+key = config.read_value('key')
+client_id = config.read_value('client_id')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='client.log', format=FORMAT)
@@ -97,7 +99,7 @@ def return_docs(json_result, client_id):
     logger.debug('Function Successful: %s', 'return_docs: job_id and urls retrieved successfully', extra=d)
     logger.debug('Calling Function: %s','return_docs: call documents_processor',extra=d)
 
-    json_info = docs.documents_processor(urls,job_id,client_id)
+    json_info = docs.documents_processor(urls, job_id, client_id)
 
     logger.debug('Function Successful: %s', 'return_docs: successful call to documents processor', extra=d)
 
@@ -177,7 +179,7 @@ def return_doc(json_result, client_id):
     r = requests.post(serverurl+"/return_doc",
                       files={'file':('result.zip', fileobj)},
                       data={'json':json.dumps({"job_id" : job_id, "type" : "doc",
-                                               "client_id": client_id, "version" : version })})
+                                               "user": client_id, "version" : version })})
 
     logger.info('Doc file created')
 

@@ -2,7 +2,7 @@ import json
 import mirrulations.docs_filter as dsf
 import os
 
-PATH = 'tests/test_files/'
+PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../tests/test_files/")
 
 
 def generate_json_data(file_name):

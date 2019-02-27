@@ -2,7 +2,7 @@ import os
 from mirrulations_web import dir_search as ds
 
 PATH = os.getenv("HOME")+"/regulations_data/"
-TEMPATH = "tests/test_files/regulations-data/"
+TEMPATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../tests/test_files/regulations-data/")
 
 # CURRENTLY SERVER ONLY TEST
 # def test_search_document():

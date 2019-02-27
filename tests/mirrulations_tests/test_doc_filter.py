@@ -5,7 +5,7 @@ import os
 import mirrulations.doc_filter as df
 
 
-PATH = 'tests/test_files/'
+PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../tests/test_files/")
 
 @pytest.fixture
 def mock_req():

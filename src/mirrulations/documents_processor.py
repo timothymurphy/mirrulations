@@ -1,14 +1,13 @@
 from mirrulations.api_call_management import *
 import json
 import logging
+import mirrulations.config as config
 
 workfiles = []
 version = "v1.3"
-home = os.getenv("HOME")
-with open(home + '/.env/regulationskey.txt') as f:
-    key = f.readline().strip()
-    client_id = f.readline().strip()
 
+key = config.read_value('key')
+client_id = config.read_value('client_id')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='documents_processor.log', format=FORMAT)
