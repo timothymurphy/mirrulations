@@ -47,7 +47,7 @@ def make_json():
     }
 
 
-def make_databse():
+def make_database():
     r = fakeredis.FakeRedis()
     r.flushall()
     test_list = json.dumps(["a", ["b", "c"]])
@@ -81,7 +81,7 @@ def test_get_work_wrong_parameter(client):
 
 
 def test_get_queue_item(client):
-    r = make_databse()
+    r = make_database()
     list = literal_eval(r.lpop("queue").decode("utf-8"))
     assert list == ['a', ['b', 'c']]
 
