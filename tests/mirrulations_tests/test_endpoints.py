@@ -11,7 +11,7 @@ version = 'v1.3'
 
 @pytest.fixture
 def redis_server():
-    return RedisManager(fakeredis.FakeStrictRedis())
+    return RedisManager(fakeredis.FakeRedis())
 
 
 @pytest.fixture
