@@ -9,6 +9,8 @@ from ast import literal_eval
 
 version = 'v1.3'
 
+endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
+
 
 @pytest.fixture
 def mock_req():
@@ -62,19 +64,16 @@ def test_non_existent_endpoint(client):
 
 
 def test_get_work_success(client):
-    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.get('/get_work', query_string={'client_id': '1'})
     assert result.status_code == 200
 
 
 def test_get_work_throws_exception_if_no_client_id(client):
-    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.get('/get_work')
     assert result.status_code == 400
 
 
 def test_get_work_wrong_parameter(client):
-    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.get('/get_work', query_string={'clientid': '1'})
     assert result.status_code == 400
 
@@ -92,31 +91,26 @@ def test_generate_json():
 
 
 def test_return_docs_call_success(client):
-    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.post("/return_docs", data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
 def test_return_docs_no_parameter(client):
-    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.post('/return_docs')
     assert result.status_code == 400
 
 
 def test_return_doc_call_success(client):
-    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.post('/return_doc', data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
 def test_return_doc_no_file_parameter(client):
-    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.post('/return_doc', data=dict(json_info=json.dumps(make_json())))
     assert result.status_code == 400
 
 
 def test_return_doc_no_json_parameter(client):
-    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.post('/return_doc', data=dict(file=open('tests/test_files/filename.txt', 'rb')))
     assert result.status_code == 400
 
