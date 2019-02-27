@@ -1,30 +1,15 @@
-import pytest
 import json
 import mock
 import mirrulations.docs_filter as dsf
-import fakeredis
-import redis
-from mirrulations.redis_manager import RedisManager
-from ast import literal_eval
 import os
 
 PATH = 'tests/test_files/'
-
-r = RedisManager(redis.Redis())
 
 
 def generate_json_data(file_name):
     file = open(file_name, 'r')
     test_data = json.load(file)
     return test_data
-
-
-@mock.patch('mirrulations.redis_manager.reset_lock')
-@mock.patch('mirrulations.redis_manager.set_lock')
-def make_database(reset, lock):
-    r = RedisManager(fakeredis.FakeRedis())
-    r.delete_all()
-    return r
 
 
 # Empty Workfile Tests
