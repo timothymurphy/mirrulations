@@ -357,7 +357,7 @@ def process_doc(redis_server, json_data, compressed_file):
     :param compressed_file: compressed file of document data
     :return:
     """
-    logger.debug('FILTER JOB_ID: %s', 'process_doc: ' + json_data["job_id"], extra=d)
+    logger.debug('FILTER JOB_ID: %s', 'process_doc: ' + str(json_data["job_id"]), extra=d)
     if redis_server.does_job_exist_in_progress(json_data["job_id"]) is False:
         logger.debug('Variable Failure: %s',
                        'process_doc: job_id does not exist in progress queue', extra=d)
