@@ -1,22 +1,17 @@
 import random
 import json
-import redis
 import string
 import logging
-from mirrulations.redis_manager import RedisManager
 import os
 import zipfile
 import tempfile
 import shutil
-import re
 import mirrulations.doc_filter as df
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='docs_filter.log', format=FORMAT)
 d = { 'clientip': '192.168.0.1', 'user': 'FILTERS'}
 logger = logging.getLogger('tcpserver')
-
-r = RedisManager(redis.Redis())
 
 """
 This program does the validation of data from the docs jobs and then creates doc jobs using that data
@@ -134,7 +129,7 @@ def remove_empty_lists(json_data):
 
 
 # Saving and Adding Functions
-def add_document_job(json_data):
+def add_document_job(redis_server, json_data):
     """
     Creates a job for each work file and then adds each job to the "queue"
     :param json_data: the json data containing all the work files
@@ -155,7 +150,7 @@ def add_document_job(json_data):
 
         logger.debug('Calling Function: % s',
                        'add_document_job: add_document_job calling add_to_queue', extra=d)
-        r.add_to_queue(job)
+        redis_server.add_to_queue(job)
         logger.debug('Function Successful: % s',
                        'add_document_job: successfully add_document_job called add_to_queue', extra=d)
         logger.warning('Document job successfully added to queue')
@@ -226,7 +221,7 @@ def save_client_log(client_id, compressed_file):
 
 
 # Final Function
-def process_docs(json_data, compressed_file):
+def process_docs(redis_server, json_data, compressed_file):
     """
     Main documents function, called by the server to compile list of document jobs and add them to the "queue" queue
     :param json_data: the json data for the jobs
@@ -237,7 +232,7 @@ def process_docs(json_data, compressed_file):
                    'process_docs: process_docs successfully called from return_docs', extra=d)
     logger.info('Processing Jobs...')
 
-    if r.does_job_exist_in_progress(json_data["job_id"]) is False:
+    if redis_server.does_job_exist_in_progress(json_data["job_id"]) is False:
 
         logger.debug('Variable Failure: %s',
                      'process_docs: job_id does not exist in progress queue', extra=d)
@@ -270,13 +265,13 @@ def process_docs(json_data, compressed_file):
 
             logger.debug('Calling Function: % s',
                          'process_docs: process_docs calling get_keys_from_progress', extra=d)
-            key = r.get_keys_from_progress(json_data["job_id"])
+            key = redis_server.get_keys_from_progress(json_data["job_id"])
             logger.debug('Function Successful: % s',
                          'process_docs: process_docs successfully called get_keys_from_progress', extra=d)
 
             logger.debug('Calling Function: % s',
                          'process_docs: process_docs calling remove_job_from_progress', extra=d)
-            r.remove_job_from_progress(key)
+            redis_server.remove_job_from_progress(key)
             logger.debug('Function Successful: % s',
                          'process_docs: process_docs successfully called remove_job_from_progress', extra=d)
 
@@ -300,7 +295,7 @@ def process_docs(json_data, compressed_file):
 
             logger.debug('Calling Function: % s',
                          'process_docs: process_docs calling renew_job', extra=d)
-            r.renew_job(json_data["job_id"])
+            redis_server.renew_job(json_data["job_id"])
             logger.debug('Function Successful: % s',
                            'process_docs: process_docs successfully called renew_job', extra=d)
             logger.info('Jobs successfully processed')

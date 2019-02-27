@@ -1,15 +1,16 @@
-#!/usr/bin/env python
-import os, os.path, tempfile, json, shutil, re, zipfile
-import redis
+import os
+import os.path
+import tempfile
+import json
+import shutil
+import re
+import zipfile
 import logging
-from mirrulations.redis_manager import RedisManager
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='doc_filter.log', format=FORMAT)
 d = { 'clientip': '192.168.0.1', 'user': 'FILTERS'}
 logger = logging.getLogger('tcpserver')
-
-r = RedisManager(redis.Redis())
 
 """
 This program does the validation of data from the doc jobs and then saves that data locally
@@ -349,7 +350,7 @@ def get_file_list(compressed_file, PATHstr, client_id):
 
 
 # Final Function
-def process_doc(json_data, compressed_file):
+def process_doc(redis_server, json_data, compressed_file):
     """
     Main document function, called by the server to check and save document files returned from the client
     :param json_data: json data of the job
@@ -357,7 +358,7 @@ def process_doc(json_data, compressed_file):
     :return:
     """
     logger.debug('FILTER JOB_ID: %s', 'process_doc: ' + json_data["job_id"], extra=d)
-    if r.does_job_exist_in_progress(json_data["job_id"]) is False:
+    if redis_server.does_job_exist_in_progress(json_data["job_id"]) is False:
         logger.debug('Variable Failure: %s',
                        'process_doc: job_id does not exist in progress queue', extra=d)
 
@@ -374,7 +375,7 @@ def process_doc(json_data, compressed_file):
             if ifRenew is True:
                 logger.debug('Calling Function: % s',
                              'process_doc: process_doc calling renew_job', extra=d)
-                r.renew_job(json_data)
+                redis_server.renew_job(json_data)
                 logger.debug('Function Successful: % s',
                              'process_doc: process_doc successfully called renew_job', extra=d)
 
@@ -418,14 +419,14 @@ def check_single_document(file, json_data, path):
     return ifDocumentsChecks
 
 
-def remove_job(json_data):
+def remove_job(redis_server, json_data):
     """
     Removes a specified job from the progress queue
     :param json_data:
     :return:
     """
-    key = r.get_keys_from_progress(json_data["job_id"])
-    r.remove_job_from_progress(key)
+    key = redis_server.get_keys_from_progress(json_data["job_id"])
+    redis_server.remove_job_from_progress(key)
 
 
 def save_all_files_locally(file_list, path):
