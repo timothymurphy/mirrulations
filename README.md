@@ -42,15 +42,15 @@ To download the actual project, you will need to go to our [GitHub page](https:/
 
 From your terminal, in the directory, set up a virtual environment by
 
-		python3 -m venv .env
-		source .env/bin/activate
+	python3 -m venv .env
+	source .env/bin/activate
 
 Next, install all the requirements by
 
-		pip install -r requirements.txt
-		pip install -e .
+	pip install -r requirements.txt
+	pip install -e .
 
-After this, you can run `python src/mirrulations/APIKeySetup.py` to connect to the server.
+After this, you can run `python src/mirrulations/config_setup.py` to connect to the server.
 In the GUI, you can use the IP 10.76.100.34 and port 8080.
 The API key itself is the one you received earlier.
 Lastly, run `python src/client.py` to get it working.

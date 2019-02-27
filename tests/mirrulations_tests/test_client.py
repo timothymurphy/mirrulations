@@ -5,14 +5,14 @@ from mirrulations.api_call import add_api_key
 from mirrulations.api_call_management import CallFailException
 import mirrulations.config as config
 
+ip = config.read_value('ip')
+port = config.read_value('port')
+key = config.read_value('key')
+client_id = config.read_value('client_id')
 
-serverurl = "http://" + config.read_value("ip") + ":" + config.read_value("port")
+serverurl = "http://" + ip + ":" + port
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
 
-home = os.getenv("HOME")
-with open(home + '/.env/regulationskey.txt') as f:
-    key = f.readline().strip()
-    client_id = f.readline().strip()
 
 @pytest.fixture
 def mock_req():

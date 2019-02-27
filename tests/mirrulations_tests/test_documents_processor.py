@@ -1,16 +1,12 @@
-from json import JSONDecodeError
-
 from mirrulations.documents_processor import *
-import tempfile
 import pytest
 import requests_mock
 
 from mirrulations.api_call import *
+import mirrulations.config as config
 
-home = os.getenv("HOME")
-with open(home + '/.env/regulationskey.txt') as f:
-    key = f.readline().strip()
-    client_id = f.readline().strip()
+key = config.read_value('key')
+client_id = config.read_value('client_id')
 
 base_url = 'https://api.data.gov:443/regulations/v3/documents.json?'
 base_url2 = 'https://www.website.com/regulations/v3/documents.json?'
@@ -26,7 +22,7 @@ def mock_req():
 def test_documents_processor_basic():
     urls = []
     docs = documents_processor(urls, 'JobID', client_id)
-    assert docs == {'client_id': client_id, "type":"docs",
+    assert docs == {'client_id': client_id, "type": "docs",
                     'data': [],
                     'job_id': 'JobID',
                     'version': version}
@@ -89,7 +85,7 @@ def test_documents_processor(mock_req):
                                                   [{'id': 'CMS-2005-0001-0002', 'count': 1000}],
                                                   [{'id': 'CMS-2005-0001-0003', 'count': 89}, {'id': 'CMS-2005-0001-0004', 'count': 667}]
                                                   ],
-                                                    'version': version, 'client_id':str(client_id)})
+                                                    'version': version, 'client_id': str(client_id)})
 
 
 def test_valid_results(mock_req):
