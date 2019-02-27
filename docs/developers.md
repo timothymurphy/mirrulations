@@ -13,7 +13,6 @@ We prefer to do our development in PyCharm CE.
 ### Prerequisites
 
 1. Python 3.7 or greater
-2. Redis-server
 
 ### Setup
 
@@ -42,7 +41,6 @@ We prefer to do our development in PyCharm CE.
 
 5. Run the tests:
 
-		(in another terminal window) redis-server
 		pytest
 
 6. Open PyCharm CE.
