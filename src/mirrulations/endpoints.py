@@ -15,9 +15,11 @@ logger = logging.getLogger('tcpserver')
 
 app = Flask(__name__)
 
-redis_server = RedisManager(redis.Redis())
-
 version = 'v1.3'
+
+
+def redis_server():
+    return RedisManager(redis.Redis())
 
 
 @app.route('/')
@@ -52,7 +54,7 @@ def get_work():
         logger.error('Error - no client ID')
         return 'Bad Parameter', 400
     logger.debug('Assign Variable: %s', 'get_work: attempting to get json_info from get_work - Calling get_work', extra=d)
-    json_info = redis_server.get_work()
+    json_info = redis_server().get_work()
     logger.debug('Variable Success: %s', 'get_work: successfully retrieved the json_info', extra=d)
     logger.debug('Returning: %s', 'get_work: returning json_info to client from get_work', extra=d)
     logger.info('Work retrieved')
@@ -85,7 +87,7 @@ def return_docs():
         return 'Bad Parameter', 400
     logger.debug('Calling Function: %s', 'return_docs: return_docs calling process_docs', extra=d)
     files = io.BytesIO(files)
-    process_docs(redis_server, json.loads(json_info), files)
+    process_docs(redis_server(), json.loads(json_info), files)
     logger.debug('Function Successful: %s', 'return_docs: process_docs successfully called from return_docs', extra=d)
     logger.debug('Returning: %s', 'return_docs: returning success from return_docs', extra=d)
     logger.info('Docs returned to server')
@@ -115,7 +117,7 @@ def return_doc():
     files = io.BytesIO(files)
     logger.debug('Exception: %s', 'return_doc: BadParameterException for return_doc', extra=d)
     logger.debug('Calling Function: %s', 'return_doc: call process_docs with the json and files posted to return_doc endpoint', extra=d)
-    process_doc(redis_server, json.loads(json_info), files)
+    process_doc(redis_server(), json.loads(json_info), files)
     logger.debug('Function Successful: %s', 'return_doc: success from return_doc', extra=d)
     logger.debug('Returning: %s', 'return_doc: returning success from return_doc', extra=d)
     logger.info('Doc returned to server')
