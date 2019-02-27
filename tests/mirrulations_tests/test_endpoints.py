@@ -1,6 +1,7 @@
 import pytest
 import requests_mock
 import fakeredis
+
 from mirrulations.endpoints import *
 import mirrulations.endpoints as endpoints
 import json
@@ -47,7 +48,11 @@ def make_database():
     r.flushall()
     test_list = json.dumps(["a", ["b", "c"]])
     r.lpush("queue", test_list)
-    return RedisManager(r)
+    return r
+
+
+def fakeredis_server():
+    return RedisManager(fakeredis.FakeRedis())
 
 
 def test_default_path(client):
@@ -60,16 +65,19 @@ def test_non_existent_endpoint(client):
     assert result.status_code == 404
 
 
+@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_get_work_success(client):
     result = client.get('/get_work', query_string={'client_id': '1'})
     assert result.status_code == 200
 
 
+@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_get_work_throws_exception_if_no_client_id(client):
     result = client.get('/get_work')
     assert result.status_code == 400
 
 
+@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_get_work_wrong_parameter(client):
     result = client.get('/get_work', query_string={'clientid': '1'})
     assert result.status_code == 400
@@ -87,26 +95,31 @@ def test_generate_json():
     assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version": version})
 
 
+@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_return_docs_call_success(client):
     result = client.post("/return_docs", data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
+@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_return_docs_no_parameter(client):
     result = client.post('/return_docs')
     assert result.status_code == 400
 
 
+@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_return_doc_call_success(client):
     result = client.post('/return_doc', data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
+@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_return_doc_no_file_parameter(client):
     result = client.post('/return_doc', data=dict(json_info=json.dumps(make_json())))
     assert result.status_code == 400
 
 
+@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_return_doc_no_json_parameter(client):
     result = client.post('/return_doc', data=dict(file=open('tests/test_files/filename.txt', 'rb')))
     assert result.status_code == 400
