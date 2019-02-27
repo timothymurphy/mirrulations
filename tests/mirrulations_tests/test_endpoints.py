@@ -10,11 +10,6 @@ version = 'v1.3'
 
 
 @pytest.fixture
-def redis_server():
-    return RedisManager(fakeredis.FakeRedis())
-
-
-@pytest.fixture
 def mock_req():
     with requests_mock.Mocker() as m:
         yield m
@@ -52,7 +47,7 @@ def make_database():
     r.flushall()
     test_list = json.dumps(["a", ["b", "c"]])
     r.lpush("queue", test_list)
-    return r
+    return RedisManager(r)
 
 
 def test_default_path(client):
