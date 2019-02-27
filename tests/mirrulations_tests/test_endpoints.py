@@ -1,9 +1,9 @@
 import pytest
 import requests_mock
+import mock
 import fakeredis
-
-from mirrulations.endpoints import *
 import mirrulations.endpoints as endpoints
+from mirrulations.redis_manager import RedisManager
 import json
 from ast import literal_eval
 
@@ -51,10 +51,6 @@ def make_database():
     return r
 
 
-def fakeredis_server():
-    return RedisManager(fakeredis.FakeRedis())
-
-
 def test_default_path(client):
     result = client.get('/')
     assert result.status_code == 200
@@ -65,20 +61,20 @@ def test_non_existent_endpoint(client):
     assert result.status_code == 404
 
 
-@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_get_work_success(client):
+    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.get('/get_work', query_string={'client_id': '1'})
     assert result.status_code == 200
 
 
-@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_get_work_throws_exception_if_no_client_id(client):
+    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.get('/get_work')
     assert result.status_code == 400
 
 
-@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_get_work_wrong_parameter(client):
+    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.get('/get_work', query_string={'clientid': '1'})
     assert result.status_code == 400
 
@@ -91,36 +87,36 @@ def test_get_queue_item(client):
 
 def test_generate_json():
     list = ["a", "b", ["a", "b"]]
-    json1 = generate_json(list)
+    json1 = endpoints.generate_json(list)
     assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version": version})
 
 
-@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_return_docs_call_success(client):
+    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.post("/return_docs", data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
-@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_return_docs_no_parameter(client):
+    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.post('/return_docs')
     assert result.status_code == 400
 
 
-@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_return_doc_call_success(client):
+    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.post('/return_doc', data={'file':open('tests/test_files/filename.txt', 'rb'), 'json':json.dumps(make_json())})
     assert result.status_code == 200
 
 
-@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_return_doc_no_file_parameter(client):
+    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.post('/return_doc', data=dict(json_info=json.dumps(make_json())))
     assert result.status_code == 400
 
 
-@requests_mock.mock.patch('mirrulations.endpoints.redis_server', return_value=fakeredis_server())
 def test_return_doc_no_json_parameter(client):
+    endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
     result = client.post('/return_doc', data=dict(file=open('tests/test_files/filename.txt', 'rb')))
     assert result.status_code == 400
 

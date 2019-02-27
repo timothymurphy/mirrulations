@@ -1,5 +1,4 @@
 import json
-import mock
 import mirrulations.docs_filter as dsf
 import os
 
@@ -57,44 +56,38 @@ def test_file_doesnt_exists_local():
 
 
 # Validation Tests
-@mock.patch("mirrulations.docs_filter.RedisManager")
-def test_file_checker_500_lines(redis):
+def test_file_checker_500_lines():
     test_data = generate_json_data(PATH + '500_lines.json')
     assert dsf.workfile_length_checker(test_data) is True
     assert test_data["type"] == "docs"
 
 
-@mock.patch("mirrulations.docs_filter.RedisManager")
-def test_file_checker_1000_lines(redis):
+def test_file_checker_1000_lines():
     test_data = generate_json_data(PATH + '1000_lines.json')
     assert dsf.workfile_length_checker(test_data) is True
     assert test_data["type"] == "docs"
 
 
-@mock.patch("mirrulations.docs_filter.RedisManager")
-def test_file_checker_2_workfiles(redis):
+def test_file_checker_2_workfiles():
     test_data = generate_json_data(PATH + '2_workfiles.json')
     assert dsf.workfile_length_checker(test_data) is True
     assert test_data["type"] == "docs"
 
 
-@mock.patch("mirrulations.docs_filter.RedisManager")
-def test_file_checker_1001_lines(redis):
+def test_file_checker_1001_lines():
     test_data = generate_json_data(PATH + '1001_lines.json')
     assert dsf.workfile_length_checker(test_data) is False
     assert test_data["type"] == "docs"
 
 
-@mock.patch("mirrulations.docs_filter.RedisManager")
-def test_file_checker_too_many_attachments(redis):
+def test_file_checker_too_many_attachments():
     test_data = generate_json_data(PATH + 'too_many_attachments.json')
     assert dsf.workfile_length_checker(test_data) is False
     assert test_data["type"] == "docs"
 
 
 # Assimilation Tests
-@mock.patch("mirrulations.docs_filter.RedisManager")
-def test_create_job(redis):
+def test_create_job():
     test_data = generate_json_data(PATH + '500_lines.json')
     job_id = "1"
     job = json.loads(dsf.create_document_job(test_data["data"], job_id))
