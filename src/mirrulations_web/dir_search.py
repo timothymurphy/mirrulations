@@ -1,6 +1,6 @@
 import logging
 import os.path
-import mirrulations.doc_filter as df
+import mirrulations_core.documents_core as dc
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='doc_filter.log', format=FORMAT)
@@ -17,7 +17,7 @@ def search_for_document(document_id):
     :param document_id:
     :return: Return the full path if the document exists, else return an empty string
     """
-    orgs, dock_id, doc_id = df.get_doc_attributes(document_id)
+    orgs, dock_id, doc_id = dc.get_doc_attributes(document_id)
 
     full_path = PATH + orgs + "/" + dock_id + "/" + doc_id
     doc_json = "doc." + doc_id + ".json"
@@ -36,7 +36,7 @@ def search_for_document_test_directory(document_id, dir):
     :param dir: The test directory being used
     :return: Return the full path if the document exists, else return an empty string
     """
-    orgs, dock_id, doc_id = df.get_doc_attributes(document_id)
+    orgs, dock_id, doc_id = dc.get_doc_attributes(document_id)
 
     full_path = dir + orgs + "/" + dock_id + "/" + doc_id
     doc_json = "doc." + doc_id + ".json"

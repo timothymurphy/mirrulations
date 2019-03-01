@@ -6,7 +6,7 @@ import os
 import zipfile
 import tempfile
 import shutil
-import mirrulations.doc_filter as df
+import mirrulations_core.documents_core as dc
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='docs_filter.log', format=FORMAT)
@@ -89,7 +89,7 @@ def check_document_exists(json_data):
         count = 0
         for line in workfile:
             document = line["id"]
-            alpha_doc_org,docket_id,document_id = df.get_doc_attributes("doc." + document + ".json")
+            alpha_doc_org,docket_id,document_id = dc.get_doc_attributes("doc." + document + ".json")
             full_path = path + alpha_doc_org + "/" + docket_id + "/" + document_id + "/" + "doc." + document + ".json"
 
             count, local_verdict = local_files_check(full_path, count)
