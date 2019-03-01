@@ -1,4 +1,9 @@
-import mirrulations_core.dummy_config_setup as dummy_config_setup
+import random
+import string
+import json
+import os
+
+CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json')
 
 
 def pytest_addoption(parser):
@@ -6,15 +11,18 @@ def pytest_addoption(parser):
 
 
 def pytest_sessionstart(session):
-    print('HERE 2')
-    if not dummy_config_setup.if_config_exists():
+    if not os.path.exists(CONFIG_PATH):
+        with open(CONFIG_PATH, 'wt') as file:
+            file.write(json.dumps({
+                'ip': '0.0.0.0',
+                'port': '8080',
+                'key': ''.join(random.choices(string.ascii_letters + string.digits, k=40)),
+                'client_id': ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+            }, indent=4))
+            file.close()
         setattr(session.config, '_makeconfig', True)
-        dummy_config_setup.setup_dummy_config_for_tests()
-        print('HERE 2.5')
 
 
 def pytest_sessionfinish(session, exitstatus):
-    print('HERE 3')
     if getattr(session.config, '_makeconfig', False):
-        dummy_config_setup.remove_config_if_dummy()
-        print('HERE 3.5')
+        os.remove(CONFIG_PATH)
