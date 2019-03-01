@@ -10,7 +10,7 @@ logger = logging.getLogger('tcpserver')
 
 def search_for_document_in_directory(document_id, directory_path):
     """
-    Looks in a directory structure to see if a given document id exists
+    Called by the server to check to see if a document exists in the directory structure
     :param document_id: the document id being searched
     :param directory_path: The directory path being searched in
     :return: Return the full path if the document exists, else return an empty string
