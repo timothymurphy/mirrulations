@@ -3,7 +3,7 @@ import pytest
 import requests_mock
 
 from mirrulations.api_call import *
-import mirrulations.config as config
+import mirrulations_core.config as config
 
 key = config.read_value('key')
 client_id = config.read_value('client_id')
