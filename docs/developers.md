@@ -32,15 +32,8 @@ We prefer to do our development in PyCharm CE.
 		pip install -r requirements.txt
 		pip install -e .
 
-4. Run the preliminary files:
-
-		python src/mirrulations/config_setup.py
-		- IP:  0.0.0.0
-		- Port:  8080
-		- API Key:  Get from https://regulationsgov.github.io/developers/
-
-5. Run the tests:
+4. Run the tests:
 
 		pytest
 
-6. Open PyCharm CE.
+5. Open PyCharm CE.
