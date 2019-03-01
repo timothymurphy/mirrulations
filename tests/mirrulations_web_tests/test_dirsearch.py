@@ -32,3 +32,8 @@ def test_search_document_in_directory_bad_document_special_case():
 def test_search_document_in_directory_bad_document_orgs_out_of_order():
     full_path = ds.search_for_document_in_directory("USC-RULES-CV-2018-0003-1130", PATH)
     assert full_path == ""
+
+
+def test_search_document_in_directory_default_parameter():
+    full_path = ds.search_for_document_in_directory("USC-RULES-CV-2018-0003-1130")
+    assert full_path == ""
