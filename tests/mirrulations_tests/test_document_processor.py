@@ -6,7 +6,7 @@ import os
 
 from mirrulations.api_call import add_api_key
 
-import mirrulations.config as config
+import mirrulations_core.config as config
 
 key = config.read_value('key')
 

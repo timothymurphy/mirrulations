@@ -2,6 +2,7 @@ import requests
 import random
 import string
 import json
+import os
 from appJar import gui
 
 ''' 
@@ -26,7 +27,7 @@ def invalid_key_error():
 
 
 def successful_login(ip, port, key, client_id):
-    with open("config.json", "wt") as file:
+    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../config.json"), "wt") as file:
         file.write(json.dumps({
             "ip": ip,
             "port": port,

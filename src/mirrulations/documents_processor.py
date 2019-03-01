@@ -1,7 +1,7 @@
 from mirrulations.api_call_management import *
 import json
 import logging
-import mirrulations.config as config
+import mirrulations_core.config as config
 
 workfiles = []
 version = "v1.3"
