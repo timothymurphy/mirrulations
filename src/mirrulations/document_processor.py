@@ -1,6 +1,6 @@
 import tempfile
 from mirrulations.documents_processor import *
-import mirrulations.config as config
+import mirrulations_core.config as config
 
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
 

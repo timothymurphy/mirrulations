@@ -3,7 +3,7 @@ import pytest
 import requests_mock
 from mirrulations.api_call import add_api_key
 from mirrulations.api_call_management import CallFailException
-import mirrulations.config as config
+import mirrulations_core.config as config
 
 ip = config.read_value('ip')
 port = config.read_value('port')

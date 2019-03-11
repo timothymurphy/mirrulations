@@ -1,6 +1,6 @@
 import requests
 import logging
-import mirrulations.config as config
+import mirrulations_core.config as config
 
 key = config.read_value('key')
 
