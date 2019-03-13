@@ -36,6 +36,8 @@ If you are interested in becoming a developer, see `docs/developers.md`.
 
 To get started, you'll need to have the latest version of Python3 so you can actually run the software, which you can download [here](https://docs.python-guide.org/starting/install3/osx/) for Mac OS and [here](https://docs.python-guide.org/starting/install3/win/) for Windows.
 
+Outside of development work, an instance of redis will need to be running. This can be installed through homebrew, or download and build it from [redis](https://redis.io/).
+
 You will also need a valid API key from Regulations.gov to participate. To apply for a key, you must simply [contact the Regulations Help Desk](regulations@erulemakinghelpdesk.com) and provide your name, email address, organization, and intended use of the API. If you are not with any organizations, just say so in your message. They will email you with a key once they've verified you and activated the key.
 
 To download the actual project, you will need to go to our [GitHub page](https://github.com/MoravianCollege/mirrulations) and [clone](https://help.github.com/articles/cloning-a-repository/) the project to your computer.
@@ -55,7 +57,13 @@ If you do not have a `config.json` previously made, you will be prompted to make
 (You can also force an overwrite of `config.json` with the tag `--config` at the end of your command.)
 A GUI will show up, asking for the API key from earlier as well as, if ran as a client, a server IP and a port.
 In the GUI, you can use the IP 10.76.100.34 and port 8080.
+<<<<<<< HEAD
 (If you can't use a GUI or wish to add the information without one, add the tag `--terminal` to the end of your command and your terminal will prompt you.)
+=======
+The API key itself is the one you received earlier.
+In a separate terminal window run `redis-server`.
+Lastly, run `python src/client.py` to get it working.
+>>>>>>> bb8f924fed66b76ba43baadd61ed79f337a1c022
 
 ### Disclaimers
 --------
