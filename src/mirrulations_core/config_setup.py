@@ -2,7 +2,6 @@ import requests
 import random
 import string
 import json
-import os
 from appJar import gui
 
 connection_error_title = 'Unable to connect!'
@@ -19,32 +18,32 @@ successful_login_title = 'Success!'
 successful_login_description = 'You are successfully logged in!'
 
 
-def gui_client_setup():
-
-    def connection_error():
-        app.errorBox(connection_error_title, connection_error_description)
-        app.stop()
-        exit()
-
-    def invalid_key_error():
-        app.errorBox(invalid_key_error_title, invalid_key_error_description)
-        app.stop()
-        exit()
-
-    def successful_login(ip, port, key, client_id):
-        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json'), 'wt') as file:
-            file.write(json.dumps({
-                'ip': ip,
-                'port': port,
-                'key': key,
-                'client_id': client_id
-            }, indent=4))
-            file.close()
-
-        app.infoBox(successful_login_title, successful_login_description)
-        app.stop()
+def gui_client_setup(config_path):
 
     def press():
+
+        def connection_error():
+            app.errorBox(connection_error_title, connection_error_description)
+            app.stop()
+            exit()
+
+        def invalid_key_error():
+            app.errorBox(invalid_key_error_title, invalid_key_error_description)
+            app.stop()
+            exit()
+
+        def successful_login(ip, port, key, client_id):
+            with open(config_path, 'wt') as file:
+                file.write(json.dumps({
+                    'ip': ip,
+                    'port': port,
+                    'key': key,
+                    'client_id': client_id
+                }, indent=4))
+                file.close()
+
+            app.infoBox(successful_login_title, successful_login_description)
+            app.stop()
 
         ip = app.getEntry('IP1') + '.' + app.getEntry('IP2') + '.' + app.getEntry('IP3') + '.' + app.getEntry('IP4')
         port = app.getEntry('Port')
@@ -107,30 +106,30 @@ def gui_client_setup():
         app.addButton('Cancel', app.stop, column=5, row=2, colspan=3)
 
 
-def gui_server_setup():
-
-    def connection_error():
-        app.errorBox(connection_error_title, connection_error_description)
-        app.stop()
-        exit()
-
-    def invalid_key_error():
-        app.errorBox(invalid_key_error_title, invalid_key_error_description)
-        app.stop()
-        exit()
-
-    def successful_login(key, client_id):
-        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json'), 'wt') as file:
-            file.write(json.dumps({
-                'key': key,
-                'client_id': client_id
-            }, indent=4))
-            file.close()
-
-        app.infoBox(successful_login_title, successful_login_description)
-        app.stop()
+def gui_server_setup(config_path):
 
     def press():
+
+        def connection_error():
+            app.errorBox(connection_error_title, connection_error_description)
+            app.stop()
+            exit()
+
+        def invalid_key_error():
+            app.errorBox(invalid_key_error_title, invalid_key_error_description)
+            app.stop()
+            exit()
+
+        def successful_login():
+            with open(config_path, 'wt') as file:
+                file.write(json.dumps({
+                    'key': key,
+                    'client_id': client_id
+                }, indent=4))
+                file.close()
+
+            app.infoBox(successful_login_title, successful_login_description)
+            app.stop()
 
         key = app.getEntry('API Key')
         client_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
@@ -145,7 +144,7 @@ def gui_server_setup():
             elif r.status_code > 299 and r.status_code != 429:
                 connection_error()
             else:
-                successful_login(key, client_id)
+                successful_login()
 
     with gui('Mirrulations Login') as app:
 
@@ -160,7 +159,7 @@ def gui_server_setup():
         app.addButton('Cancel', app.stop, column=5, row=1, colspan=3)
 
 
-def terminal_client_setup():
+def terminal_client_setup(config_path):
 
     def connection_error():
         print(connection_error_title + '\n' + connection_error_description)
@@ -170,8 +169,8 @@ def terminal_client_setup():
         print(invalid_key_error_title + '\n' + invalid_key_error_description)
         exit()
 
-    def successful_login(ip, port, key, client_id):
-        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json'), 'wt') as file:
+    def successful_login():
+        with open(config_path, 'wt') as file:
             file.write(json.dumps({
                 'ip': ip,
                 'port': port,
@@ -197,10 +196,10 @@ def terminal_client_setup():
         elif r.status_code > 299 and r.status_code != 429:
             connection_error()
         else:
-            successful_login(ip, port, key, client_id)
+            successful_login()
 
 
-def terminal_server_setup():
+def terminal_server_setup(config_path):
 
     def connection_error():
         print(connection_error_title + '\n' + connection_error_description)
@@ -210,8 +209,8 @@ def terminal_server_setup():
         print(invalid_key_error_title + '\n' + invalid_key_error_description)
         exit()
 
-    def successful_login(key, client_id):
-        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json'), 'wt') as file:
+    def successful_login():
+        with open(config_path, 'wt') as file:
             file.write(json.dumps({
                 'key': key,
                 'client_id': client_id
@@ -233,4 +232,4 @@ def terminal_server_setup():
         elif r.status_code > 299 and r.status_code != 429:
             connection_error()
         else:
-            successful_login(key, client_id)
+            successful_login()
