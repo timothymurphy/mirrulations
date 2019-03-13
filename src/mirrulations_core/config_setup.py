@@ -233,3 +233,8 @@ def terminal_server_setup(config_path):
             connection_error()
         else:
             successful_login()
+
+
+if __name__ == '__main__':
+    import os
+    gui_client_setup(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json'))
