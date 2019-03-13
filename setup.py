@@ -19,8 +19,8 @@ setup(
                       'python-redis-lock==3.3.1',
                       'requests==2.21.0',
                       'requests-mock==1.5.2'],
-    scripts=['src/mirrulations_core/gui_setup.py',
-             'src/mirrulations_core/terminal_setup.py'],
+    scripts=['src/mirrulations_core/config_gui_setup.py',
+             'src/mirrulations_core/config_terminal_setup.py'],
     packages=find_packages('src'),
     package_dir={'': 'src'}
 )
