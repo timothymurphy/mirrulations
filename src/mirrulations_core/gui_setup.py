@@ -13,31 +13,31 @@ from appJar import gui
 
 
 def connection_error():
-    app.errorBox("Unable to connect!",
-                 "We weren't able to connect to regulations.gov.\n"
-                 "Please try again later.")
+    app.errorBox('Unable to connect!',
+                 'We weren\'t able to connect to regulations.gov.\n'
+                 'Please try again later.')
 
 
 def invalid_key_error():
-    app.errorBox("Invalid API key!",
-                 "Your API key is invalid.\n"
-                 "Please visit\n"
-                 "https://regulationsgov.github.io/developers/\n"
-                 "for an API key.")
+    app.errorBox('Invalid API key!',
+                 'Your API key is invalid.\n'
+                 'Please visit\n'
+                 'https://regulationsgov.github.io/developers/\n'
+                 'for an API key.')
 
 
 def successful_login(ip, port, key, client_id):
-    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../config.json"), "wt") as file:
+    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json'), 'wt') as file:
         file.write(json.dumps({
-            "ip": ip,
-            "port": port,
-            "key": key,
-            "client_id": client_id
+            'ip': ip,
+            'port': port,
+            'key': key,
+            'client_id': client_id
         }, indent=4))
         file.close()
 
-    app.errorBox("Success!",
-                 "You are successfully logged in!")
+    app.errorBox('Success!',
+                 'You are successfully logged in!')
     app.stop()
 
 
@@ -49,7 +49,7 @@ def press():
     client_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
 
     try:
-        r = requests.get("https://api.data.gov/regulations/v3/documents.json?api_key=" + key)
+        r = requests.get('https://api.data.gov/regulations/v3/documents.json?api_key=' + key)
     except requests.ConnectionError:
         connection_error()
     else:
@@ -64,7 +64,7 @@ def press():
 with gui('Mirrulations Login') as app:
 
     app.setSize('750x100')
-    app.setFont(size=20, family="Gill Sans")
+    app.setFont(size=20, family='Gill Sans')
     app.resizable = False
 
     app.addLabel('IPv4 Address', text='Server IPv4 Address:', column=0, row=0)
