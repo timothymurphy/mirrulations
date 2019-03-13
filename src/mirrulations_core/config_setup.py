@@ -32,7 +32,7 @@ def gui_client_setup(config_path):
             app.stop()
             exit()
 
-        def successful_login(ip, port, key, client_id):
+        def successful_login():
             with open(config_path, 'wt') as file:
                 file.write(json.dumps({
                     'ip': ip,
@@ -41,7 +41,6 @@ def gui_client_setup(config_path):
                     'client_id': client_id
                 }, indent=4))
                 file.close()
-
             app.infoBox(successful_login_title, successful_login_description)
             app.stop()
 
@@ -60,7 +59,11 @@ def gui_client_setup(config_path):
             elif r.status_code > 299 and r.status_code != 429:
                 connection_error()
             else:
-                successful_login(ip, port, key, client_id)
+                successful_login()
+
+    def cancel():
+        app.stop()
+        exit()
 
     with gui('Mirrulations Login') as app:
 
@@ -103,7 +106,7 @@ def gui_client_setup(config_path):
         app.addEntry('API Key', column=1, row=1, colspan=9)
 
         app.addButton('Submit', press, column=1, row=2, colspan=3)
-        app.addButton('Cancel', app.stop, column=5, row=2, colspan=3)
+        app.addButton('Cancel', cancel, column=5, row=2, colspan=3)
 
 
 def gui_server_setup(config_path):
@@ -127,7 +130,6 @@ def gui_server_setup(config_path):
                     'client_id': client_id
                 }, indent=4))
                 file.close()
-
             app.infoBox(successful_login_title, successful_login_description)
             app.stop()
 
@@ -146,6 +148,10 @@ def gui_server_setup(config_path):
             else:
                 successful_login()
 
+    def cancel():
+        app.stop()
+        exit()
+
     with gui('Mirrulations Login') as app:
 
         app.setSize('750x60')
@@ -156,7 +162,7 @@ def gui_server_setup(config_path):
         app.addEntry('API Key', column=1, row=0, colspan=9)
 
         app.addButton('Submit', press, column=1, row=1, colspan=3)
-        app.addButton('Cancel', app.stop, column=5, row=1, colspan=3)
+        app.addButton('Cancel', cancel, column=5, row=1, colspan=3)
 
 
 def terminal_client_setup(config_path):
@@ -178,7 +184,6 @@ def terminal_client_setup(config_path):
                 'client_id': client_id
             }, indent=4))
             file.close()
-
         print(successful_login_title + '\n' + successful_login_description)
 
     ip = input('IP:\n')
@@ -216,7 +221,6 @@ def terminal_server_setup(config_path):
                 'client_id': client_id
             }, indent=4))
             file.close()
-
         print(successful_login_title + '\n' + successful_login_description)
 
     key = input('API Key:\n')
@@ -233,8 +237,3 @@ def terminal_server_setup(config_path):
             connection_error()
         else:
             successful_login()
-
-
-if __name__ == '__main__':
-    import os
-    gui_client_setup(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json'))

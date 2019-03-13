@@ -19,7 +19,7 @@ setup(
                       'python-redis-lock==3.3.1',
                       'requests==2.21.0',
                       'requests-mock==1.5.2'],
-    scripts=['src/mirrulations.py'],
     packages=find_packages('src'),
-    package_dir={'': 'src'}
+    package_dir={'': 'src'},
+    entry_points={'console_scripts': ['mirrulations=mirrulations_core.__main__:main']}
 )
