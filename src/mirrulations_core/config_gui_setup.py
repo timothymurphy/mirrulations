@@ -36,7 +36,7 @@ def successful_login(ip, port, key, client_id):
         }, indent=4))
         file.close()
 
-    app.errorBox('Success!',
+    app.infoBox('Success!',
                  'You are successfully logged in!')
     app.stop()
 
