@@ -29,7 +29,6 @@ We prefer to do our development in PyCharm CE.
 
 3. Install packages:
 
-		pip install -r requirements.txt
 		pip install -e .
 
 4. Run the tests:

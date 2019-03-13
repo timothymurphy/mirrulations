@@ -47,7 +47,6 @@ From your terminal, in the directory, set up a virtual environment by
 
 Next, install all the requirements by
 
-	pip install -r requirements.txt
 	pip install -e .
 
 After this, you can run `python src/mirrulations/config_setup.py` to connect to the server.
