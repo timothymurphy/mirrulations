@@ -10,8 +10,8 @@ CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../confi
 def main():
     args = sys.argv[1:]
 
-    is_server = 'server' in args
-    setup_config = True if '--config' in args or '-c' in args else not os.path.exists(CONFIG_PATH)
+    is_server = '--server' in args or '-s' in args
+    setup_config = '--config' in args or '-c' in args or not os.path.exists(CONFIG_PATH)
     use_terminal = '--terminal' in args or '-t' in args
 
     if setup_config:

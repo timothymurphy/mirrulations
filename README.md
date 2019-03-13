@@ -49,10 +49,13 @@ Next, install all the requirements by
 
 	pip install -e .
 
-After this, you can run `python src/mirrulations/config_setup.py` to connect to the server.
+Lastly, run `mirrulations.py` to get it running as a client, or `mirrulations.py --server` to get it running as a server.
+
+If you do not have a `config.json` previously made, you will be prompted to make one.
+(You can also force an overwrite of `config.json` with the tag `--config` at the end of your command.)
+A GUI will show up, asking for the API key from earlier as well as, if ran as a client, a server IP and a port.
 In the GUI, you can use the IP 10.76.100.34 and port 8080.
-The API key itself is the one you received earlier.
-Lastly, run `python src/client.py` to get it working.
+(If you can't use a GUI or wish to add the information without one, add the tag `--terminal` to the end of your command and your terminal will prompt you.)
 
 ### Disclaimers
 --------
