@@ -2,31 +2,35 @@ import os
 import zipfile
 
 
-def zip_directory_zip_version(zipfile_name, directory_path):
+def zip_directory(document_id, directory_path):
+    zipfile_name = document_id + '.zip'
+
     if os.path.exists(directory_path):
-        with zipfile.ZipFile(zipfile_name+'.zip', 'w', zipfile.ZIP_DEFLATED) as outZipFile:
 
-            # The root directory within the ZIP file.
-            rootdir = os.path.basename(directory_path)
+        with zipfile.ZipFile(zipfile_name, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            root_directory = os.path.basename(directory_path)
 
-            for dirpath, dirnames, filenames in os.walk(directory_path):
-                for filename in filenames:
-                    # Write the file named filename to the archive,
-                    # giving it the archive name 'arcname'.
-                    filepath = os.path.join(dirpath, filename)
-                    parentpath = os.path.relpath(filepath, directory_path)
-                    arcname = os.path.join(rootdir, parentpath)
+            for directory_path, directory_names, file_names in os.walk(directory_path):
+                for file_name in file_names:
 
-                    outZipFile.write(filepath, arcname)
+                    file_path = os.path.join(directory_path, file_name)
+                    parent_path = os.path.relpath(file_path, directory_path)
 
-            outZipFile.writestr('README.md', 'This is a README file for ' + zipfile_name)
+                    arcname = os.path.join(root_directory, parent_path)
 
-        return outZipFile
+                    # The arcname prevents the archive from writing the full path to the zipfile
+                    zip_file.write(file_path, arcname)
+
+        add_readme(zip_file.filename, document_id)
+
+        return zip_file
 
     else:
-        return ''
+        with zipfile.ZipFile(zipfile_name, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            zip_file.writestr('README.md', 'This file ' + document_id + ' does not exist')
+        return zip_file
 
 
 def add_readme(zip_file, document_id):
-    with zipfile.ZipFile(zip_file, 'a', zipfile.ZIP_DEFLATED) as outZipFile:
-        outZipFile.writestr('README.md', 'This is a README file for ' + document_id)
+    with zipfile.ZipFile(zip_file, 'a', zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr('README.md', 'This is a README file for ' + document_id)
