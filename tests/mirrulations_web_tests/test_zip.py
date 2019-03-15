@@ -1,6 +1,6 @@
 import zipfile
-import mirrulations_web.directory_zip as dz
 import os
+import mirrulations_web.directory_zip as dz
 
 REGULATIONS_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test_files/regulations-data/")
 WEB_FILES_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test_files/mirrulations_web_files/")
