@@ -2,7 +2,6 @@ import requests
 import random
 import string
 import json
-from appJar import gui
 
 connection_error_title = 'Unable to connect!'
 connection_error_description = 'We weren\'t able to connect to regulations.gov.\n' \
@@ -19,6 +18,7 @@ successful_login_description = 'You are successfully logged in!'
 
 
 def gui_client_setup(config_path):
+    from appJar import gui
 
     def press():
 
@@ -65,7 +65,7 @@ def gui_client_setup(config_path):
         app.stop()
         exit()
 
-    with gui('Mirrulations Login') as app:
+    with gui('Mirrulations Login', handleArgs=False) as app:
 
         app.setSize('750x100')
         app.setFont(size=20, family='Gill Sans')
@@ -110,6 +110,7 @@ def gui_client_setup(config_path):
 
 
 def gui_server_setup(config_path):
+    from appJar import gui
 
     def press():
 
@@ -152,7 +153,7 @@ def gui_server_setup(config_path):
         app.stop()
         exit()
 
-    with gui('Mirrulations Login') as app:
+    with gui('Mirrulations Login', handleArgs=False) as app:
 
         app.setSize('750x60')
         app.setFont(size=20, family='Gill Sans')
