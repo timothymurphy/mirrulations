@@ -31,32 +31,27 @@ With the API limiting that is in place, it would take us months to download all 
 
 ## Getting Started
 
-
 If you are interested in becoming a developer, see `docs/developers.md`.
 
-To get started, you'll need to have the latest version of Python3 so you can actually run the software, which you can download [here](https://docs.python-guide.org/starting/install3/osx/) for Mac OS and [here](https://docs.python-guide.org/starting/install3/win/) for Windows.
-
-Outside of development work, an instance of redis will need to be running. This can be installed through homebrew, or download and build it from [redis](https://redis.io/).
+To run Mirrulations, you need Python 3.7.2 or greater ([MacOSX](https://docs.python-guide.org/starting/install3/osx/) or [Windows](https://docs.python-guide.org/starting/install3/win/)) on your machine to run this, as well as [redis](https://redis.io/) if you are running a server
 
 You will also need a valid API key from Regulations.gov to participate. To apply for a key, you must simply [contact the Regulations Help Desk](regulations@erulemakinghelpdesk.com) and provide your name, email address, organization, and intended use of the API. If you are not with any organizations, just say so in your message. They will email you with a key once they've verified you and activated the key.
 
 To download the actual project, you will need to go to our [GitHub page](https://github.com/MoravianCollege/mirrulations) and [clone](https://help.github.com/articles/cloning-a-repository/) the project to your computer.
 
-From your terminal, in the directory, set up a virtual environment by
+From your terminal, in the project directory, set up a virtual environment by
 
 	python3 -m venv .env
 	source .env/bin/activate
+    pip install -e .
 
-Next, install all the requirements by
+Lastly, run `mirrulations` to get it running as a client, or `mirrulations --server` to get it running as a server.
 
-	pip install -r requirements.txt
-	pip install -e .
-
-After this, you can run `python src/mirrulations/config_setup.py` to connect to the server.
-In the GUI, you can use the IP 10.76.100.34 and port 8080.
+If you do not have a `config.json` previously made, you will be prompted to make one.
+(You can also force an overwrite of `config.json` with the tag `--config` at the end of your command.)
+A terminal prompt will show up, asking for the API key from earlier as well as, if ran as a client, a server IP and a port.
+You can use the IP 10.76.100.34 and port 8080.
 The API key itself is the one you received earlier.
-In a separate terminal window run `redis-server`.
-Lastly, run `python src/mirrulations/client.py` to get it working.
 
 ### Disclaimers
 --------

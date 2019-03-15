@@ -23,6 +23,10 @@ def read_value(value):
         logger.debug("Variable Success: %s", 'read_value: found json from config', extra=d)
         logger.info('Config file read successful...')
         result = contents[value]
+    except FileNotFoundError:
+        logger.debug('Exception: %s', 'read_value: Error finding JSON', extra=d)
+        logger.error('File Not Found Error')
+        return None
     except IOError:
         logger.debug('Exception: %s', 'read_value: Error opening JSON', extra=d)
         logger.error('Input/Output Error')

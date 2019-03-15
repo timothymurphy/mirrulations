@@ -4,7 +4,7 @@
 
 ## Project Organization
 
-All of the source code is within the distribution `src` as a module named `mirrulations`.
+All of the source code is within the distribution `src` as various modules prefixed with `mirrulations`.
 
 ## Developer Setup
 
@@ -12,7 +12,8 @@ We prefer to do our development in PyCharm CE.
 
 ### Prerequisites
 
-1. Python 3.7 or greater
+1. Python 3.7.2 or greater
+2. Redis (if running a server)
 
 ### Setup
 
@@ -26,14 +27,10 @@ We prefer to do our development in PyCharm CE.
 
 		python3 -m venv .env
 		source .env/bin/activate/
-
-3. Install packages:
-
-		pip install -r requirements.txt
 		pip install -e .
 
-4. Run the tests:
+3. Run the tests:
 
 		pytest
 
-5. Open PyCharm CE.
+4. Open PyCharm CE.

@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 import requests
-import os
 import random
 import string
 import redis
 import mirrulations.redis_manager as redis_manager
 import mirrulations.endpoints as endpoints
+import mirrulations_core.config as config
 import logging
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
@@ -26,9 +25,7 @@ def monolith():
 
     r = redis_manager.RedisManager(redis.Redis())
 
-    home = os.getenv("HOME")
-    with open(home + '/.env/regulationskey.txt') as f:
-        regulations_key = f.readline().strip()
+    regulations_key = config.read_value('key')
 
     current_page = 0
 
