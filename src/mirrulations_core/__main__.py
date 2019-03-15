@@ -25,10 +25,23 @@ def main():
 
     if is_server:
         from threading import Thread
-        from mirrulations.docs_work_gen import monolith
-        from mirrulations.endpoints import run
-        Thread(target=run).start()
-        Thread(target=monolith).start()
+
+        def run_redis():
+            os.system('redis-server')
+
+        def run_server():
+            from mirrulations.endpoints import run
+            run()
+
+        def run_work():
+            from mirrulations.docs_work_gen import monolith
+            from mirrulations.expire import expire
+            monolith()
+            expire()
+
+        Thread(target=run_redis).start()
+        Thread(target=run_server).start()
+        Thread(target=run_work).start()
     else:
         from mirrulations.client import do_work
         do_work()
