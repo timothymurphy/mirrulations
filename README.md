@@ -31,18 +31,15 @@ With the API limiting that is in place, it would take us months to download all 
 
 ## Getting Started
 
-
 If you are interested in becoming a developer, see `docs/developers.md`.
 
-To get started, you'll need to have the latest version of Python3 so you can actually run the software, which you can download [here](https://docs.python-guide.org/starting/install3/osx/) for Mac OS and [here](https://docs.python-guide.org/starting/install3/win/) for Windows.
-
-Outside of development work, an instance of redis will need to be running. This can be installed through homebrew, or download and build it from [redis](https://redis.io/).
+To run Mirrulations, you need Python 3.7.2 or greater ([MacOSX](https://docs.python-guide.org/starting/install3/osx/) or [Windows](https://docs.python-guide.org/starting/install3/win/)) on your machine to run this, as well as [redis](https://redis.io/) if you are running a server
 
 You will also need a valid API key from Regulations.gov to participate. To apply for a key, you must simply [contact the Regulations Help Desk](regulations@erulemakinghelpdesk.com) and provide your name, email address, organization, and intended use of the API. If you are not with any organizations, just say so in your message. They will email you with a key once they've verified you and activated the key.
 
 To download the actual project, you will need to go to our [GitHub page](https://github.com/MoravianCollege/mirrulations) and [clone](https://help.github.com/articles/cloning-a-repository/) the project to your computer.
 
-From your terminal, in the directory, set up a virtual environment by
+From your terminal, in the project directory, set up a virtual environment by
 
 	python3 -m venv .env
 	source .env/bin/activate
