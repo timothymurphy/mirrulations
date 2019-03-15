@@ -62,7 +62,12 @@ If you do not have a `config.json` previously made, you will be prompted to make
 A GUI will show up, asking for the API key from earlier as well as, if ran as a client, a server IP and a port.
 You can use the IP 10.76.100.34 and port 8080.
 The API key itself is the one you received earlier.
+<<<<<<< HEAD
 (If you can't use a GUI or wish to add the information without one, add the tag `--terminal` to the end of your command and your terminal will prompt you.)
+=======
+In a separate terminal window run `redis-server`.
+Lastly, run `python src/mirrulations/client.py` to get it working.
+>>>>>>> 7b7968473d14c0bd5b901e213e5c9c473950ae64
 
 ### Disclaimers
 --------
