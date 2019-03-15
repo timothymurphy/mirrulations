@@ -24,8 +24,11 @@ def main():
             cs.gui_server_setup(CONFIG_PATH) if is_server else cs.gui_client_setup(CONFIG_PATH)
 
     if is_server:
+        from threading import Thread
         from mirrulations.docs_work_gen import monolith
-        monolith()
+        from mirrulations.endpoints import run
+        Thread(target=run).start()
+        Thread(target=monolith).start()
     else:
         from mirrulations.client import do_work
         do_work()
