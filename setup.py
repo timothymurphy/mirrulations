@@ -21,5 +21,10 @@ setup(
                       'requests-mock==1.5.2'],
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    entry_points={'console_scripts': ['mirrulations=mirrulations_core.__main__:main']}
+    entry_points={'console_scripts': ['mirrulations_client=mirrulations_core.__main__:client',
+                                      'mirrulations_client_config_setup=mirrulations_core.__main__:client_config_setup',
+                                      'mirrulations_client_config_setup_terminal=mirrulations_core.__main__:client_config_setup_terminal',
+                                      'mirrulations_server=mirrulations_core.__main__:server',
+                                      'mirrulations_server_config_setup=mirrulations_core.__main__:server_config_setup',
+                                      'mirrulations_server_config_setup_terminal=mirrulations_core.__main__:server_config_setup_terminal']}
 )
