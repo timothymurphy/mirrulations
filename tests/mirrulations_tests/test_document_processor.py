@@ -1,10 +1,9 @@
-from mirrulations.document_processor import *
-from mirrulations.documents_processor import *
+from mirrulations_client.document_processor import *
 import pytest
 import requests_mock
 import os
 
-from mirrulations.api_call import add_api_key
+from mirrulations_core.api_call import add_api_key
 
 import mirrulations_core.config as config
 

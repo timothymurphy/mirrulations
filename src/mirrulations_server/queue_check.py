@@ -1,5 +1,5 @@
 import redis, logging
-from mirrulations.redis_manager import RedisManager
+from mirrulations_server.redis_manager import RedisManager
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='redis_log.log', format=FORMAT)

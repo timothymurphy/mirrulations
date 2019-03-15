@@ -62,10 +62,12 @@ def main():
 
     parser = argparse.ArgumentParser(prog='mirrulations')
     parser.add_argument('-s', '--server', action='store_true', help='run as server')
+    parser.add_argument('-w', '--web', action='store_true', help='run as website')
     parser.add_argument('-c', '--config', action='store_true', help='force config setup')
     args = vars(parser.parse_args())
 
     is_server = args['server']
+    is_web = args['web']
     do_config_setup = args['config'] or not os.path.exists(CONFIG_PATH)
 
     if do_config_setup:
@@ -78,12 +80,12 @@ def main():
             os.system('redis-server')
 
         def run_server():
-            from mirrulations.endpoints import run
+            from mirrulations_server.endpoints import run
             run()
 
         def run_work():
-            from mirrulations.docs_work_gen import monolith
-            from mirrulations.expire import expire
+            from mirrulations_server.docs_work_gen import monolith
+            from mirrulations_server.expire import expire
             monolith()
             expire()
 
@@ -91,7 +93,7 @@ def main():
         Thread(target=run_server).start()
         Thread(target=run_work).start()
     else:
-        from mirrulations.client import do_work
+        from mirrulations_client.client import do_work
         do_work()
 
 

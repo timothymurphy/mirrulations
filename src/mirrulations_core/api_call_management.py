@@ -1,6 +1,5 @@
 import time
-import logging
-from mirrulations.api_call import *
+from mirrulations_core.api_call import *
 
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'

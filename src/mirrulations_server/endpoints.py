@@ -1,9 +1,9 @@
 from flask import Flask, request
 import redis
 import json
-from mirrulations.docs_filter import process_docs
-from mirrulations.doc_filter import process_doc
-from mirrulations.redis_manager import RedisManager
+from mirrulations_server.docs_filter import process_docs
+from mirrulations_server.doc_filter import process_doc
+from mirrulations_server.redis_manager import RedisManager
 import logging
 import io
 

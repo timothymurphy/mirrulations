@@ -1,7 +1,7 @@
 import pytest
 import requests_mock
 
-from mirrulations.api_call import *
+from mirrulations_core.api_call import *
 
 base_url = 'https://api.data.gov:443/regulations/v3/documents.json?'
 
