@@ -9,6 +9,6 @@ def download_zip(document_id, download_path=PATH):
     zip_path = ds.search_for_document_in_directory(document_id, download_path)
     if zip_path != "":
         zipfile = dz.zip_directory(document_id, zip_path)
-        return zipfile, zipfile.filename
+        return zipfile.filename
     else:
         return ""
