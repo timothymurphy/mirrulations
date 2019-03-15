@@ -1,43 +1,35 @@
+import argparse
 import os
 
 CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json')
 
 
-def client():
+def main():
 
-    from mirrulations.client import do_work
-    do_work()
+    parser = argparse.ArgumentParser(prog='mirrulations')
+    parser.add_argument('-s', '--server', action='store_true', help='run as server')
+    parser.add_argument('-c', '--config_setup', action='store_true', help='force config setup')
+    parser.add_argument('-t', '--terminal', action='store_true', help='run without gui')
+    args = vars(parser.parse_args())
 
+    is_server = args['server']
+    do_config_setup = args['config_setup'] or not os.path.exists(CONFIG_PATH)
+    use_terminal = args['terminal']
 
-def client_setup_config():
+    if do_config_setup:
+        import mirrulations_core.config_setup as cs
+        if use_terminal:
+            cs.terminal_server_setup(CONFIG_PATH) if is_server else cs.terminal_client_setup(CONFIG_PATH)
+        else:
+            cs.gui_server_setup(CONFIG_PATH) if is_server else cs.gui_client_setup(CONFIG_PATH)
 
-    from mirrulations_core.config_setup import gui_client_setup
-    gui_client_setup(CONFIG_PATH)
-
-
-def client_setup_config_terminal():
-
-    from mirrulations_core.config_setup import terminal_client_setup
-    terminal_client_setup(CONFIG_PATH)
-
-
-def server():
-
-    from mirrulations.docs_work_gen import monolith
-    monolith()
-
-
-def server_setup_config():
-
-    from mirrulations_core.config_setup import gui_server_setup
-    gui_server_setup(CONFIG_PATH)
-
-
-def server_setup_config_terminal():
-
-    from mirrulations_core.config_setup import terminal_server_setup
-    terminal_server_setup(CONFIG_PATH)
+    if is_server:
+        from mirrulations.docs_work_gen import monolith
+        monolith()
+    else:
+        from mirrulations.client import do_work
+        do_work()
 
 
 if __name__ == '__main__':
-    client()
+    main()
