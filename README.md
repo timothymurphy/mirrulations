@@ -46,14 +46,7 @@ From your terminal, in the directory, set up a virtual environment by
 
 	python3 -m venv .env
 	source .env/bin/activate
-
-Next, install all the requirements by
-
-    `pip install -e .`
-    
-Then in another window,
-
-    `redis-server`
+    pip install -e .
 
 Lastly, run `mirrulations` to get it running as a client, or `mirrulations --server` to get it running as a server.
 
