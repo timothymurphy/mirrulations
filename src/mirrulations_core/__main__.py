@@ -13,7 +13,7 @@ def main():
     args = vars(parser.parse_args())
 
     is_server = args['server']
-    do_config_setup = args['config_setup'] or not os.path.exists(CONFIG_PATH)
+    do_config_setup = args['config'] or not os.path.exists(CONFIG_PATH)
     use_terminal = args['terminal']
 
     if do_config_setup:
