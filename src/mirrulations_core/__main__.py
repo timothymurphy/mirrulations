@@ -74,27 +74,10 @@ def main():
         config_setup(is_server)
 
     if is_server:
-        from threading import Thread
-
-        def run_redis():
-            os.system('redis-server')
-
-        def run_server():
-            from mirrulations_server.endpoints import run
-            run()
-
-        def run_work():
-            from mirrulations_server.docs_work_gen import monolith
-            from mirrulations_server.expire import expire
-            monolith()
-            expire()
-
-        Thread(target=run_redis).start()
-        Thread(target=run_server).start()
-        Thread(target=run_work).start()
+        from mirrulations_server.__main__ import main
     else:
-        from mirrulations_client.client import do_work
-        do_work()
+        from mirrulations_client.__main__ import main
+    main()
 
 
 if __name__ == '__main__':
