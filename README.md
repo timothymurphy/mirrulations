@@ -56,7 +56,7 @@ After this, you can run `python src/mirrulations/config_setup.py` to connect to 
 In the GUI, you can use the IP 10.76.100.34 and port 8080.
 The API key itself is the one you received earlier.
 In a separate terminal window run `redis-server`.
-Lastly, run `python src/client.py` to get it working.
+Lastly, run `python src/mirrulations/client.py` to get it working.
 
 ### Disclaimers
 --------
