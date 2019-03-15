@@ -58,7 +58,7 @@ Then in another window,
 Lastly, run `mirrulations` to get it running as a client, or `mirrulations --server` to get it running as a server.
 
 If you do not have a `config.json` previously made, you will be prompted to make one.
-(You can also force an overwrite of `config.json` with the tag `--config_setup` at the end of your command.)
+(You can also force an overwrite of `config.json` with the tag `--config` at the end of your command.)
 A GUI will show up, asking for the API key from earlier as well as, if ran as a client, a server IP and a port.
 You can use the IP 10.76.100.34 and port 8080.
 The API key itself is the one you received earlier.

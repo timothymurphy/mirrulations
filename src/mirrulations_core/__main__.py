@@ -8,7 +8,7 @@ def main():
 
     parser = argparse.ArgumentParser(prog='mirrulations')
     parser.add_argument('-s', '--server', action='store_true', help='run as server')
-    parser.add_argument('-c', '--config_setup', action='store_true', help='force config setup')
+    parser.add_argument('-c', '--config', action='store_true', help='force config setup')
     parser.add_argument('-t', '--terminal', action='store_true', help='run without gui')
     args = vars(parser.parse_args())
 
