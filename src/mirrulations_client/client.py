@@ -305,7 +305,3 @@ def do_work():
             requests.get(client_health_url + "/fail")
         logger.debug('Function Successful: %s', 'do_work: successful iteration in do work', extra=d)
         logger.info('Work completed')
-
-
-if __name__ == '__main__':
-    do_work()

@@ -61,7 +61,3 @@ def monolith():
 
     else:
         print("No API Key!")
-
-
-if __name__ == '__main__':
-    monolith()

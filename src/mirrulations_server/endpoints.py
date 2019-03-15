@@ -156,7 +156,3 @@ def generate_json(work_list):
 
 def run():
     app.run('0.0.0.0', '8080')
-
-
-if __name__ == '__main__':
-    run()

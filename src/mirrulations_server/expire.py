@@ -25,7 +25,3 @@ def expire():
         logger.debug('Sleep: %s', 'expire: sleep for 1 hours', extra=d)
         logger.info('Returning to sleep')
         time.sleep(3600)
-
-
-if __name__ == '__main__':
-    expire()
