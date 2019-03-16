@@ -2,7 +2,7 @@ import pytest
 import requests_mock
 import mock
 import fakeredis
-import mirrulations_server.endpoints as endpoints
+import mirrulations_server.flask_manager as endpoints
 from mirrulations_server.redis_manager import RedisManager
 import json
 import os

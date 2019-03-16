@@ -1,5 +1,5 @@
 import os
-import mirrulations_web.dir_search as ds
+import mirrulations_web.directory_search as ds
 import mirrulations_web.directory_zip as dz
 
 PATH = os.getenv("HOME") + "/regulations-data/"

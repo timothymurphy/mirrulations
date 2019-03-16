@@ -39,7 +39,7 @@ def call(url):
     return result
 
 
-def add_api_key(url):
+def add_api_key(url):  # filename api_call.log
     """
     The API key will not be given in the url so it must be added
     :param url: the url that will be used to make the API call

@@ -1,5 +1,5 @@
 import os
-from mirrulations_web import dir_search as ds
+from mirrulations_web import directory_search as ds
 
 PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../tests/test_files/regulations-data/")
 
