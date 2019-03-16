@@ -75,6 +75,8 @@ def main():
 
     if is_server:
         from mirrulations_server.__main__ import main
+    elif is_web:
+        from mirrulations_web.__main__ import main
     else:
         from mirrulations_client.__main__ import main
     main()
