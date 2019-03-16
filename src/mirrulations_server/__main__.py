@@ -12,8 +12,7 @@ def main():
         run()
 
     def run_work():
-        from mirrulations_server.work_manager import monolith
-        from mirrulations_server.expire import expire
+        from mirrulations_server.work_manager import monolith, expire
         monolith()
         expire()
 
