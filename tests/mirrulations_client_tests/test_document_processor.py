@@ -3,7 +3,7 @@ import pytest
 import requests_mock
 import os
 
-from mirrulations_core.api_call import add_api_key
+from mirrulations_core.api_call_management import add_api_key
 
 import mirrulations_core.config as config
 

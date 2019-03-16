@@ -1,8 +1,7 @@
 from mirrulations_client.client import *
 import pytest
 import requests_mock
-from mirrulations_core.api_call import add_api_key
-from mirrulations_core.api_call_management import CallFailException
+from mirrulations_core.api_call_management import add_api_key, CallFailException
 import mirrulations_core.config as config
 
 ip = config.read_value('ip')

@@ -2,7 +2,7 @@ from mirrulations_client.documents_processor import *
 import pytest
 import requests_mock
 
-from mirrulations_core.api_call import *
+from mirrulations_core.api_call_management import *
 import mirrulations_core.config as config
 
 key = config.read_value('key')
