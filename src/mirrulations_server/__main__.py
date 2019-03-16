@@ -1,11 +1,11 @@
-import os
 from threading import Thread
 
 
 def main():
 
     def run_redis():
-        os.system('redis-server')
+        from mirrulations_server.redis_manager import run
+        run()
 
     def run_flask():
         from mirrulations_server.flask_manager import run

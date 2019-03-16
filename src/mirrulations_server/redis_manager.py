@@ -1,8 +1,9 @@
 from ast import literal_eval
-import redis_lock
 import json
-import time
 import logging
+import os
+import redis_lock
+import time
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='redis_log.log', format=FORMAT)
@@ -487,3 +488,7 @@ def get_curr_time():
     logger.debug('Call Successful: %s', 'get_curr_time: call successful', extra=d)
     logger.info('Current time retrieved')
     return float(time.time())
+
+
+def run():
+    os.system('redis-server')

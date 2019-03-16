@@ -5,7 +5,7 @@ import requests
 import string
 import time
 import mirrulations_server.redis_manager as redis_manager
-import mirrulations_server.flask_manager as endpoints
+import mirrulations_server.flask_manager as flask_manager
 import mirrulations_core.config as config
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
@@ -57,7 +57,7 @@ def monolith():
 
         # Makes a JSON from the list of URLs and send it to the queue as a job
         docs_work = [''.join(random.choices(string.ascii_letters + string.digits, k=16)), "docs", url_list]
-        r.add_to_queue(endpoints.generate_json(docs_work))
+        r.add_to_queue(flask_manager.generate_json(docs_work))
 
 
 def expire():  # user EXPIRE
@@ -74,3 +74,8 @@ def expire():  # user EXPIRE
         logger.debug('Sleep: %s', 'expire: sleep for 1 hours', extra=d)
         logger.info('Returning to sleep')
         time.sleep(3600)
+
+
+def run():
+    monolith()
+    expire()
