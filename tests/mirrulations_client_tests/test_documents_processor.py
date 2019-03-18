@@ -72,7 +72,7 @@ def test_make_docs():
 
 
 def test_documents_processor(mock_req):
-    mock_req.get(get_plain_documents_url(),
+    mock_req.get(get_documents_url(),
                  status_code=200,
                  text='{"documents":[{"documentId": "CMS-2005-0001-0001", "attachmentCount": 4},\
                                      {"documentId": "CMS-2005-0001-0002", "attachmentCount": 999}]}')
@@ -80,7 +80,7 @@ def test_documents_processor(mock_req):
                  status_code=200,
                  text='{"documents":[{"documentId": "CMS-2005-0001-0003", "attachmentCount": 88},\
                                      {"documentId": "CMS-2005-0001-0004", "attachmentCount": 666}]}')
-    docs = documents_processor([get_plain_documents_url(), fake_url], 'Job ID', client_id)
+    docs = documents_processor([get_documents_url(), fake_url], 'Job ID', client_id)
     assert docs == ({'job_id': 'Job ID',
                      'type': 'docs',
                      'data': [[{'id': 'CMS-2005-0001-0001', 'count': 5}],
@@ -91,35 +91,35 @@ def test_documents_processor(mock_req):
 
 
 def test_valid_results(mock_req):
-    mock_req.get(get_plain_documents_url(),
+    mock_req.get(get_documents_url(),
                  status_code=200,
                  text='{"documents":[{"documentId": "CMS-2005-0001-0001", "attachmentCount": 4},\
                                      {"documentId": "CMS-2005-0001-0002", "attachmentCount": 999}]}')
-    result = process_results(api_call(get_plain_documents_url()))
+    result = process_results(api_call(get_documents_url()))
     assert result
 
 
 def test_successful_call(mock_req):
-    mock_req.get(get_plain_documents_url(), status_code=200, text='{}')
-    assert api_call(get_plain_documents_url()).text == '{}'
+    mock_req.get(get_documents_url(), status_code=200, text='{}')
+    assert api_call(get_documents_url()).text == '{}'
 
 
 def test_call_fail_raises_exception(mock_req):
-    mock_req.get(get_plain_documents_url(), status_code=407, text='{}')
+    mock_req.get(get_documents_url(), status_code=407, text='{}')
     with pytest.raises(CallFailException):
-        api_call(get_plain_documents_url())
+        api_call(get_documents_url())
 
 
 def test_empty_json(mock_req):
-    mock_req.get(get_plain_documents_url(), status_code=200, text='')
+    mock_req.get(get_documents_url(), status_code=200, text='')
     with pytest.raises(json.JSONDecodeError):
-        process_results(api_call(get_plain_documents_url()))
+        process_results(api_call(get_documents_url()))
 
 
 def test_bad_json_format(mock_req):
-    mock_req.get(get_plain_documents_url(), status_code=200, text='{information: [{},{}]}')
+    mock_req.get(get_documents_url(), status_code=200, text='{information: [{},{}]}')
     with pytest.raises(json.JSONDecodeError):
-        process_results(api_call(get_plain_documents_url()))
+        process_results(api_call(get_documents_url()))
 
 
 

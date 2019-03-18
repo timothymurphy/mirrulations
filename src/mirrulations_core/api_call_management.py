@@ -11,30 +11,21 @@ d = {'clientip': '192.168.0.1', 'user': 'CLIENT'}
 logger = logging.getLogger('tcpserver')
 
 
-def make_url(search_type, suffix):
-    return 'https://api.data.gov/regulations/v3/' + search_type + '.json?api_key=' + key + suffix
+def make_url(search_type, suffix, url='https://api.data.gov/regulations/v3/'):
+    return url + search_type + '.json?api_key=' + key + suffix
 
 
-def get_document_url(document_id):
-    return make_url('document', '&documentId=' + document_id)
-
-
-def get_modified_document_url(document_id, attachment_number, content_type):
+def get_document_url(document_id, attachment_number=None, content_type=None):
     return make_url('document', '&documentId=' + document_id
-                                + '&attachmentNumber=' + str(attachment_number)
-                                + '&contentType=' + content_type)
+                                + ('' if attachment_number is None else '&attachmentNumber=' + str(attachment_number))
+                                + ('' if content_type is None else '&contentType=' + content_type))
 
 
-def get_document_count_url(results_per_page):
-    return make_url('documents.json', '&countsOnly=1' + '&rpp=' + str(results_per_page))
-
-
-def get_plain_documents_url():
-    return make_url('documents.json', '')
-
-
-def get_documents_url(page_offset, results_per_page):
-    return make_url('documents.json', '&po=' + str(page_offset) + '&rpp=' + str(results_per_page))
+def get_documents_url(counts_only=False, page_offset=None, results_per_page=None):
+    return make_url('documents.json', ''
+                                      + ('&countsOnly=1' if counts_only else '')
+                                      + ('' if page_offset is None else '&po=' + str(page_offset))
+                                      + ('' if results_per_page is None else '&rpp=' + str(results_per_page)))
 
 
 def get_docket_url(docket_id):
