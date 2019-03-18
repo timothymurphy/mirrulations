@@ -21,7 +21,7 @@ r = redis_manager.RedisManager(redis.Redis())
 def get_max_page_hit(results_per_page):
 
     try:
-        url = api_call_management.get_document_count_url(results_per_page)
+        url = api_call_management.get_documents_url(counts_only=True, results_per_page=results_per_page)
         records = api_call_management.send_call(url).json()
         return records["totalNumRecords"] // results_per_page
     except api_call_management.CallFailException:
