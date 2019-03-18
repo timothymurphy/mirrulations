@@ -41,8 +41,8 @@ To download the actual project, you will need to go to our [GitHub page](https:/
 
 From your terminal, in the project directory, set up a virtual environment by
 
-	python3 -m venv .env
-	source .env/bin/activate
+	python3 -m venv .venv
+	source .venv/bin/activate
     pip install -e .
 
 Lastly, run `mirrulations` to get it running as a client, or `mirrulations --server` to get it running as a server.

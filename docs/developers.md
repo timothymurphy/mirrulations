@@ -25,8 +25,8 @@ We prefer to do our development in PyCharm CE.
 
 2. Set up your virtual environment:
 
-		python3 -m venv .env
-		source .env/bin/activate/
+		python3 -m .venv .venv
+		source .venv/bin/activate/
 		pip install -e .
 
 3. Run the tests:
