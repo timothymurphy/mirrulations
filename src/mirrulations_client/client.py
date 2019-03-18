@@ -15,11 +15,10 @@ version = "v1.3"
 
 ip = config.read_value('ip')
 port = config.read_value('port')
-
-serverurl = "http://" + ip + ":" + port
-
 key = config.read_value('key')
 client_id = config.read_value('client_id')
+
+server_url = "http://" + ip + ":" + port
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='client.log', format=FORMAT)
@@ -29,20 +28,17 @@ logger = logging.getLogger('tcpserver')
 client_health_url = "https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08"
 
 
-def get_work(client_id):
+def get_work():
     """
     Calls the /get_work endpoint of the server to fetch work to process
-    :param client_id: the id of the client calling /get_work
     :return: the result of making a call to get work
     """
-    global d
-
     logger.debug('Call Successful: %s', 'get_work: call made successfully', extra=d)
     logger.debug('Assign Variable: %s', 'get_work: create the url for getting work', extra=d)
 
     logger.info('Attempting to retrieve work...')
 
-    url = serverurl+"/get_work?client_id="+str(client_id)
+    url = server_url + "/get_work?client_id=" + client_id
 
     logger.debug('Variable Success: %s', 'get_work: url created successfully for get work', extra=d)
     logger.debug('Returning: %s', 'get_work: the respond from the api call to get_work', extra=d)
@@ -55,10 +51,7 @@ def get_json_info(json_result):
     """
     Return job information from server json
     :param json_result: the json returned from
-    :return:
     """
-    global d
-
     logger.debug('Call Successful: %s', 'get_json_info: call made successfully', extra=d)
     logger.debug('Assign Variable: %s', 'get_json_info: get the job id from ', extra=d)
 
@@ -79,16 +72,13 @@ def get_json_info(json_result):
     return job_id, urls
 
 
-def return_docs(json_result, client_id):
+def return_docs(json_result):
     """
     Handles the documents processing necessary for a job
     Calls the /return_docs endpoint of the server to return data for the job it completed
     :param json_result: the json received from the /get_work endpoint
-    :param client_id: the id of the client that is processing the documents job
     :return: result from calling /return_docs
     """
-    global d
-
     logger.info('Returning documents data to server...')
 
     logger.debug('Call Successful: %s', 'return_docs: call made successfully', extra=d)
@@ -117,7 +107,7 @@ def return_docs(json_result, client_id):
     logger.debug('Variable Success: %s', 'return_docs: zip file opened', extra=d)
 
     logger.debug('Calling Function: %s', 'return_docs: post to /return_docs endpoint', extra=d)
-    r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json':json.dumps(json_info)})
+    r = requests.post(server_url + "/return_docs", files={'file': fileobj}, data={'json':json.dumps(json_info)})
     logger.debug('Function Successful: %s', 'return_docs: successful call to /return_doc', extra=d)
 
     r.raise_for_status()
@@ -128,16 +118,13 @@ def return_docs(json_result, client_id):
     return r
 
 
-def return_doc(json_result, client_id):
+def return_doc(json_result):
     """
     Handles the document processing necessary for a job
     Calls the /return_doc endpoint of the server to return data for the job it completed
     :param json_result: the json received from the /get_work endpoint
-    :param client_id: the id of the client that is processing the documents job
     :return: result from calling /return_doc
     """
-    global d
-
     logger.info('Returning document data to server...')
 
     logger.debug('Call Successful: %s', 'return_doc: call made successfully', extra=d)
@@ -173,11 +160,11 @@ def return_doc(json_result, client_id):
     shutil.make_archive("result", "zip", path.name)
     logger.debug('File Creation Successful: %s', "return_doc: successfully created the zip file", extra=d)
     logger.debug('Assign Variable: %s', 'return_doc: opening the zip', extra=d)
-    fileobj = open('result.zip', 'rb')
+    file_obj = open('result.zip', 'rb')
     logger.debug('Variable Success: %s', 'return_doc: zip opened', extra=d)
     logger.debug('Calling Function: %s', 'return_doc: post to /return_doc endpoint', extra=d)
-    r = requests.post(serverurl+"/return_doc",
-                      files={'file':('result.zip', fileobj)},
+    r = requests.post(server_url + "/return_doc",
+                      files={'file':('result.zip', file_obj)},
                       data={'json':json.dumps({"job_id" : job_id, "type" : "doc",
                                                "user": client_id, "version" : version })})
 
@@ -195,17 +182,17 @@ def return_doc(json_result, client_id):
     return r
 
 
-def copy_file_safely(directory, filepath):
+def copy_file_safely(directory, file_path):
     """
     Safely copies a file to a directory; if the file isn't there to be copied, it won't be copied.
     :param directory: Directory to copy to
-    :param filepath: File to copy
+    :param file_path: File to copy
     """
 
     logger.info('Copying file...')
-    if Path(filepath).exists():
+    if Path(file_path).exists():
         if Path(directory).exists():
-            shutil.copy(filepath, directory)
+            shutil.copy(file_path, directory)
             logger.debug('Call Successful: %s', 'copy_file_safely: File copied.', extra=d)
             logger.info('File copied')
         else:
@@ -221,7 +208,6 @@ def add_client_log_files(directory, log_directory):
     Used to copy client log files into the temp directory to be sent to the server.
     :param directory: Directory to write files to
     :param log_directory: Directory to get files from
-    :return:
     """
     logger.info('Copying log files...')
 
@@ -238,12 +224,12 @@ def add_client_log_files(directory, log_directory):
 
     logger.info('Log files copied')
 
+
 def do_work():
     """
     Working loop
     Get work - Determine type of work - Do work - Return work
     If there is no work in the server, sleep for an hour
-    :return:
     """
     logger.debug('Call Successful: %s', 'do_work: called successfully', extra=d)
     logger.info('Beginning "do-work" process...')
@@ -253,24 +239,25 @@ def do_work():
         logger.debug('Calling Function: %s', 'do_work: call to get_work function', extra=d)
         logger.info('Getting work...')
         try:
-            work = get_work(client_id)
-            logger.debug('Function Successful: %s', 'do_work: get_work call successful', extra=d)
-
-            requests.get(client_health_url)
-
-            logger.debug('Assign Variable: %s', 'do_work: decode the json variable from get_work', extra=d)
-            work_json = json.loads(work.content.decode('utf-8'))
-            logger.debug('Variable Success: %s', 'do_work: decode the json of work successfully', extra=d)
-
+            work = get_work()
         except man.CallFailException:
             time.sleep(3600)
+            continue
+
+        logger.debug('Function Successful: %s', 'do_work: get_work call successful', extra=d)
+
+        requests.get(client_health_url)
+
+        logger.debug('Assign Variable: %s', 'do_work: decode the json variable from get_work', extra=d)
+        work_json = json.loads(work.content.decode('utf-8'))
+        logger.debug('Variable Success: %s', 'do_work: decode the json of work successfully', extra=d)
 
         if work_json["type"] == "doc":
 
             logger.debug('Calling Function: %s', 'do_work: call return_doc', extra=d)
             logger.info('Work is Doc job')
 
-            r = return_doc(work_json, client_id)
+            return_doc(work_json)
 
             logger.debug('Function Successful: %s', 'do_work: return_doc call successful', extra=d)
 
@@ -281,7 +268,7 @@ def do_work():
             logger.debug('Calling Function: %s', 'do_work: call return_docs', extra=d)
             logger.info('Work is Docs job')
 
-            r = return_docs(work_json, client_id)
+            return_docs(work_json)
 
             logger.debug('Function Successful: %s', 'do_work: return_docs call successful', extra=d)
 
@@ -297,11 +284,11 @@ def do_work():
             requests.get(client_health_url)
 
         else:
-            logger.debug('Exception: %s', 'do_work: type specified in json object was not in - doc, docs, none')
 
+            logger.debug('Exception: %s', 'do_work: type specified in json object was not in - doc, docs, none')
             logger.error('Job type unexpected')
 
-
             requests.get(client_health_url + "/fail")
+
         logger.debug('Function Successful: %s', 'do_work: successful iteration in do work', extra=d)
         logger.info('Work completed')
