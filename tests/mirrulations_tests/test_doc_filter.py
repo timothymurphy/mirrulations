@@ -44,35 +44,35 @@ def test_get_file_name():
 
 # Validation Tests
 def test_is_document_ending_a_number():
-    assert df.ending_is_number("FDA-2018-N-0073-0002") is True
+    assert df.document_id_ending_is_number("FDA-2018-N-0073-0002") is True
 
 
 def test_is_document_ending_a_number_special():
-    assert df.ending_is_number("AHRQ_FRDOC_0001-0036") is True
+    assert df.document_id_ending_is_number("AHRQ_FRDOC_0001-0036") is True
 
 
 def test_is_document_ending_a_word():
-    assert df.ending_is_number("FDA-2018-N-0073-Abcd") is False
+    assert df.document_id_ending_is_number("FDA-2018-N-0073-Abcd") is False
 
 
 def test_is_document_ending_a_word_special():
-    assert df.ending_is_number("AHRQ_FRDOC_0001-WXyz") is False
+    assert df.document_id_ending_is_number("AHRQ_FRDOC_0001-WXyz") is False
 
 
 def test_id_matches_good():
-    assert df.id_matches(PATH + "doc.FMCSA-1997-2350-21654.json", "FMCSA-1997-2350-21654") is True
+    assert df.document_id_matches_json_id(PATH + "doc.FMCSA-1997-2350-21654.json", "FMCSA-1997-2350-21654") is True
 
 
 def test_id_matches_bad():
-    assert df.id_matches(PATH + "doc.FMCSA-1997-2350-21653.json", "FMCSA-1997-2350-21653") is False
+    assert df.document_id_matches_json_id(PATH + "doc.FMCSA-1997-2350-21653.json", "FMCSA-1997-2350-21653") is False
 
 
 def test_is_document_beginning_good():
-    assert df.beginning_is_letter("AHRQ_FRDOC_0001-0036") is True
+    assert df.document_id_beginning_is_letter("AHRQ_FRDOC_0001-0036") is True
 
 
 def test_is_document_beginning_bad():
-    assert df.beginning_is_letter("9147_FRDOC_0001-0036") is False
+    assert df.document_id_beginning_is_letter("9147_FRDOC_0001-0036") is False
 
 
 # Saving Tests
@@ -91,7 +91,7 @@ def test_get_file_list_and_work(workfile_tempdir, savefile_tempdir):
     condition = True
     for file in file_list[0]:
         document_id = df.get_document_id(file)
-        if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
+        if file.startswith("doc.") and df.document_id_ending_is_number(document_id) and df.document_id_beginning_is_letter(document_id):
             pass
         else:
             condition = False
@@ -108,7 +108,7 @@ def test_get_file_list_and_bad_work(savefile_tempdir):
     condition = True
     for file in file_list[0]:
         document_id = df.get_document_id(file)
-        if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
+        if file.startswith("doc.") and df.document_id_ending_is_number(document_id) and df.document_id_beginning_is_letter(document_id):
             pass
         else:
             condition = False
@@ -124,7 +124,7 @@ def test_get_file_list_and_more_bad_work(savefile_tempdir):
     condition = True
     for file in file_list[0]:
         document_id = df.get_document_id(file)
-        if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
+        if file.startswith("doc.") and df.document_id_ending_is_number(document_id) and df.document_id_beginning_is_letter(document_id):
             pass
         else:
             condition = False
@@ -140,12 +140,24 @@ def test_get_file_list_and_bad_number_work(savefile_tempdir):
     condition = True
     for file in file_list[0]:
         document_id = df.get_document_id(file)
-        if file.startswith("doc.") and df.ending_is_number(document_id) and df.beginning_is_letter(document_id):
+        if file.startswith("doc.") and df.document_id_ending_is_number(document_id) and df.document_id_beginning_is_letter(document_id):
             pass
         else:
             condition = False
 
     assert condition is False
+
+
+def test_check_if_document_needs_renew():
+    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.tif', {'type': 'doc'}, PATH) is False
+
+
+def test_check_if_document_needs_renew_json():
+    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.json', {'type': 'doc'}, PATH) is False
+
+
+def test_check_if_document_needs_renew_bad_json():
+    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21653.json', {'type': 'doc'}, PATH) is True
 
 
 def test_save_single_file_locally(workfile_tempdir, savefile_tempdir):

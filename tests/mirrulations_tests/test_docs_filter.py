@@ -33,7 +33,7 @@ def test_remove_empty_lists_save_others():
 #     home = os.getenv("HOME")
 #     path = home + "/regulations_data/AHRQ_FRDOC/AHRQ_FRDOC_0001/AHRQ_FRDOC_0001-0036/doc.AHRQ_FRDOC_0001-0036.json"
 #     count = 0
-#     count, verdict = dsf.local_files_check(path, count)
+#     count, verdict = dsf.check_if_file_exists_locally(path, count)
 #     assert count == 0
 #     assert verdict is True
 
@@ -42,7 +42,7 @@ def test_file_doesnt_exists_local():
     home = os.getenv("HOME")
     path = home + "/regulations_data/AHRQ_FRDOC/AHRQ_FRDOC_0001/AHRQ_FRDOC_0001-0037/doc.AHRQ_FRDOC_0001-0037.json"
     count = 0
-    count, verdict = dsf.local_files_check(path, count)
+    count, verdict = dsf.check_if_file_exists_locally(path, count)
     assert count == 1
     assert verdict is False
 
@@ -58,31 +58,31 @@ def test_file_doesnt_exists_local():
 # Validation Tests
 def test_file_checker_500_lines():
     test_data = generate_json_data(PATH + '500_lines.json')
-    assert dsf.workfile_length_checker(test_data) is True
+    assert dsf.check_workfile_length(test_data) is True
     assert test_data["type"] == "docs"
 
 
 def test_file_checker_1000_lines():
     test_data = generate_json_data(PATH + '1000_lines.json')
-    assert dsf.workfile_length_checker(test_data) is True
+    assert dsf.check_workfile_length(test_data) is True
     assert test_data["type"] == "docs"
 
 
 def test_file_checker_2_workfiles():
     test_data = generate_json_data(PATH + '2_workfiles.json')
-    assert dsf.workfile_length_checker(test_data) is True
+    assert dsf.check_workfile_length(test_data) is True
     assert test_data["type"] == "docs"
 
 
 def test_file_checker_1001_lines():
     test_data = generate_json_data(PATH + '1001_lines.json')
-    assert dsf.workfile_length_checker(test_data) is False
+    assert dsf.check_workfile_length(test_data) is False
     assert test_data["type"] == "docs"
 
 
 def test_file_checker_too_many_attachments():
     test_data = generate_json_data(PATH + 'too_many_attachments.json')
-    assert dsf.workfile_length_checker(test_data) is False
+    assert dsf.check_workfile_length(test_data) is False
     assert test_data["type"] == "docs"
 
 
