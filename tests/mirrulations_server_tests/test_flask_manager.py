@@ -2,7 +2,7 @@ import pytest
 import requests_mock
 import mock
 import fakeredis
-import mirrulations_server.flask_manager as endpoints
+import mirrulations_server.flask_manager as flask_manager
 from mirrulations_server.redis_manager import RedisManager
 import json
 import os
@@ -12,7 +12,7 @@ PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test_files/m
 
 version = 'v1.3'
 
-endpoints.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
+flask_manager.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
 
 
 @pytest.fixture
@@ -23,8 +23,8 @@ def mock_req():
 
 @pytest.fixture
 def client():
-    endpoints.app.config['TESTING'] = True
-    client = endpoints.app.test_client()
+    flask_manager.app.config['TESTING'] = True
+    client = flask_manager.app.test_client()
     yield client
 
 
@@ -85,12 +85,6 @@ def test_get_queue_item(client):
     r = make_database()
     list = literal_eval(r.lpop("queue").decode("utf-8"))
     assert list == ['a', ['b', 'c']]
-
-
-def test_generate_json():
-    list = ["a", "b", ["a", "b"]]
-    json1 = endpoints.generate_json(list)
-    assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version": version})
 
 
 def test_return_docs_call_success(client):

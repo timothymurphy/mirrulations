@@ -12,9 +12,8 @@ def main():
         run()
 
     def run_work():
-        from mirrulations_server.work_manager import monolith, expire
-        monolith()
-        expire()
+        from mirrulations_server.work_manager import run
+        run()
 
     Thread(target=run_redis).start()
     Thread(target=run_flask).start()

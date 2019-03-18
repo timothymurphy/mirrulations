@@ -1,8 +1,7 @@
 import tempfile
 from mirrulations_client.documents_processor import *
+import mirrulations_core.api_call_management as api_call_manager
 import mirrulations_core.config as config
-
-base_url = 'https://api.data.gov/regulations/v3/document?documentId='
 
 key = config.read_value('key')
 client_id = config.read_value('client_id')
@@ -25,9 +24,9 @@ def document_processor(doc_ids):
     for doc_id in doc_ids:
         logger.debug('Call Successful: %s', 'document_processor: processing document: ' + doc_id, extra=d)
         try:
-            result = api_call_manager(add_api_key(make_doc_url(doc_id)))
+            result = api_call_manager.api_call(api_call_manager.get_document_url(doc_id))
             total = get_extra_documents(result, dirpath.name, doc_id)
-        except CallFailException:
+        except api_call_manager.CallFailException:
             logger.debug('CallFailException: %s', 'document_processor: error with doc_id ' + doc_id, extra=d)
             logger.error('Doc ID error')
     logger.info('Documents written to temporary directory')
@@ -125,13 +124,13 @@ def download_doc_formats(dirpath, doc_json, documentId):
         extra_formats = doc_json["fileFormats"]
         total_requests += len(extra_formats)
         for extra_doc in extra_formats:
-            result = api_call_manager(add_api_key(str(extra_doc)))
+            result = api_call_manager.api_call(extra_doc)
             here = extra_doc.index("contentType") + 12
             type = extra_doc[here:]
             download_document(dirpath, documentId, result, type)
     except KeyError:
         pass
-    except CallFailException:
+    except api_call_manager.CallFailException:
         logger.debug('CallFailException: %s', 'download_doc_formats: Exception trying to download attachment for '
                      + documentId, extra=d)
         logger.error('Error - Call failed')
@@ -161,11 +160,11 @@ def download_attachments(dirpath, doc_json, documentId):
             for a_format in attachment_formats:
                 here = str(a_format).index("contentType") + 12
                 type = str(a_format)[here:]
-                result = api_call_manager(add_api_key(str(a_format)))
+                result = api_call_manager.api_call(api_call_manager.get_document_url(a_format))
                 download_document(dirpath, documentId, result, type)
     except KeyError:
         pass
-    except CallFailException:
+    except api_call_management.CallFailException:
         logger.debug('CallFailException: %s', 'download_attachments: error trying to download attachment for '
                      + documentId, extra=d)
         logger.error('Error - Call failed')

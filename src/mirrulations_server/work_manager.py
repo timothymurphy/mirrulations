@@ -1,12 +1,14 @@
+import json
 import logging
 import random
 import redis
-import requests
 import string
 import time
 import mirrulations_server.redis_manager as redis_manager
-import mirrulations_server.flask_manager as flask_manager
+import mirrulations_core.api_call_management as api_call_management
 import mirrulations_core.config as config
+
+key = config.read_value('key')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='redis_log.log', format=FORMAT)
@@ -16,66 +18,53 @@ logger = logging.getLogger('tcpserver')
 r = redis_manager.RedisManager(redis.Redis())
 
 
-def monolith():
-    """
-    Runs the script. This is one monolithic function (aptly named) as the script just needs to be run; however, there is a certain
-    point where I need to break out of the program if an error occurs, and I wasn't sure how exactly sys.exit() would work and whether
-    or not it would mess with things outside of / calling this script, so I just made one giant method so I can return when needed.
-    :return:
-    """
+def get_max_page_hit(results_per_page):
 
-    url_base = "https://api.data.gov/regulations/v3/documents.json?rpp=1000"
+    try:
+        url = api_call_management.get_document_count_url(results_per_page)
+        records = api_call_management.send_call(url).json()
+        return records["totalNumRecords"] // results_per_page
+    except api_call_management.CallFailException:
+        logger.error('Error occured with API request')
+        print("Error occurred with docs_work_gen regulations API request.")
+        exit()
 
-    regulations_key = config.read_value('key')
+
+def get_work(results_per_page):
+
+    max_page_hit = get_max_page_hit(results_per_page)
 
     current_page = 0
 
-    # Gets number of documents available to download
-    try:
-        record_count = requests.get("https://api.data.gov/regulations/v3/documents.json?api_key=" + regulations_key
-                                    + "&countsOnly=1").json()["totalNumRecords"]
-    except:
-        logger.error('Error occured with API request')
-        print("Error occurred with docs_work_gen regulations API request.")
-        return 0
-
-    # Gets the max page we'll go to; each page is 1000 documents
-    max_page_hit = record_count // 1000
-
-    # This loop generates lists of URLs, sending out a job and writing them to the work server every 1000 URLs.
-    # It will stop and send whatever's left if we hit the max page limit.
     while current_page < max_page_hit:
         url_list = []
-        for i in range(1000):
-            current_page += 1
-            url_full = url_base + "&po=" + str(current_page * 1000)
 
-            url_list.append(url_full)
+        for i in range(results_per_page):
+            current_page += 1
+            url_list.append(api_call_management.get_documents_url(current_page * results_per_page, results_per_page))
 
             if current_page == max_page_hit:
                 break
 
         # Makes a JSON from the list of URLs and send it to the queue as a job
-        docs_work = [''.join(random.choices(string.ascii_letters + string.digits, k=16)), "docs", url_list]
-        r.add_to_queue(flask_manager.generate_json(docs_work))
+        r.add_to_queue(json.dumps([''.join(random.choices(string.ascii_letters + string.digits, k=16)),
+                                   "docs", url_list]))
 
 
-def expire():  # user EXPIRE
-    """
-    Checks to see if any of the in-progress jobs have expired
-    """
+def expired_job_checker():  # user EXPIRE
+
     logger.info('Checking for expired jobs...')
-
-    while True:
-        logger.debug('Awake: %s', 'expire: expire is active', extra=d)
-        logger.debug('Calling Function: %s', 'expire: attempting to find expired', extra=d)
-        r.find_expired()
-        logger.debug('Function Successful: %s', 'expire: find expired successfully', extra=d)
-        logger.debug('Sleep: %s', 'expire: sleep for 1 hours', extra=d)
-        logger.info('Returning to sleep')
-        time.sleep(3600)
+    logger.debug('Awake: %s', 'expire: expire is active', extra=d)
+    logger.debug('Calling Function: %s', 'expire: attempting to find expired', extra=d)
+    r.find_expired()
+    logger.debug('Function Successful: %s', 'expire: find expired successfully', extra=d)
+    logger.debug('Sleep: %s', 'expire: sleep for 1 hours', extra=d)
+    logger.info('Returning to sleep')
 
 
 def run():
-    monolith()
-    expire()
+
+    get_work(1000)
+    while True:
+        expired_job_checker()
+        time.sleep(3600)

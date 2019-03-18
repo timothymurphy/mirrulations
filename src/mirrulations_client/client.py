@@ -48,7 +48,7 @@ def get_work(client_id):
     logger.debug('Returning: %s', 'get_work: the respond from the api call to get_work', extra=d)
     logger.info('Work successfully retrieved')
 
-    return man.api_call_manager(url)
+    return man.api_call(url)
 
 
 def get_json_info(json_result):

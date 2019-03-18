@@ -124,35 +124,5 @@ def return_doc():
     return 'Successful!'
 
 
-def generate_json(work_list):
-    """
-    Given a list of values, the list will be converted into json format
-    :param work_list: The list of values that will be converted into json
-    :return: Returns the json formatted list
-    """
-    logger.info('Converting into JSON...')
-    logger.debug('Call Successful: %s', 'generate_json: generate_json called successfully', extra=d)
-    logger.debug('Assign Variable: %s', 'generate_json: assign job_id from the work_list', extra=d)
-    job_id = work_list[0]
-    logger.debug('Variable Success: %s', 'generate_json: jod_id assigned', extra=d)
-    logger.debug('Assign Variable: %s', 'generate_json: assign type from the work_list', extra=d)
-    type = work_list[1]
-    logger.debug('Variable Success: %s', 'generate_json: type assigned', extra=d)
-    logger.debug('Assign Variable: %s', 'generate_json: assign data from the work_list', extra=d)
-    data = work_list[2]
-    logger.debug('Variable Success: %s', 'generate_json: data assigned', extra=d)
-    logger.debug('Assign Variable: %s', 'generate_json: assign converted_json from the combination of job_id, type, and data', extra=d)
-    converted_json = {
-        "job_id": job_id,
-        "type": type,
-        "data": data,
-        "version": version
-    }
-    logger.debug('Variable Success: %s', 'generate_json: converted_json created', extra=d)
-    logger.debug("Returning: %s", 'generate_json: returning converted_json', extra=d)
-    logger.info('JSON conversion successful')
-    return json.dumps(converted_json)
-
-
 def run():
     app.run('0.0.0.0', '8080')

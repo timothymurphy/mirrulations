@@ -1,7 +1,7 @@
 from mirrulations_client.client import *
 import pytest
 import requests_mock
-from mirrulations_core.api_call_management import add_api_key, CallFailException
+from mirrulations_core.api_call_management import get_document_url, CallFailException
 import mirrulations_core.config as config
 
 ip = config.read_value('ip')
@@ -10,7 +10,7 @@ key = config.read_value('key')
 client_id = config.read_value('client_id')
 
 serverurl = "http://" + ip + ":" + port
-base_url = 'https://api.data.gov/regulations/v3/document?documentId='
+fake_url = 'https://website.com/random?api_key=' + key
 
 
 @pytest.fixture
@@ -26,28 +26,27 @@ def test_get_work(mock_req):
     assert result.status_code == 200
 
 
-
 def test_return_docs(mock_req):
     mock_req.post(serverurl+"/return_docs", status_code=200)
-    mock_req.get(add_api_key('http://website.com/random'), status_code=200, text='{"documents": \
-                                                                                  [{"documentId": "CMS-2005-0001-0001", "attachmentCount": 4},\
-                                                                                  {"documentId": "CMS-2005-0001-0002", "attachmentCount": 999}]}')
+    mock_req.get(fake_url, status_code=200, text='{"documents": \
+                                                  [{"documentId": "CMS-2005-0001-0001", "attachmentCount": 4},\
+                                                   {"documentId": "CMS-2005-0001-0002", "attachmentCount": 999}]}')
     r = return_docs({'job_id': 'qwerty', 'data': ['http://website.com/random']}, str(client_id))
     assert r.status_code == 200
 
 
 def ignore_test_return_docs_error(mock_req):
 
-    mock_req.get(add_api_key('http://website.com/random'), status_code=400, text='{"documents": \
-                                                                                  [{"documentId": "CMS-2005-0001-0001", "attachmentCount": 4},\
-                                                                                  {"documentId": "CMS-2005-0001-0002", "attachmentCount": 999}]}')
+    mock_req.get(fake_url, status_code=400, text='{"documents": \
+                                                  [{"documentId": "CMS-2005-0001-0001", "attachmentCount": 4},\
+                                                   {"documentId": "CMS-2005-0001-0002", "attachmentCount": 999}]}')
     with pytest.raises(CallFailException):
         r = return_docs({'job_id': 'qwerty', 'data': ['http://website.com/random']}, str(client_id))
 
 
 def test_return_doc(mock_req):
     mock_req.post(serverurl + "/return_doc", status_code=200)
-    mock_req.get(add_api_key('https://api.data.gov/regulations/v3/document?documentId=website-com'),
+    mock_req.get(get_document_url('website-com'),
                  status_code=200, text='{ "something": '
                                        '["https://api.data.gov/regulations/v3/download?'
                                        'documentId=OSHA-H117-2006-0947-0647&'

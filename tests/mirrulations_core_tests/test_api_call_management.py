@@ -1,11 +1,7 @@
 import pytest
 import requests_mock
 from mock import *
-
 from mirrulations_core.api_call_management import *
-
-
-base_url = 'https://api.data.gov:443/regulations/v3/documents.json?'
 
 
 @pytest.fixture
@@ -21,62 +17,64 @@ def set_time():
 
 
 def test_happy_path(mock_req):
-    mock_req.get(add_api_key(base_url), status_code=200, text='{}')
-    assert call(add_api_key(base_url)).text == '{}'
+    mock_req.get(get_plain_documents_url(), status_code=200, text='{}')
+    assert send_call(get_plain_documents_url()).text == '{}'
 
 
 def test_exception_thrown(mock_req):
-    mock_req.get(add_api_key(base_url),status_code=300)
+    mock_req.get(get_plain_documents_url(),status_code=300)
     with pytest.raises(TemporaryException):
-        call(add_api_key(base_url))
+        send_call(get_plain_documents_url())
 
 
 def test_api_count_zero(mock_req):
-        mock_req.get(add_api_key(base_url), status_code=429)
+        mock_req.get(get_plain_documents_url(), status_code=429)
         with pytest.raises(ApiCountZeroException):
-            call(add_api_key(base_url))
+            send_call(get_plain_documents_url())
 
 
 def test_api_permanent_exception(mock_req):
-        mock_req.get(add_api_key(base_url), status_code=404)
+        mock_req.get(get_plain_documents_url(), status_code=404)
         with pytest.raises(PermanentException):
-            call(add_api_key(base_url))
+            send_call(get_plain_documents_url())
 
 
 def test_invalid_key_gives_permanent_exception(mock_req):
-        mock_req.get(add_api_key(base_url), status_code=403)
+        mock_req.get(get_plain_documents_url(), status_code=403)
         with pytest.raises(PermanentException):
-            call(add_api_key(base_url))
+            send_call(get_plain_documents_url())
+
 
 def test_generic_500_failure(mock_req):
-    mock_req.get(add_api_key(base_url), status_code=500)
+    mock_req.get(get_plain_documents_url(), status_code=500)
     with pytest.raises(PermanentException):
-        call(add_api_key(base_url))
-
-
+        send_call(get_plain_documents_url())
 
 
 def test_success(mock_req):
-    mock_req.get(add_api_key(base_url), status_code=200, text='{}')
-    assert api_call_manager(add_api_key(base_url)).text == '{}'
+    mock_req.get(get_plain_documents_url(), status_code=200, text='{}')
+    assert api_call(get_plain_documents_url()).text == '{}'
 
 
 @patch('time.sleep', set_time())
 def test_retry_calls_failure(mock_req):
-    mock_req.get(add_api_key(base_url), status_code=304)
+    mock_req.get(get_plain_documents_url(), status_code=304)
     with pytest.raises(CallFailException):
-        api_call_manager(add_api_key(base_url))
+        api_call(get_plain_documents_url())
+
 
 def test_callfailexception(mock_req):
-    mock_req.get(add_api_key(base_url), status_code=403)
+    mock_req.get(get_plain_documents_url(), status_code=403)
     with pytest.raises(CallFailException):
-        api_call_manager(add_api_key(base_url))
+        api_call(get_plain_documents_url())
 
 
 @patch('time.sleep', set_time())
 def test_user_out_of_api_calls_sleeps(mock_req):
-    mock_req.register_uri('GET', add_api_key(base_url), [{'text': 'resp1', 'status_code': 429},{'text': '{}', 'status_code': 200}])
-    assert api_call_manager(add_api_key(base_url)).text == '{}'
+    mock_req.register_uri('GET',
+                          get_plain_documents_url(),
+                          [{'text': 'resp1', 'status_code': 429},{'text': '{}', 'status_code': 200}])
+    assert api_call(get_plain_documents_url()).text == '{}'
 
 
 

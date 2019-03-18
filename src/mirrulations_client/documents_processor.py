@@ -1,6 +1,6 @@
-from mirrulations_core.api_call_management import *
 import json
 import logging
+import mirrulations_core.api_call_management as api_call_management
 import mirrulations_core.config as config
 
 workfiles = []
@@ -30,7 +30,7 @@ def documents_processor(urls, job_id, client_id):
     for url in urls:
         try:
             logger.debug('Call Successful: %s', 'documents_processor: Processing URL: ' + url, extra=d)
-            result = api_call_manager(add_api_key(url))
+            result = api_call_management.api_call(url)
             process_results(result)
             logger.debug('Call Successful: %s', 'documents_processor: Done processing URL: ' + url, extra=d)
         except:
