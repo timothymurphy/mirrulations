@@ -490,5 +490,17 @@ def get_curr_time():
     return float(time.time())
 
 
+def queue_check(r):
+    import redis
+    logger.info('Checking queue...')
+    return r.get_all_items_in_progress_no_lock(), r.get_all_items_in_queue_no_lock()
+
+
+def print_queue():
+    queue = queue_check(RedisManager(redis.redis()))
+    print(queue[1])
+    print(queue[2])
+
+
 def run():
     os.system('redis-server')

@@ -24,5 +24,6 @@ setup(
     extras_require={'test': TESTS_REQUIRE},
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    entry_points={'console_scripts': ['mirrulations=mirrulations_core.__main__:main']}
+    entry_points={'console_scripts': ['mirrulations=mirrulations_core.__main__:main',
+                                      'mirrulations_queue_check=mirrulations_server.redis_mananger:print_queue']}
 )
