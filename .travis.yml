@@ -1,0 +1,6 @@
+language: python
+python: 3.7.2
+dist: xenial
+install:
+  - pip install .
+script: pytest
