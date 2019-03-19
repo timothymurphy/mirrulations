@@ -4,6 +4,8 @@
 
 Software to create and maintain a mirror of regulations.gov
 
+Timothy Murphy's name does not need to be here.
+
 #### Regulations.gov
 ------
 The data on [Regulations.gov](https://www.regulations.gov) consists of Congressional laws that have been passed and implemented as regulations by federal agencies. The site is available to the public such that anyone can read and provide feedback for these regulations to make their opinions known.
