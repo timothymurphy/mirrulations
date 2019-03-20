@@ -19,7 +19,98 @@ This program does the validation of data from the docs jobs and then creates doc
 version= 'v1.3'
 
 
-# Validation Function
+def process_docs(redis_server, json_data, compressed_file):
+    """
+    Main documents function, called by the server to compile list of document jobs and add them to the "queue" queue
+    :param json_data: the json data for the jobs
+    :param compressed_file: the zipfile containing the client's log
+    :return:
+    """
+    logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called from return_docs', extra=d)
+    logger.info('Processing Jobs...')
+
+    if redis_server.does_job_exist_in_progress(json_data["job_id"]) is False:
+        logger.debug('Variable Failure: %s', 'process_docs: job_id does not exist in progress queue', extra=d)
+
+    else:
+        save_client_log(json_data['client_id'], compressed_file)
+
+        logger.debug('Variable Success: %s', 'process_docs: job does exist in progress queue', extra=d)
+        logger.debug('Calling Function: % s', 'process_docs: process_docs calling check_workfile_length', extra=d)
+        WorkfileLengthPassed = check_workfile_length(json_data)
+        logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called check_workfile_length',
+                     extra=d)
+        FileTypeIsDocs = json_data['type'] == 'docs'
+
+        if WorkfileLengthPassed and FileTypeIsDocs:
+
+            logger.debug('Calling Function: % s', 'process_docs: process_docs calling check_document_exists', extra=d)
+            json_data = check_document_exists(json_data)
+            logger.debug('Calling Function: % s', 'process_docs: process_docs calling add_document_job_to_queue',
+                         extra=d)
+            add_document_job_to_queue(redis_server, json_data)
+            logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called '
+                                                     'add_document_job_to_queue', extra=d)
+            logger.debug('Calling Function: % s', 'process_docs: process_docs calling get_keys_from_progress', extra=d)
+            key = redis_server.get_keys_from_progress(json_data['job_id'])
+            logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called '
+                                                     'get_keys_from_progress', extra=d)
+            logger.debug('Calling Function: % s', 'process_docs: process_docs calling remove_job_from_progress',
+                         extra=d)
+            redis_server.remove_job_from_progress(key)
+            logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called '
+                                                     'remove_job_from_progress', extra=d)
+
+        else:
+            logger.debug('Variable Failure: %s', 'process_docs: Something went wrong in validation', extra=d)
+
+            checks_name = ['WorkfileLengthPassed', 'FileTypeIsDocs']
+            checks_values = [WorkfileLengthPassed, FileTypeIsDocs]
+            dc.write_multiple_checks_into_logger(checks_name, checks_values, 'process_docs')
+
+            logger.debug('Calling Function: % s', 'process_docs: process_docs calling renew_job', extra=d)
+            redis_server.renew_job(json_data['job_id'])
+            logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called renew_job',
+                         extra=d)
+            logger.info('Jobs successfully processed')
+
+
+def save_client_log(client_id, compressed_file):
+
+    client_path = os.getenv('HOME') + '/client-logs/' + str(client_id) + '/'
+
+    logger.debug('Function Successful: % s', 'get_file_list: get_file_list successfully called from process_doc',
+                 extra=d)
+    logger.info('Saving client log...')
+    logger.debug('Calling Function: % s', 'get_file_list: get_file_list calling ZipFile', extra=d)
+
+    files = zipfile.ZipFile(compressed_file, "r")
+    logger.debug('Function Successful: % s', 'get_file_list: get_file_list successfully called ZipFile', extra=d)
+
+    temp_directory = tempfile.mkdtemp()
+    temp_directory_path = str(temp_directory + '/')
+
+    logger.debug('Calling Function: % s', 'get_file_list: get_file_list calling extractall', extra=d)
+    files.extractall(temp_directory_path)
+    logger.debug('Function Successful: % s', 'get_file_list: get_file_list successfully called extractall', extra=d)
+
+    # Create a list of all the files in the directory
+    logger.debug('Calling Function: % s', 'get_file_list: get_file_list calling listdir', extra=d)
+    file_list = os.listdir(temp_directory_path)
+    logger.debug('Function Successful: % s', 'get_file_list: get_file_list successfully called listdir', extra=d)
+
+    logger.debug('Loop: %s', 'get_file_list: loop through the files in the file list', extra=d)
+    for file in file_list:
+        if file.endswith('.log'):
+            if not os.path.exists(client_path):
+                os.makedirs(client_path)
+                shutil.copy(temp_directory_path + file, client_path)
+            else:
+                shutil.copy(temp_directory_path + file, client_path)
+    logger.debug('Loop Successful: %s', 'get_file_list: loop successful', extra=d)
+    logger.info('Log successfully saved')
+
+
 def check_workfile_length(json_data):
     """
         Checks the file count and attachment count of each work file
@@ -33,7 +124,7 @@ def check_workfile_length(json_data):
 
     file_count = 0
     attachment_count = 0
-    for work_file in json_data["data"]:
+    for work_file in json_data['data']:
         for line in work_file:
             file_count += 1
             attachment_count += line["count"]
@@ -106,7 +197,6 @@ def remove_empty_lists(json_data):
     return json_data
 
 
-# Saving and Adding Functions
 def add_document_job_to_queue(redis_server, json_data):
     """
     Creates a job for each work file and then adds each job to the "queue"
@@ -152,94 +242,4 @@ def create_document_job(work_file, job_id):
     return json.dumps(dictionary)
 
 
-def save_client_log(client_id, compressed_file):
 
-    client_path = os.getenv('HOME') + '/client-logs/' + str(client_id) + '/'
-
-    logger.debug('Function Successful: % s', 'get_file_list: get_file_list successfully called from process_doc',
-                 extra=d)
-    logger.info('Saving client log...')
-    logger.debug('Calling Function: % s', 'get_file_list: get_file_list calling ZipFile', extra=d)
-
-    files = zipfile.ZipFile(compressed_file, "r")
-    logger.debug('Function Successful: % s', 'get_file_list: get_file_list successfully called ZipFile', extra=d)
-
-    temp_directory = tempfile.mkdtemp()
-    temp_directory_path = str(temp_directory + '/')
-
-    logger.debug('Calling Function: % s', 'get_file_list: get_file_list calling extractall', extra=d)
-    files.extractall(temp_directory_path)
-    logger.debug('Function Successful: % s', 'get_file_list: get_file_list successfully called extractall', extra=d)
-
-    # Create a list of all the files in the directory
-    logger.debug('Calling Function: % s', 'get_file_list: get_file_list calling listdir', extra=d)
-    file_list = os.listdir(temp_directory_path)
-    logger.debug('Function Successful: % s', 'get_file_list: get_file_list successfully called listdir', extra=d)
-
-    logger.debug('Loop: %s', 'get_file_list: loop through the files in the file list', extra=d)
-    for file in file_list:
-        if file.endswith('.log'):
-            if not os.path.exists(client_path):
-                os.makedirs(client_path)
-                shutil.copy(temp_directory_path + file, client_path)
-            else:
-                shutil.copy(temp_directory_path + file, client_path)
-    logger.debug('Loop Successful: %s', 'get_file_list: loop successful', extra=d)
-    logger.info('Log successfully saved')
-
-
-# Final Function
-def process_docs(redis_server, json_data, compressed_file):
-    """
-    Main documents function, called by the server to compile list of document jobs and add them to the "queue" queue
-    :param json_data: the json data for the jobs
-    :param compressed_file: the zipfile containing the client's log
-    :return:
-    """
-    logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called from return_docs', extra=d)
-    logger.info('Processing Jobs...')
-
-    if redis_server.does_job_exist_in_progress(json_data["job_id"]) is False:
-        logger.debug('Variable Failure: %s', 'process_docs: job_id does not exist in progress queue', extra=d)
-
-    else:
-        save_client_log(json_data['client_id'], compressed_file)
-
-        logger.debug('Variable Success: %s', 'process_docs: job does exist in progress queue', extra=d)
-        logger.debug('Calling Function: % s', 'process_docs: process_docs calling check_workfile_length', extra=d)
-        WorkfileLengthPassed = check_workfile_length(json_data)
-        logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called check_workfile_length',
-                     extra=d)
-        FileTypeIsDocs = json_data['type'] == 'docs'
-
-        if WorkfileLengthPassed and FileTypeIsDocs:
-
-            logger.debug('Calling Function: % s', 'process_docs: process_docs calling check_document_exists', extra=d)
-            json_data = check_document_exists(json_data)
-            logger.debug('Calling Function: % s', 'process_docs: process_docs calling add_document_job_to_queue',
-                         extra=d)
-            add_document_job_to_queue(redis_server, json_data)
-            logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called '
-                                                     'add_document_job_to_queue', extra=d)
-            logger.debug('Calling Function: % s', 'process_docs: process_docs calling get_keys_from_progress', extra=d)
-            key = redis_server.get_keys_from_progress(json_data['job_id'])
-            logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called '
-                                                     'get_keys_from_progress', extra=d)
-            logger.debug('Calling Function: % s', 'process_docs: process_docs calling remove_job_from_progress',
-                         extra=d)
-            redis_server.remove_job_from_progress(key)
-            logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called '
-                                                     'remove_job_from_progress', extra=d)
-
-        else:
-            logger.debug('Variable Failure: %s', 'process_docs: Something went wrong in validation', extra=d)
-
-            checks_name = ['WorkfileLengthPassed', 'FileTypeIsDocs']
-            checks_values = [WorkfileLengthPassed, FileTypeIsDocs]
-            dc.write_multiple_checks_into_logger(checks_name, checks_values, 'process_docs')
-
-            logger.debug('Calling Function: % s', 'process_docs: process_docs calling renew_job', extra=d)
-            redis_server.renew_job(json_data['job_id'])
-            logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called renew_job',
-                         extra=d)
-            logger.info('Jobs successfully processed')
