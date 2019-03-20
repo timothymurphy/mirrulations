@@ -22,8 +22,8 @@ def process_doc(redis_server, json_data, compressed_file):
     """
     Main document function, called by the server to check and save document files returned from the client
     """
-    logger.debug('FILTER JOB_ID: %s', 'process_doc: ' + str(json_data["job_id"]), extra=d)
-    if redis_server.does_job_exist_in_progress(json_data["job_id"]) is False:
+    logger.debug('FILTER JOB_ID: %s', 'process_doc: ' + str(json_data['job_id']), extra=d)
+    if redis_server.does_job_exist_in_progress(json_data['job_id']) is False:
         logger.debug('Variable Failure: %s', 'process_doc: job_id does not exist in progress queue', extra=d)
 
     else:
@@ -65,7 +65,7 @@ def get_file_list(compressed_file, compressed_file_path, client_id):
                  extra=d)
     logger.debug('Calling Function: % s', 'get_file_list: get_file_list calling ZipFile', extra=d)
 
-    files = zipfile.ZipFile(compressed_file, "r")
+    files = zipfile.ZipFile(compressed_file, 'r')
 
     logger.debug('Function Successful: % s', 'get_file_list: get_file_list successfully called ZipFile', extra=d)
     logger.debug('Calling Function: % s', 'get_file_list: get_file_list calling extractall', extra=d)
@@ -82,9 +82,9 @@ def get_file_list(compressed_file, compressed_file_path, client_id):
     final_list = []
     logger.debug('Loop: %s', 'get_file_list: loop through the files', extra=d)
     for file in file_list:
-        if file.startswith("doc."):
+        if file.startswith('doc.'):
             final_list.append(file)
-        elif file.endswith(".log"):
+        elif file.endswith('.log'):
             if not os.path.exists(client_path):
                 os.makedirs(client_path)
                 shutil.copy(compressed_file_path + file, client_path)

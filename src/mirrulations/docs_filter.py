@@ -240,6 +240,3 @@ def create_document_job(work_file, job_id):
     logger.info('Document job created...')
 
     return json.dumps(dictionary)
-
-
-
