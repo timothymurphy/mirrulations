@@ -63,24 +63,19 @@ def check_workfile_length(json_data):
     return True
 
 
-def check_document_exists(json_data):
+def check_document_exists(json_data, path=os.getenv('HOME') + '/regulations_data/'):
     """
     Checks to see if a document was already downloaded or already in one of the queues.
     If the document has already been downloaded it will be removed from its workfile.
     If a workfile were to become empty it will be removed to prevent empty doc jobs from existing.
-    :param json_data: the json containing the work files
-    :return:
     """
-
     logger.warning('Function Successful: % s', 'check_workfile_length: check_workfile_length successfully called '
                                                'from process_docs', extra=d)
-    path = os.getenv('HOME') + '/regulations_data/'
-
     for workfile in json_data['data']:
         count = 0
         for line in workfile:
             document = line['id']
-            alpha_doc_org, docket_id, document_id = dc.get_doc_attributes('doc.' + document + '.json')
+            alpha_doc_org, docket_id, document_id = dc.get_doc_attributes(document)
             full_path = path + alpha_doc_org + '/' + docket_id + '/' + document_id + '/' + 'doc.' + document + '.json'
 
             count, local_verdict = check_if_file_exists_locally(full_path, count)
@@ -223,16 +218,13 @@ def process_docs(redis_server, json_data, compressed_file):
             json_data = check_document_exists(json_data)
             logger.debug('Calling Function: % s', 'process_docs: process_docs calling add_document_job_to_queue',
                          extra=d)
-
             add_document_job_to_queue(redis_server, json_data)
             logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called '
                                                      'add_document_job_to_queue', extra=d)
-
             logger.debug('Calling Function: % s', 'process_docs: process_docs calling get_keys_from_progress', extra=d)
             key = redis_server.get_keys_from_progress(json_data['job_id'])
             logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called '
                                                      'get_keys_from_progress', extra=d)
-
             logger.debug('Calling Function: % s', 'process_docs: process_docs calling remove_job_from_progress',
                          extra=d)
             redis_server.remove_job_from_progress(key)
@@ -247,7 +239,7 @@ def process_docs(redis_server, json_data, compressed_file):
             dc.write_multiple_checks_into_logger(checks_name, checks_values, 'process_docs')
 
             logger.debug('Calling Function: % s', 'process_docs: process_docs calling renew_job', extra=d)
-            redis_server.renew_job(json_data["job_id"])
+            redis_server.renew_job(json_data['job_id'])
             logger.debug('Function Successful: % s', 'process_docs: process_docs successfully called renew_job',
                          extra=d)
             logger.info('Jobs successfully processed')
