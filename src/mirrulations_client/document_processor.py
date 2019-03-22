@@ -20,7 +20,7 @@ def document_processor(api_manager, doc_ids):
         try:
             result = api_manager.make_document_call(doc_id)
             total = get_extra_documents(api_manager, result, dirpath.name, doc_id)
-        except man.CallFailException:
+        except api_manager.CallFailException:
             logger.debug('CallFailException: %s', 'document_processor: error with doc_id ' + doc_id, extra=d)
             logger.error('Doc ID error')
     logger.info('Documents written to temporary directory')
