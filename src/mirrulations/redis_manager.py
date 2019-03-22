@@ -11,7 +11,6 @@ logger = logging.getLogger('tcpserver')
 
 
 class RedisManager:
-
     def __init__(self, database):
         """
         Initialize the database and create the lock
@@ -110,7 +109,6 @@ class RedisManager:
         with self.lock:
             for element in range(self.r.llen('queue')):
                 current = (self.r.lindex('queue', element)).decode("utf-8")
-
                 info = json.loads(current)
 
                 if job_id == info['job_id']:
@@ -127,9 +125,7 @@ class RedisManager:
         for element in range(self.r.llen('queue')):
 
             current = (self.r.lindex('queue', element)).decode("utf-8")
-
             info = json.loads(current)
-
             if job_id == info['job_id']:
                 return current
         return '{"job_id":"null", "type":"none"}'
@@ -141,7 +137,6 @@ class RedisManager:
         :return: True if the job is in the "queue", False if it is not in the "queue"
         """
         with self.lock:
-
             job = self.get_specific_job_from_queue_no_lock(job_id)
             if job == '':
                 return False
@@ -154,9 +149,7 @@ class RedisManager:
         :param job_id: The id for the job in question
         """
         with self.lock:
-
             job = self.get_specific_job_from_queue_no_lock(job_id)
-
             self.r.lrem('queue', 1, job)
 
     def does_job_exist_in_progress(self, job_id):

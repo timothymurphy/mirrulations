@@ -10,7 +10,7 @@ import mirrulations_core.documents_core as dc
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='docs_filter.log', format=FORMAT)
-d = { 'clientip': '192.168.0.1', 'user': 'FILTERS'}
+d = {'clientip': '192.168.0.1', 'user': 'FILTERS'}
 logger = logging.getLogger('tcpserver')
 
 """
@@ -27,7 +27,6 @@ def workfile_length_checker(json_data):
         :return: True if there are 1000 or less document ids and 1000 or less attachments per work file
                  False if either the ids or attachments are over 1000
         """
-
     file_count = 0
     attachment_count = 0
     for work_file in json_data["data"]:
@@ -54,7 +53,6 @@ def check_document_exists(json_data):
     :param json_data: the json containing the work files
     :return:
     """
-
     logger.warning('Function Successful: % s',
                    'workfile_length_checker: workfile_length_checker successfully called from process_docs', extra=d)
 
@@ -68,7 +66,6 @@ def check_document_exists(json_data):
             full_path = path + alpha_doc_org + "/" + docket_id + "/" + document_id + "/" + "doc." + document + ".json"
 
             count, local_verdict = local_files_check(full_path, count)
-            #redis_verdict = redis_files_check
 
             if local_verdict: #and redis_verdict:
                 workfile.pop(count)
@@ -140,7 +137,6 @@ def save_client_log(client_id, compressed_file):
     :param compressed_file: the compressed file containing the client log
     :return:
     """
-
     home=os.getenv("HOME")
     client_path = home + '/client-logs/' + str(client_id) + '/'
 
@@ -169,7 +165,6 @@ def process_docs(redis_server, json_data, compressed_file):
     :param compressed_file: the zipfile containing the client's log
     :return:
     """
-
     if redis_server.does_job_exist_in_progress(json_data["job_id"]):
         save_client_log(json_data['client_id'], compressed_file)
         wklc = workfile_length_checker(json_data)
