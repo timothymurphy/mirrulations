@@ -49,26 +49,3 @@ def mock_req():
 #                                        'attachmentNumber=1&contentType=pdf"] }')
 #     r = return_doc({'job_id': 'qwerty', 'data': [{'id': 'website-com', 'count': 4}]})
 #     assert r.status_code == 200
-
-
-def test_add_logs():
-    path = tempfile.TemporaryDirectory()
-    zip_path = tempfile.TemporaryDirectory()
-
-    open(path.name + "/client.log", "w").write("test")
-    open(path.name + "/documents_processor.log", "w").write("test")
-    open(path.name + "/document_processor.log", "w").write("test")
-    open(path.name + "/api_call.log", "w").write("test")
-    open(path.name + "/api_call_management.log", "w").write("test")
-
-    add_client_log_files(zip_path.name, path.name)
-
-    assert open(zip_path.name + "/client.log", "r").read() == "test"
-    assert open(zip_path.name + "/documents_processor.log", "r").read() == "test"
-    assert open(zip_path.name + "/document_processor.log", "r").read() == "test"
-    assert open(zip_path.name + "/api_call.log", "r").read() == "test"
-    assert open(zip_path.name + "/api_call_management.log", "r").read() == "test"
-
-    path.cleanup()
-    zip_path.cleanup()
-

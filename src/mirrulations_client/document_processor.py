@@ -1,7 +1,7 @@
 import tempfile
 from mirrulations_client.documents_processor import *
 import mirrulations_core.config as config
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 client_id = config.read_value('CLIENT', 'CLIENT_ID')
 

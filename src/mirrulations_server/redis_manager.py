@@ -4,7 +4,7 @@ import os
 import redis
 import redis_lock
 import time
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 
 class RedisManager:

@@ -5,7 +5,7 @@ import json
 from mirrulations_server.docs_filter import process_docs
 from mirrulations_server.doc_filter import process_doc
 from mirrulations_server.redis_manager import RedisManager
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 
 app = Flask(__name__)

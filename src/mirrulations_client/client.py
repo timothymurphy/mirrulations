@@ -10,16 +10,12 @@ import shutil
 import tempfile
 from pathlib import Path
 import mirrulations_core.config as config
+from mirrulations_core.mirrulations_logging import logger
 
 API_KEY = config.read_value('CLIENT', 'API_KEY')
 CLIENT_ID = config.read_value('CLIENT', 'CLIENT_ID')
 SERVER_ADDRESS = config.read_value('CLIENT', 'SERVER_ADDRESS')
 VERSION = "v1.3"
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='client.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': CLIENT_ID}
-logger = logging.getLogger('tcpserver')
 
 
 class ClientHealthCallManager:

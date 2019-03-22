@@ -1,6 +1,6 @@
 import requests
 import time
-import mirrulations_core.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 
 class APICallManager:
