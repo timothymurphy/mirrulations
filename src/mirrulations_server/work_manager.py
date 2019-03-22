@@ -4,27 +4,27 @@ import random
 import redis
 import string
 import time
-import mirrulations_server.redis_manager as redis_manager
+from mirrulations_server.redis_manager import RedisManager
 from mirrulations_core.api_call_manager import APICallManager
 import mirrulations_core.config as config
 
-key = config.read_value('SERVER', 'key')
+key = config.read_value('SERVER', 'API_KEY')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='redis_log.log', format=FORMAT)
 d = {'clientip': '192.168.0.1', 'user': 'REDIS'}
 logger = logging.getLogger('tcpserver')
 
-r = redis_manager.RedisManager(redis.Redis())
-api = APICallManager(key)
+redis_manager = RedisManager(redis.Redis())
+api_manager = APICallManager(key)
 
 
 def get_max_page_hit(results_per_page):
 
     try:
-        records = api.make_documents_call(counts_only=True, results_per_page=results_per_page).json
+        records = api_manager.make_documents_call(counts_only=True, results_per_page=results_per_page).json
         return records["totalNumRecords"] // results_per_page
-    except api.CallFailException:
+    except api_manager.CallFailException:
         logger.error('Error occured with API request')
         print("Error occurred with docs_work_gen regulations API request.")
         exit()
@@ -47,9 +47,9 @@ def get_work(results_per_page):
                 break
 
         # Makes a JSON from the list of URLs and send it to the queue as a job
-        r.add_to_queue(json.dumps([''.join(random.choices(string.ascii_letters + string.digits, k=16)),
+        redis_manager.add_to_queue(json.dumps([''.join(random.choices(string.ascii_letters + string.digits, k=16)),
                                    'docs',
-                                   docs_info_list]))
+                                               docs_info_list]))
 
 
 def expired_job_checker():  # user EXPIRE
@@ -57,7 +57,7 @@ def expired_job_checker():  # user EXPIRE
     logger.info('Checking for expired jobs...')
     logger.debug('Awake: %s', 'expire: expire is active', extra=d)
     logger.debug('Calling Function: %s', 'expire: attempting to find expired', extra=d)
-    r.find_expired()
+    redis_manager.find_expired()
     logger.debug('Function Successful: %s', 'expire: find expired successfully', extra=d)
     logger.debug('Sleep: %s', 'expire: sleep for 1 hours', extra=d)
     logger.info('Returning to sleep')

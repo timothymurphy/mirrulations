@@ -497,7 +497,7 @@ def queue_check(r):
 
 
 def print_queue():
-    queue = queue_check(RedisManager(redis.redis()))
+    queue = queue_check(RedisManager(redis.Redis()))
     print(queue[1])
     print(queue[2])
 
