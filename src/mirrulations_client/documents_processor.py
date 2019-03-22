@@ -13,7 +13,7 @@ logger = logging.getLogger('tcpserver')
 workfiles = []
 
 
-def documents_processor(api_manager, docs_info_list, job_id, client_id):
+def documents_processor(api_manager, docs_info_list, job_id):
     """
     Call each url in the list, process the results of the calls and then form a json file to send back the results
     :param urls: list of urls that have to be called
@@ -34,7 +34,7 @@ def documents_processor(api_manager, docs_info_list, job_id, client_id):
     result = json.loads(json.dumps({"job_id" : job_id,
                                     "type": "docs",
                                     "data" : workfiles,
-                                    "client_id" : str(client_id),
+                                    "client_id" : client_id,
                                     "version" : version}))
     logger.debug('Variable Success: %s', 'documents_processor: successfully loaded json', extra=d)
     logger.debug('Returning: %s', 'documents_processor: returning the json', extra=d)

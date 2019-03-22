@@ -19,7 +19,7 @@ def mock_req():
 
 def test_documents_processor_basic():
     docs_info_list = []
-    docs = documents_processor(APICallManager(key), docs_info_list, 'JobID', client_id)
+    docs = documents_processor(APICallManager(key), docs_info_list, 'JobID')
     assert docs == {'client_id': client_id, "type": "docs",
                     'data': [],
                     'job_id': 'JobID',
@@ -45,7 +45,7 @@ def test_make_docs_complex():
 
 def test_documents_processor_empty():
     docs_info_list = []
-    docs = documents_processor(APICallManager(key), docs_info_list, 'JobID', client_id)
+    docs = documents_processor(APICallManager(key), docs_info_list, 'JobID')
     assert docs == {'client_id': client_id,
                     'type':'docs',
                     'data': [],

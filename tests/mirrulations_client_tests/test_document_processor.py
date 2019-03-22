@@ -1,7 +1,6 @@
 from mirrulations_client.document_processor import *
 import pytest
 import requests_mock
-import os
 import mirrulations_core.config as config
 
 key = config.read_value('CLIENT', 'API_KEY')

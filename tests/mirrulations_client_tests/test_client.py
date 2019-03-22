@@ -2,7 +2,6 @@ from mirrulations_client.client import *
 import pytest
 import requests_mock
 import mirrulations_core.config as config
-from mirrulations_core.api_call_manager import APICallManager
 
 server_url = config.read_value('CLIENT', 'SERVER_ADDRESS')
 fake_url = 'https://website.com/random?api_key=' + config.read_value('CLIENT', 'API_KEY')
