@@ -1,29 +1,26 @@
 import tempfile
 from mirrulations_client.documents_processor import *
-import mirrulations_core.api_call_management as api_call_manager
-from mirrulations_client.client import CLIENT_ID
+import mirrulations_core.config as config
+
+client_id = config.read_value('CLIENT', 'CLIENT_ID')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='document_processor.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': CLIENT_ID}
+d = {'clientip': '192.168.0.1', 'user': client_id}
 logger = logging.getLogger('tcpserver')
 
 
-def document_processor(doc_ids):
-    """
-    This process takes all of the document ids given to it and saves all of the data for the documents in a temporary directory.
-    :param doc_ids: list of document ids that have to be collected.
-    :return: temporary directory that data was written to.
-    """
+def document_processor(man, doc_ids):
+
     logger.debug('Call Successful: %s', 'document_processor: processing document ID list', extra=d)
     logger.info('Writing documents to temporary directory...')
     dirpath = tempfile.TemporaryDirectory()
     for doc_id in doc_ids:
         logger.debug('Call Successful: %s', 'document_processor: processing document: ' + doc_id, extra=d)
         try:
-            result = api_call_manager.api_call(api_call_manager.get_document_url(doc_id))
-            total = get_extra_documents(result, dirpath.name, doc_id)
-        except api_call_manager.CallFailException:
+            result = man.make_document_call(doc_id)
+            total = get_extra_documents(man, result, dirpath.name, doc_id)
+        except man.CallFailException:
             logger.debug('CallFailException: %s', 'document_processor: error with doc_id ' + doc_id, extra=d)
             logger.error('Doc ID error')
     logger.info('Documents written to temporary directory')
@@ -71,7 +68,7 @@ def download_document(dirpath, documentId, result, type):
     logger.info('Additional formats saved')
 
 
-def get_extra_documents(result, dirpath, documentId):
+def get_extra_documents(man, result, dirpath, documentId):
     """
     Download the json of the result from the original api call
     Determine if the document has additional file formats that need to be downloaded
@@ -88,14 +85,14 @@ def get_extra_documents(result, dirpath, documentId):
     doc_json = json.loads(result.text)
     save_document(dirpath, doc_json, documentId)
     total_requests = 0
-    total_requests += download_doc_formats(dirpath, doc_json, documentId)
-    total_requests += download_attachments(dirpath, doc_json, documentId)
+    total_requests += download_doc_formats(man, dirpath, doc_json, documentId)
+    total_requests += download_attachments(man, dirpath, doc_json, documentId)
 
     logger.info('Found {} additional documents'.format(total_requests))
     return total_requests
 
 
-def download_doc_formats(dirpath, doc_json, documentId):
+def download_doc_formats(man, dirpath, doc_json, documentId):
     """
     Download the other formats for the document
     :param dirpath: path to the directory where the download will be saved
@@ -112,13 +109,13 @@ def download_doc_formats(dirpath, doc_json, documentId):
         extra_formats = doc_json["fileFormats"]
         total_requests += len(extra_formats)
         for extra_doc in extra_formats:
-            result = api_call_manager.api_call(extra_doc)
+            result = man.make_call(extra_doc)
             here = extra_doc.index("contentType") + 12
             type = extra_doc[here:]
             download_document(dirpath, documentId, result, type)
     except KeyError:
         pass
-    except api_call_manager.CallFailException:
+    except man.CallFailException:
         logger.debug('CallFailException: %s', 'download_doc_formats: Exception trying to download attachment for '
                      + documentId, extra=d)
         logger.error('Error - Call failed')
@@ -127,7 +124,7 @@ def download_doc_formats(dirpath, doc_json, documentId):
     return total_requests
 
 
-def download_attachments(dirpath, doc_json, documentId):
+def download_attachments(man, dirpath, doc_json, documentId):
     """
     Download the other attachments for the document
     :param dirpath: path to the directory where the download will be saved
@@ -148,11 +145,11 @@ def download_attachments(dirpath, doc_json, documentId):
             for a_format in attachment_formats:
                 here = str(a_format).index("contentType") + 12
                 type = str(a_format)[here:]
-                result = api_call_manager.api_call(api_call_manager.get_document_url(a_format))
+                result = man.make_document_call(a_format)
                 download_document(dirpath, documentId, result, type)
     except KeyError:
         pass
-    except api_call_management.CallFailException:
+    except man.CallFailException:
         logger.debug('CallFailException: %s', 'download_attachments: error trying to download attachment for '
                      + documentId, extra=d)
         logger.error('Error - Call failed')

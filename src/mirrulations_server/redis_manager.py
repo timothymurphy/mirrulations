@@ -2,6 +2,7 @@ from ast import literal_eval
 import json
 import logging
 import os
+import redis
 import redis_lock
 import time
 
@@ -491,7 +492,6 @@ def get_curr_time():
 
 
 def queue_check(r):
-    import redis
     logger.info('Checking queue...')
     return r.get_all_items_in_progress_no_lock(), r.get_all_items_in_queue_no_lock()
 

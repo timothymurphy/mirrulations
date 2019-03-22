@@ -16,7 +16,7 @@ logger = logging.getLogger('tcpserver')
 """
 This program does the validation of data from the docs jobs and then creates doc jobs using that data
 """
-version= 'v1.3'
+version = 'v1.3'
 
 
 # Validation Function

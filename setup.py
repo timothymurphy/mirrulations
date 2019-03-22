@@ -29,7 +29,6 @@ setup(
     extras_require={'dev': DEV_REQUIRES},
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    data_files={('.config', ['.config/config.ini', '.config/moved_config.ini', '.config/example.ini'])},
     entry_points={'console_scripts': ['mirrulations-client=mirrulations_client.__main__:main',
                                       'mirrulations-server=mirrulations_server.__main__:main',
                                       'mirrulations-web=mirrulations_web.__main__:main',

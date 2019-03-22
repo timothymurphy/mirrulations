@@ -8,7 +8,6 @@ var/
 dump.rdb
 *.log
 result.zip
-.config/config.ini
-.config/test.ini
+config.ini
 build/
 dist/

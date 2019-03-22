@@ -1,17 +1,19 @@
 import json
 import logging
-import mirrulations_core.api_call_management as api_call_management
-from mirrulations_client.client import CLIENT_ID, VERSION
+import mirrulations_core.config as config
+
+client_id = config.read_value('CLIENT', 'CLIENT_ID')
+version = 'v1.3'
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='documents_processor.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': CLIENT_ID}
+d = {'clientip': '192.168.0.1', 'user': client_id}
 logger = logging.getLogger('tcpserver')
 
 workfiles = []
 
 
-def documents_processor(urls, job_id, client_id):
+def documents_processor(man, docs_info_list, job_id, client_id):
     """
     Call each url in the list, process the results of the calls and then form a json file to send back the results
     :param urls: list of urls that have to be called
@@ -22,17 +24,18 @@ def documents_processor(urls, job_id, client_id):
     workfiles = []
     logger.debug('Call Successful: %s', 'documents_processor: Processing documents', extra=d)
     logger.info('Processing documents into JSON...')
-    for url in urls:
+    for docs_info in docs_info_list:
         try:
-            logger.debug('Call Successful: %s', 'documents_processor: Processing URL: ' + url, extra=d)
-            result = api_call_management.api_call(url)
+            result = man.make_documents_call(page_offset=docs_info[0], results_per_page=docs_info[1])
             process_results(result)
-            logger.debug('Call Successful: %s', 'documents_processor: Done processing URL: ' + url, extra=d)
         except:
-            logger.debug('Exception: %s', 'documents_processor: Error processing URL: ' + url, extra=d)
             logger.error('Error - URL processing failed')
     logger.debug('Assign Variable: %s', 'documents_processor: Load the json', extra=d)
-    result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(client_id), "version" : VERSION}))
+    result = json.loads(json.dumps({"job_id" : job_id,
+                                    "type": "docs",
+                                    "data" : workfiles,
+                                    "client_id" : str(client_id),
+                                    "version" : version}))
     logger.debug('Variable Success: %s', 'documents_processor: successfully loaded json', extra=d)
     logger.debug('Returning: %s', 'documents_processor: returning the json', extra=d)
     logger.info('Documents processed into JSON')
@@ -79,7 +82,7 @@ def make_docs(doc_list):
             work_list = []
             size = 0
         size += calls
-        document = {"id" : doc_id, "count" : calls}
+        document = {"id": doc_id, "count": calls}
         work_list.append(document)
     if size != 0:
         workfiles.append(work_list)
