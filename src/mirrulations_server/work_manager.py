@@ -10,11 +10,6 @@ import mirrulations_core.config as config
 
 key = config.read_value('SERVER', 'API_KEY')
 
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='redis_log.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'REDIS'}
-logger = logging.getLogger('tcpserver')
-
 redis_manager = RedisManager(redis.Redis())
 api_manager = APICallManager(key)
 
@@ -52,21 +47,10 @@ def get_work(results_per_page):
                                                docs_info_list]))
 
 
-def expired_job_checker():  # user EXPIRE
-
-    logger.info('Checking for expired jobs...')
-    logger.debug('Awake: %s', 'expire: expire is active', extra=d)
-    logger.debug('Calling Function: %s', 'expire: attempting to find expired', extra=d)
-    redis_manager.find_expired()
-    logger.debug('Function Successful: %s', 'expire: find expired successfully', extra=d)
-    logger.debug('Sleep: %s', 'expire: sleep for 1 hours', extra=d)
-    logger.info('Returning to sleep')
-
-
 def run():
 
     get_work(1000)
 
     while True:
-        expired_job_checker()
+        redis_manager.find_expired()
         time.sleep(3600)

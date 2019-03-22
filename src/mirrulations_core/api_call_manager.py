@@ -1,11 +1,6 @@
-import logging
 import requests
 import time
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='api_call_management.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'CLIENT'}
-logger = logging.getLogger('tcpserver')
+import mirrulations_core.mirrulations_logging import logger
 
 
 class APICallManager:
@@ -16,8 +11,6 @@ class APICallManager:
     class CallFailException(Exception):
 
         def __init__(self):
-            logger.debug('EXCEPTION: %s', 'CallFailException: There seems to be an error with your API call',
-                         extra=d)
             logger.warning('API call failed...')
 
     def make_call(self, url):
@@ -28,29 +21,22 @@ class APICallManager:
             result = requests.get(url)
 
             if result.status_code == 429:
-                logger.debug('Exception: %s', 'api_call_mangement: Caught ApiCountZeroException. Waiting 1 hour.',
-                             extra=d)
                 logger.error('Error: ran out of API calls')
                 time.sleep(3600)
 
             elif 300 < result.status_code < 400:
-                logger.debug('Exception: %s',
-                             'api_call_mangement: Caught TemporaryException, waiting 5 minutes. Current pause: ' +
-                             str(pause), extra=d)
                 logger.error('Error: waiting 5 minutes...')
                 time.sleep(300)
                 pause += 1
 
             elif 400 <= result.status_code < 600:
-                logger.debug('Exception: %s', 'api_call_mangement: Caught PermanentException', extra=d)
                 logger.error('Error with the API call')
                 break
 
             else:
+                logger.warning('API call successfully made')
                 return result
 
-        logger.debug('Exception: %s', 'api_call_mangement: CallFailException for return docs', extra=d)
-        logger.debug('Incomplete: %s', url, extra=d)
         logger.error('API call failed...')
         raise self.CallFailException
 

@@ -5,6 +5,8 @@ INSTALL_REQUIRES = ['requests==2.21.0',
                     'redis==3.1.0',
                     'python-redis-lock==3.3.1',
                     'pytest==4.3.0',
+                    'pytest-cov==2.6.1',
+                    'pycodestyle==2.5.0',
                     'fakeredis[lua]==1.0.2',
                     'mock==2.0.0',
                     'requests-mock==1.5.2']

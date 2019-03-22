@@ -1,5 +1,5 @@
 .DS_Store
-.venv/
+.env/
 .pytest_cache/
 __pycache__/
 *.egg-info/
@@ -11,3 +11,4 @@ result.zip
 config.ini
 build/
 dist/
+.coverage

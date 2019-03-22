@@ -2,7 +2,7 @@ import configparser
 import os
 import random
 import string
-
+from mirrulations_core.mirrulations_logging import logger
 from mirrulations_core.api_call_manager import verify_key
 
 CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../.config/config.ini")
