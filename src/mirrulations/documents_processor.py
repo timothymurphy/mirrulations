@@ -37,7 +37,7 @@ def documents_processor(urls, job_id, client_id):
             logger.debug('Exception: %s', 'documents_processor: Error processing URL: ' + url, extra=d)
             logger.error('Error - URL processing failed')
     logger.debug('Assign Variable: %s', 'documents_processor: Load the json', extra=d)
-    result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(client_id), "version" : version}))
+    result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(client_id), "VERSION" : version}))
     logger.debug('Variable Success: %s', 'documents_processor: successfully loaded json', extra=d)
     logger.debug('Returning: %s', 'documents_processor: returning the json', extra=d)
     logger.info('Documents processed into JSON')

@@ -179,7 +179,7 @@ def return_doc(json_result, client_id):
     r = requests.post(serverurl+"/return_doc",
                       files={'file':('result.zip', fileobj)},
                       data={'json':json.dumps({"job_id" : job_id, "type" : "doc",
-                                               "user": client_id, "version" : version })})
+                                               "user": client_id, "VERSION" : version })})
 
     logger.info('Doc file created')
 

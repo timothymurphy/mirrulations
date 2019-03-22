@@ -38,7 +38,7 @@ def get_work():
     Endpoint the user will use to get work from the queue
     client_id will be one of the parameters given for logging purposes
     :return: Returns the json containing the job_id, the type of work to be done, the work that nees to be done, and
-    the version number
+    the VERSION number
     """
     logging.warning("Successful API Call: %s", 'get_work: get_work', extra=d)
     logger.info('Calling API to get work...')
@@ -146,7 +146,7 @@ def generate_json(work_list):
         "job_id": job_id,
         "type": type,
         "data": data,
-        "version": version
+        "VERSION": version
     }
     logger.debug('Variable Success: %s', 'generate_json: converted_json created', extra=d)
     logger.debug("Returning: %s", 'generate_json: returning converted_json', extra=d)
