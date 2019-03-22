@@ -26,11 +26,13 @@ class APICallManager:
         while pause < 51:
 
             result = requests.get(url)
+
             if result.status_code == 429:
                 logger.debug('Exception: %s', 'api_call_mangement: Caught ApiCountZeroException. Waiting 1 hour.',
                              extra=d)
                 logger.error('Error: ran out of API calls')
                 time.sleep(3600)
+
             elif 300 < result.status_code < 400:
                 logger.debug('Exception: %s',
                              'api_call_mangement: Caught TemporaryException, waiting 5 minutes. Current pause: ' +
@@ -38,10 +40,12 @@ class APICallManager:
                 logger.error('Error: waiting 5 minutes...')
                 time.sleep(300)
                 pause += 1
+
             elif 400 <= result.status_code < 600:
                 logger.debug('Exception: %s', 'api_call_mangement: Caught PermanentException', extra=d)
                 logger.error('Error with the API call')
                 break
+
             else:
                 return result
 
@@ -56,7 +60,7 @@ class APICallManager:
 
     def make_document_call(self, document_id, attachment_number=None, content_type=None):
         return self.make_call(self.make_api_call_url('document',
-                                                      '&documentId=' + document_id
+                                                     '&documentId=' + document_id
                                                      + ('' if attachment_number is None
                                                          else '&attachmentNumber=' + str(attachment_number))
                                                      + ('' if content_type is None
@@ -71,8 +75,7 @@ class APICallManager:
                                                          else '&rpp=' + str(results_per_page))))
 
     def make_docket_call(self, docket_id):
-        return self.make_call(self.make_api_call_url('docket.json',
-                                                      '&docketId=' + docket_id))
+        return self.make_call(self.make_api_call_url('docket.json', '&docketId=' + docket_id))
 
 
 def verify_key(key_input):
