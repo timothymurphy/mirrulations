@@ -13,7 +13,7 @@ def make_database():
     r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()
     list = json.dumps({"A":"a", "B":["b", "c"]})
-    list2 = json.dumps({"D":"d", "E":["e", "f"]})
+    list2 = json.dumps({"D":"D", "E":["e", "f"]})
     list3 = json.dumps({"G":"g", "H":["h", "i"]})
     r.add_to_queue(list)
     r.add_to_queue(list2)
