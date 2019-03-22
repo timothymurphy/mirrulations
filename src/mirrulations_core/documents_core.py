@@ -51,3 +51,13 @@ def add_hyphens(list):
             hyphened_string = hyphened_string + list[x] + "-"
 
     return hyphened_string
+
+
+def remove_job_from_progress(redis_server, json_data):
+    """
+    :param redis_server:
+    :param json_data:
+    :return:
+    """
+    key = redis_server.get_keys_from_progress(json_data['job_id'])
+    redis_server.remove_job_from_progress(key)

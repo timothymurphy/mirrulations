@@ -22,9 +22,7 @@ def process_docs(redis_server, json_data, compressed_file):
     :param compressed_file: the zipfile containing the client's log
     :return:
     """
-    if redis_server.does_job_exist_in_progress(json_data["job_id"]) is False:
-        pass
-    else:
+    if redis_server.does_job_exist_in_progress(json_data["job_id"]) is True:
         save_client_log(json_data['client_id'], compressed_file)
         workfile_length_passed = check_workfile_length(json_data)
         file_type_is_docs = json_data['type'] == 'docs'
@@ -33,8 +31,9 @@ def process_docs(redis_server, json_data, compressed_file):
 
             json_data = check_document_exists(json_data)
             add_document_job_to_queue(redis_server, json_data)
-            key = redis_server.get_keys_from_progress(json_data['job_id'])
-            redis_server.remove_job_from_progress(key)
+            dc.remove_job_from_progress(redis_server, json_data)
+            #key = redis_server.get_keys_from_progress(json_data['job_id'])
+            #redis_server.remove_job_from_progress(key)
         else:
             redis_server.renew_job(json_data['job_id'])
 

@@ -13,14 +13,15 @@ import mirrulations_core.documents_core as dc
 This program does the validation of data from the doc jobs and then saves that data locally
 """
 
+HOME_REGULATION_PATH = os.getenv('HOME') + '/regulations-data/'
 
-def process_doc(redis_server, json_data, compressed_file):
+
+def process_doc(redis_server, json_data, compressed_file, destination=HOME_REGULATION_PATH):
     """
     Main document function, called by the server to check and
     save document files returned from the client
     """
     if redis_server.does_job_exist_in_progress(json_data['job_id']):
-
         temp_directory = tempfile.mkdtemp()
         temp_directory_path = str(temp_directory + '/')
 
@@ -37,8 +38,8 @@ def process_doc(redis_server, json_data, compressed_file):
                 break_check = True
                 break
         if break_check is False:
-            save_all_files_locally(file_list, temp_directory_path)
-            remove_job_from_progress(redis_server, json_data)
+            save_all_files_locally(file_list, temp_directory_path, destination)
+            dc.remove_job_from_progress(redis_server, json_data)
 
 
 def get_file_list(compressed_file, compressed_file_path, client_id):
@@ -65,6 +66,7 @@ def get_file_list(compressed_file, compressed_file_path, client_id):
                 shutil.copy(compressed_file_path + file, client_path)
             else:
                 shutil.copy(compressed_file_path + file, client_path)
+    return final_list, compressed_file_path
 
 
 def ending_is_number(document_id):
@@ -91,8 +93,7 @@ def check_if_document_needs_renew(file, json_data, path):
     file_ends_with_json = file.endswith('.json')
     file_job_type_is_doc = json_data['type'] == 'doc'
 
-    file_combined_check = file_starts_with_doc and file_begin_with_doc_letter and \
-                          file_end_is_doc_num and file_job_type_is_doc
+    file_combined_check = file_starts_with_doc and file_begin_with_doc_letter and file_end_is_doc_num and file_job_type_is_doc
     file_combined_check_and_json = file_combined_check and file_ends_with_json
 
     if file_combined_check_and_json:
@@ -146,7 +147,6 @@ def document_id_matches_json_id(path, doc_id):
     :return:
     """
     file = open(path, 'r')
-
     if not os.path.exists(path):
         os.makedirs(path)
 
@@ -158,45 +158,16 @@ def document_id_matches_json_id(path, doc_id):
     return result
 
 
-def get_file_list(compressed_file, PATHstr, client_id):
-    """
-    Get the list of files to be processed from a compressed file
-    :param compressed_file: file containing file list to be uncompressed
-    :param PATHstr: location of the file in string form
-    :param client_id: the id of the client that did the job
-    :return: The list of file names in the compressed file
-    """
-    home = os.getenv("HOME")
-    client_path = home + '/client-logs/' + str(client_id) + '/'
-    files = zipfile.ZipFile(compressed_file, "r")
-    files.extractall(PATHstr)
-    # Create a list of all the files in the directory
-    file_list = os.listdir(PATHstr)
-
-    final_list = []
-    for file in file_list:
-        if file.startswith("doc."):
-            final_list.append(file)
-        elif file.endswith(".log"):
-            if not os.path.exists(client_path):
-                os.makedirs(client_path)
-                shutil.copy(PATHstr + file, client_path)
-            else:
-                shutil.copy(PATHstr + file, client_path)
-
-    return final_list, PATHstr
-
-
-def save_all_files_locally(file_list, path):
+def save_all_files_locally(file_list, path_to_file_list, destination):
     """
     :param file_list:
-    :param path:
+    :param path_to_file_list:
+    :param destination:
     :return:
     """
     for file in file_list:
-        reg_data_path = os.getenv('HOME') + '/regulations-data/'
-        file_path = path + file
-        save_single_file_locally(file_path, reg_data_path)
+        file_path = path_to_file_list + file
+        save_single_file_locally(file_path, destination)
 
 
 def save_single_file_locally(current_path, destination):
@@ -233,6 +204,7 @@ def check_single_document(file, json_data, path):
     if ifDocumentsChecksAndJson:
         return True
 
+
 def get_file_name(file_path):
     """
     :param file_path:
@@ -250,13 +222,3 @@ def create_new_directory_for_path(path):
     """
     if not os.path.exists(path):
         os.makedirs(path)
-
-
-def remove_job_from_progress(redis_server, json_data):
-    """
-    :param redis_server:
-    :param json_data:
-    :return:
-    """
-    key = redis_server.get_keys_from_progress(json_data['job_id'])
-    redis_server.remove_job_from_progress(key)

@@ -2,7 +2,11 @@ import pytest
 import requests_mock
 import tempfile
 import os
+import fakeredis
+import json
+import mock
 import mirrulations.doc_filter as df
+from mirrulations.redis_manager import RedisManager
 
 
 PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../tests/test_files/mirrulations_files/')
@@ -23,6 +27,29 @@ def workfile_tempdir():
 def savefile_tempdir():
     with tempfile.TemporaryDirectory() as tmpdirname:
         yield tmpdirname
+
+
+@mock.patch('mirrulations.redis_manager.reset_lock')
+@mock.patch('mirrulations.redis_manager.set_lock')
+def make_database(reset, lock):
+    r = RedisManager(fakeredis.FakeRedis())
+    r.delete_all()
+    return r
+
+
+def test_process_doc(savefile_tempdir):
+    redis_server = make_database()
+    PATHstr = savefile_tempdir
+
+    json_data = json.dumps({'job_id': '1', 'type': 'doc',
+                            'client_id': 'Alex', 'VERSION': '0.0.0'})
+    redis_server.add_to_progress(json_data)
+    json_data = json.loads(json_data)
+
+    compressed_file = PATH + 'result.zip'
+    df.process_doc(redis_server, json_data, compressed_file, PATHstr)
+    progress = redis_server.get_all_items_in_progress()
+    assert len(progress) == 0
 
 
 def test_get_file_list(workfile_tempdir, savefile_tempdir):
@@ -101,18 +128,6 @@ def test_get_file_list_and_bad_number_work(savefile_tempdir):
     assert condition is False
 
 
-def test_check_if_document_needs_renew():
-    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.tif', {'type': 'doc'}, PATH) is False
-
-
-def test_check_if_document_needs_renew_json():
-    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.json', {'type': 'doc'}, PATH) is False
-
-
-def test_check_if_document_needs_renew_bad_json():
-    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21653.json', {'type': 'doc'}, PATH) is True
-
-
 def test_get_document_id():
     assert df.get_document_id('doc.mesd-2018-234234-0001.json') == 'mesd-2018-234234-0001'
 
@@ -171,5 +186,24 @@ def test_save_single_file_locally(workfile_tempdir, savefile_tempdir):
     assert os.path.exists(final_path)
 
 
+def test_check_if_document_needs_renew():
+    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.tif', {'type': 'doc'}, PATH) is False
+
+
+def test_check_if_document_needs_renew_json():
+    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.json', {'type': 'doc'}, PATH) is False
+
+
+def test_check_if_document_needs_renew_bad_json():
+    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21653.json', {'type': 'doc'}, PATH) is True
+
+
 def test_get_file_name():
     assert df.get_file_name(PATH + 'doc.mesd-2018-234234-0001.json') == 'doc.mesd-2018-234234-0001.json'
+
+
+def test_create_new_directory():
+    test_path = PATH + 'check/'
+    df.create_new_directory_for_path(test_path)
+    assert os.path.exists(test_path)
+    os.rmdir(test_path)
