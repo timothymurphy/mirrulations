@@ -8,7 +8,6 @@ logger = logging.getLogger('tcpserver')
 
 
 def queue_check(r):
-    logger.info('Checking queue...')
     return r.get_all_items_in_progress_no_lock() , r.get_all_items_in_queue_no_lock()
 
 

@@ -19,18 +19,13 @@ def document_processor(doc_ids):
     :param doc_ids: list of document ids that have to be collected.
     :return: temporary directory that data was written to.
     """
-    logger.debug('Call Successful: %s', 'document_processor: processing document ID list', extra=d)
-    logger.info('Writing documents to temporary directory...')
     dirpath = tempfile.TemporaryDirectory()
     for doc_id in doc_ids:
-        logger.debug('Call Successful: %s', 'document_processor: processing document: ' + doc_id, extra=d)
         try:
             result = api_call_manager(add_api_key(make_doc_url(doc_id)))
             total = get_extra_documents(result, dirpath.name, doc_id)
         except CallFailException:
-            logger.debug('CallFailException: %s', 'document_processor: error with doc_id ' + doc_id, extra=d)
             logger.error('Doc ID error')
-    logger.info('Documents written to temporary directory')
     return dirpath
 
 
@@ -51,12 +46,9 @@ def save_document(dirpath, doc_json, documentId):
     :param documentId: the string of a documentId
     :return:
     """
-    logger.debug('Call Successful: %s', 'document_processor: saving document with docID: ' + documentId, extra=d)
-    logger.info('Saving JSON from document call...')
     location = dirpath + "/doc." + documentId + ".json"
     with open(location , "w+") as f:
         json.dump(doc_json, f)
-        logger.info('JSON saved')
 
 
 def download_document(dirpath, documentId, result, type):
@@ -69,8 +61,6 @@ def download_document(dirpath, documentId, result, type):
     :return:
     """
 
-    logger.debug('Call Successful: %s', 'document_processor: downloading document with docID: ' + documentId, extra=d)
-    logger.info('Saving additional file formats...')
 
     # These are special cases where the api representation is different from the user's interpretation
     if(type == "excel12book"):
@@ -81,7 +71,6 @@ def download_document(dirpath, documentId, result, type):
         for chunk in result.iter_content(chunk_size=1024):
             if chunk:
                 f.write(chunk)
-    logger.info('Additional formats saved')
 
 
 def get_extra_documents(result, dirpath, documentId):
@@ -95,8 +84,6 @@ def get_extra_documents(result, dirpath, documentId):
     :return: the total number of requests required to download all of them
     """
 
-    logger.debug('Call Successful: %s', 'document_processor: getting extra documents for docID: ' + documentId, extra=d)
-    logger.info('Checking for attachments to document...')
 
     doc_json = json.loads(result.text)
     save_document(dirpath, doc_json, documentId)
@@ -104,7 +91,6 @@ def get_extra_documents(result, dirpath, documentId):
     total_requests += download_doc_formats(dirpath, doc_json, documentId)
     total_requests += download_attachments(dirpath, doc_json, documentId)
 
-    logger.info('Found {} additional documents'.format(total_requests))
     return total_requests
 
 
@@ -117,8 +103,6 @@ def download_doc_formats(dirpath, doc_json, documentId):
     :return: the total number of requests used to download the extra formats
     """
 
-    logger.debug('Call Successful: %s', 'document_processor: downloading doc formats for docID: ' + documentId, extra=d)
-    logger.info('Downloading additional formats...')
 
     total_requests = 0
     try:
@@ -132,11 +116,8 @@ def download_doc_formats(dirpath, doc_json, documentId):
     except KeyError:
         pass
     except CallFailException:
-        logger.debug('CallFailException: %s', 'download_doc_formats: Exception trying to download attachment for '
-                     + documentId, extra=d)
         logger.error('Error - Call failed')
         pass
-    logger.info('Additional formats downloaded')
     return total_requests
 
 
@@ -149,8 +130,6 @@ def download_attachments(dirpath, doc_json, documentId):
     :return: the total number of requests used to download the extra attachments
     """
 
-    logger.debug('Call Successful: %s', 'document_processor: downloading attachments for docID: ' + documentId, extra=d)
-    logger.info('Downloading attachments...')
 
     total_requests = 0
     try:
@@ -166,9 +145,6 @@ def download_attachments(dirpath, doc_json, documentId):
     except KeyError:
         pass
     except CallFailException:
-        logger.debug('CallFailException: %s', 'download_attachments: error trying to download attachment for '
-                     + documentId, extra=d)
         logger.error('Error - Call failed')
         pass
-    logger.info('Attachments downloaded')
     return total_requests

@@ -19,8 +19,6 @@ def api_call_manager(url):
     :return: returns the resulting information of the documents
     """
 
-    logger.debug('Call Successful: %s', 'api_call_mangement: starting API Call Manager', extra=d)
-    logger.info('Managing API call...')
 
     pause = 0
     while pause < 51:
@@ -28,22 +26,16 @@ def api_call_manager(url):
             result = call(url)
             return result
         except TemporaryException:
-            logger.debug('Exception: %s',
-                         'api_call_mangement: Caught TemporaryException, waiting 5 minutes. Current pause: ' +
-                         str(pause), extra=d)
+
             logger.error('Error: waiting 5 minutes...')
             time.sleep(300)
             pause += 1
         except PermanentException:
-            logger.debug('Exception: %s', 'api_call_mangement: Caught PermanentException', extra=d)
             logger.error('Error with the API call')
             break
         except ApiCountZeroException:
-            logger.debug('Exception: %s', 'api_call_mangement: Caught ApiCountZeroException. Waiting 1 hour.', extra=d)
             logger.error('Error: ran out of API calls')
             time.sleep(3600)
-    logger.debug('Exception: %s', 'api_call_mangement: CallFailException for return docs', extra=d)
-    logger.debug('Incomplete: %s', url, extra=d)
     logger.error('API call failed...')
     raise CallFailException
 
@@ -53,5 +45,4 @@ class CallFailException(Exception):
     Raise an exception is there is an error making the API call
     """
     def __init__(self):
-        logger.debug('EXCEPTION: %s', 'CallFailException: There seems to be an error with your API call', extra=d)
         logger.warning('API call failed...')
