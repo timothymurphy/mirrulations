@@ -19,7 +19,7 @@ setup(
                       'requests==2.21.0',
                       'requests-mock==1.5.2',
                       'pytest-cov==2.6.1',
-                      'pylint==2.3.1'],
+                      'pycodestyle==2.5.0'],
     packages=find_packages('src'),
     package_dir={'': 'src'},
     entry_points={'console_scripts': ['mirrulations=mirrulations_core.__main__:main']}
