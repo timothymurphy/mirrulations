@@ -1,5 +1,4 @@
 .DS_Store
-.env
 .venv/
 .pytest_cache/
 __pycache__/
@@ -9,6 +8,7 @@ var/
 dump.rdb
 *.log
 result.zip
-config.json
+.config/config.ini
+.config/test.ini
 build/
 dist/

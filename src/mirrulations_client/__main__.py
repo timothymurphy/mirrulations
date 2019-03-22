@@ -1,8 +1,8 @@
-from mirrulations_client.client import do_work
+from mirrulations_client.client import run
 
 
 def main():
-    do_work()
+    run()
 
 
 if __name__ == '__main__':

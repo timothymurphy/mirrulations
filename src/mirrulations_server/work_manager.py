@@ -8,7 +8,7 @@ import mirrulations_server.redis_manager as redis_manager
 import mirrulations_core.api_call_management as api_call_management
 import mirrulations_core.config as config
 
-key = config.read_value('key')
+key = config.read_value('SERVER', 'key')
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='redis_log.log', format=FORMAT)

@@ -1,18 +1,14 @@
 import json
 import logging
 import mirrulations_core.api_call_management as api_call_management
-import mirrulations_core.config as config
-
-workfiles = []
-version = "v1.3"
-
-key = config.read_value('key')
-client_id = config.read_value('client_id')
+from mirrulations_client.client import CLIENT_ID, VERSION
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='documents_processor.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': client_id}
+d = {'clientip': '192.168.0.1', 'user': CLIENT_ID}
 logger = logging.getLogger('tcpserver')
+
+workfiles = []
 
 
 def documents_processor(urls, job_id, client_id):
@@ -23,7 +19,6 @@ def documents_processor(urls, job_id, client_id):
     :param client_id: id of the client calling this function
     :return result: the json to be returned to the server after each call is processed
     """
-    global workfiles
     workfiles = []
     logger.debug('Call Successful: %s', 'documents_processor: Processing documents', extra=d)
     logger.info('Processing documents into JSON...')
@@ -37,7 +32,7 @@ def documents_processor(urls, job_id, client_id):
             logger.debug('Exception: %s', 'documents_processor: Error processing URL: ' + url, extra=d)
             logger.error('Error - URL processing failed')
     logger.debug('Assign Variable: %s', 'documents_processor: Load the json', extra=d)
-    result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(client_id), "version" : version}))
+    result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(client_id), "version" : VERSION}))
     logger.debug('Variable Success: %s', 'documents_processor: successfully loaded json', extra=d)
     logger.debug('Returning: %s', 'documents_processor: returning the json', extra=d)
     logger.info('Documents processed into JSON')
@@ -57,7 +52,7 @@ def process_results(result):
     docs_json = json.loads(result.text)
     try:
         doc_list = docs_json["documents"]
-        work = make_docs(doc_list)
+        make_docs(doc_list)
     except TypeError:
         logger.debug('Exception: %s', 'BadJsonException for return docs', extra=d)
         logger.error('Error - bad JSON')
@@ -73,7 +68,6 @@ def make_docs(doc_list):
     :param doc_list: list of document ids and attachment counts as a dictionary
     :return: the global workfiles variable that contains all of the work in list
     """
-    global workfiles
     logger.info('Extracting IDs to create calls...')
     size = 0
     work_list = []

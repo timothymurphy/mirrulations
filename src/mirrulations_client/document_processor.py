@@ -1,14 +1,11 @@
 import tempfile
 from mirrulations_client.documents_processor import *
 import mirrulations_core.api_call_management as api_call_manager
-import mirrulations_core.config as config
-
-key = config.read_value('key')
-client_id = config.read_value('client_id')
+from mirrulations_client.client import CLIENT_ID
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='document_processor.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': client_id}
+d = {'clientip': '192.168.0.1', 'user': CLIENT_ID}
 logger = logging.getLogger('tcpserver')
 
 
@@ -31,15 +28,6 @@ def document_processor(doc_ids):
             logger.error('Doc ID error')
     logger.info('Documents written to temporary directory')
     return dirpath
-
-
-def make_doc_url(documentId):
-    """
-    Given a documentId as a string append it to the end of the api call
-    :param documentId: the string of a documentId
-    :return: the url that will be called with a documentId through regulations.gov API
-    """
-    return base_url + documentId
 
 
 def save_document(dirpath, doc_json, documentId):

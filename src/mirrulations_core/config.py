@@ -1,44 +1,84 @@
-import json
-import logging
+import configparser
 import os
+import random
+import string
 
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='client.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'CONFIG'}
-logger = logging.getLogger('tcpserver')
+from mirrulations_core.api_call_management import verify_key
+
+CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../.config/config.ini")
 
 
-def read_value(value):
-    """
-    Reads a file from the configuration JSON file.
-    :param value: Value to be read from the JSON
-    :return: Value read from the JSON
-    """
-    logger.debug('Calling Function: %s', 'read_value: Reading a value from the configuration file', extra=d)
-    logger.info('Reading config file...')
-    try:
-        logger.debug("Assign Variable: %s", 'read_value: loading json from config', extra=d)
-        configurationpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../config.json")
-        contents = json.loads(open(configurationpath, "r").read())
-        logger.debug("Variable Success: %s", 'read_value: found json from config', extra=d)
-        logger.info('Config file read successful...')
-        result = contents[value]
-    except FileNotFoundError:
-        logger.debug('Exception: %s', 'read_value: Error finding JSON', extra=d)
-        logger.error('File Not Found Error')
-        return None
-    except IOError:
-        logger.debug('Exception: %s', 'read_value: Error opening JSON', extra=d)
-        logger.error('Input/Output Error')
-        return None
-    except json.JSONDecodeError:
-        logger.debug('Exception: %s', 'read_value: Error loading JSON', extra=d)
-        logger.error('JSON Decode Error')
-        return None
-    except KeyError:
-        logger.debug('Exception: %s', 'config: Caught KeyError, no value present for: ' + str(value) +
-                     '. Returning None.', extra=d)
-        logger.error('Key Error')
-        return None
-    else:
-        return result
+def check_config(section):
+
+    if os.path.exists(CONFIG_PATH):
+        return False
+
+    with configparser.ConfigParser() as cfg:
+        cfg.read(CONFIG_PATH)
+        for key in cfg[section]:
+            if cfg[section][key] is None:
+                return False
+        return True
+
+
+def make_config_if_missing():
+
+    if not os.path.exists(CONFIG_PATH):
+        with configparser.ConfigParser() as cfg:
+            cfg['CLIENT'] = {'API_KEY': None,
+                             'CLIENT_ID': None,
+                             'SERVER_ADDRESS': None}
+            cfg['SERVER'] = {'API_KEY': None}
+            cfg['WEB'] = {}
+            with open(CONFIG_PATH, 'w') as file:
+                file.write(cfg)
+                file.close()
+
+
+def client_config_setup():
+
+    make_config_if_missing()
+
+    api_key = input('API Key:\n')
+    verify_key(api_key)
+    client_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+    server_ip = input('Server IP:\n')
+    server_port = input('Server Port:\n')
+
+    with configparser.ConfigParser() as cfg:
+        cfg.read(CONFIG_PATH)
+        cfg['CLIENT'] = {'API_KEY': api_key,
+                         'CLIENT_ID': client_id,
+                         'SERVER_ADDRESS': server_ip + ':' + server_port}
+        with open(CONFIG_PATH, 'w') as file:
+            file.write(cfg)
+            file.close()
+
+
+def server_config_setup():
+
+    make_config_if_missing()
+
+    api_key = input('API Key:\n')
+    verify_key(api_key)
+
+    with configparser.ConfigParser() as cfg:
+        cfg.read(CONFIG_PATH)
+        cfg['SERVER'] = {'API_KEY': api_key}
+        with open(CONFIG_PATH, 'w') as file:
+            file.write(cfg)
+            file.close()
+
+
+def web_config_setup():
+
+    make_config_if_missing()
+
+    return None
+
+
+def read_value(section, value):
+
+    with configparser.ConfigParser() as cfg:
+        cfg.read(CONFIG_PATH)
+        return cfg[section][value]

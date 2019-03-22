@@ -1,14 +1,43 @@
 import logging
 import requests
 import time
-import mirrulations_core.config as config
 
-key = config.read_value('key')
+key = 0
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='api_call_management.log', format=FORMAT)
 d = {'clientip': '192.168.0.1', 'user': 'CLIENT'}
 logger = logging.getLogger('tcpserver')
+
+
+def verify_key(key_input):
+
+    class CannotConnectError(Exception):
+        print('Unable to connect!\n'
+              'We weren\'t able to connect to regulations.gov.\n'
+              'Please try again later.')
+        exit(3)
+
+    class InvalidKeyError(Exception):
+        print('Invalid API key!\n'
+              'Your API key is invalid.\n'
+              'Please visit\n'
+              'https://regulationsgov.github.io/developers/\n'
+              'for an API key.')
+        exit(4)
+
+    try:
+        with requests.get('https://api.data.gov/regulations/v3/documents.json?api_key=' + key_input) as r:
+            if r.status_code == 403:
+                raise CannotConnectError
+            elif r.status_code > 299 and r.status_code != 429:
+                raise InvalidKeyError
+            else:
+                print('Success!\n'
+                      'You are successfully logged in.')
+                return None
+    except requests.ConnectionError:
+        raise CannotConnectError
 
 
 def make_url(search_type, suffix, url='https://api.data.gov/regulations/v3/'):
@@ -32,7 +61,7 @@ def get_docket_url(docket_id):
     return make_url('docket.json', '&docketId=' + docket_id)
 
 
-def send_call(url):  # filename api_call.json
+def send_call(url):
     """
     Sends an API call to regulations.gov
     Raises exceptions if it is not a valid API call
