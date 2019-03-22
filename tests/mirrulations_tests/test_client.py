@@ -20,12 +20,12 @@ def mock_req():
         yield m
 
 
-def test_get_work(mock_req):
+def test_get_work(mock_req, caplog):
     url = serverurl+"/get_work?client_id=" + str(client_id)
     mock_req.get(url, status_code=200, text='RANDOM')
     result = get_work(str(client_id))
     assert result.status_code == 200
-
+    assert 'Obtained work from server.' in caplog.text
 
 
 def test_return_docs(mock_req):

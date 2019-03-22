@@ -4,14 +4,9 @@ import json
 from mirrulations.docs_filter import process_docs
 from mirrulations.doc_filter import process_doc
 from mirrulations.redis_manager import RedisManager
-import logging
+from mirrulations.mirrulations_logging import logger
 import io
 
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='endpoints_log.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'FLASK'}
-logger = logging.getLogger('tcpserver')
 
 app = Flask(__name__)
 version = 'v1.3'
@@ -38,13 +33,13 @@ def get_work():
     :return: Returns the json containing the job_id, the type of work to be done, the work that nees to be done, and
     the version number
     """
-    logging.warning("Successful API Call: %s", 'get_work: get_work', extra=d)
+    logger.warning("Successful API Call: %s", 'get_work: get_work')
     if len(request.args) != 1:
         logger.error('Error - number of parameters incorrect')
         return 'Parameter Missing', 400
     client_id = request.args.get('client_id')
     if client_id is None:
-        logging.warning("Exception: %s", 'get_work: BadParameterException, client id was none', extra=d)
+        logger.warning("Exception: %s", 'get_work: BadParameterException, client id was none')
         logger.error('Error - no client ID')
         return 'Bad Parameter', 400
     json_info = redis_server().get_work()

@@ -1,12 +1,6 @@
 import time
-import logging
+from mirrulations.mirrulations_logging import logger
 from mirrulations.api_call import *
-
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='api_call_management.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'CLIENT'}
-logger = logging.getLogger('tcpserver')
 
 
 def api_call_manager(url):

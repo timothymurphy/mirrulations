@@ -5,12 +5,7 @@ import redis
 import mirrulations.redis_manager as redis_manager
 import mirrulations.endpoints as endpoints
 import mirrulations_core.config as config
-import logging
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='redis_log.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'REDIS'}
-logger = logging.getLogger('tcpserver')
+from mirrulations.mirrulations_logging import logger
 
 
 def monolith():

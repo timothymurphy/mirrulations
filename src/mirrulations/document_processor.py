@@ -1,16 +1,12 @@
 import tempfile
 from mirrulations.documents_processor import *
 import mirrulations_core.config as config
+from mirrulations.mirrulations_logging import logger
 
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
 
 key = config.read_value('key')
 client_id = config.read_value('client_id')
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='document_processor.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': client_id}
-logger = logging.getLogger('tcpserver')
 
 
 def document_processor(doc_ids):
