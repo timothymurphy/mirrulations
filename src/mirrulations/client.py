@@ -35,13 +35,7 @@ def get_work(client_id):
     :param client_id: the id of the client calling /get_work
     :return: the result of making a call to get work
     """
-    global d
-
-
-
     url = serverurl+"/get_work?client_id="+str(client_id)
-
-
     return man.api_call_manager(url)
 
 
@@ -51,17 +45,9 @@ def get_json_info(json_result):
     :param json_result: the json returned from
     :return:
     """
-    global d
-
-
 
     job_id = json_result["job_id"]
-
-
     urls = json_result["data"]
-
-
-
     return job_id, urls
 
 
@@ -73,26 +59,15 @@ def return_docs(json_result, client_id):
     :param client_id: the id of the client that is processing the documents job
     :return: result from calling /return_docs
     """
-    global d
-
-
 
     job_id, urls = get_json_info(json_result)
-
-
     json_info = docs.documents_processor(urls, job_id, client_id)
-
-
     path = tempfile.TemporaryDirectory()
     add_client_log_files(path.name, ".")
     shutil.make_archive("result", "zip", path.name)
     fileobj = open('result.zip', 'rb')
-
-    r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json':json.dumps(json_info)})
-
+    r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json': json.dumps(json_info)})
     r.raise_for_status()
-
-
     return r
 
 
@@ -104,40 +79,20 @@ def return_doc(json_result, client_id):
     :param client_id: the id of the client that is processing the documents job
     :return: result from calling /return_doc
     """
-    global d
-
-
 
     job_id, doc_dicts = get_json_info(json_result)
-
-
     doc_ids = []
     for dic in doc_dicts:
-
-
         doc_ids.append(dic['id'])
-
-
-
-
     path = doc.document_processor(doc_ids)
-
     add_client_log_files(path.name, ".")
-
-
     shutil.make_archive("result", "zip", path.name)
     fileobj = open('result.zip', 'rb')
     r = requests.post(serverurl+"/return_doc",
-                      files={'file':('result.zip', fileobj)},
-                      data={'json':json.dumps({"job_id" : job_id, "type" : "doc",
-                                               "user": client_id, "version" : version })})
-
-
-
+                      files={'file': ('result.zip', fileobj)},
+                      data={'json': json.dumps({"job_id": job_id, "type": "doc",
+                                               "user": client_id, "version": version})})
     r.raise_for_status()
-
-
-
     return r
 
 
@@ -181,7 +136,6 @@ def do_work():
     """
 
     while True:
-
         try:
             work = get_work(client_id)
             requests.get(client_health_url)

@@ -16,15 +16,12 @@ def get_doc_attributes(document_id):
              document_id: the document_id
     """
 
-
     if "_" in document_id:
         split_name = re.split("[-_]", document_id)
-
         org = split_name[0] + "_" + split_name[1]
         docket_id = org + "_" + split_name[2]
         document_id = docket_id + "-" + split_name[3]
         return org, docket_id, document_id
-
     else:
         split_name = re.split("[-]", document_id)
         length = len(split_name)
@@ -34,17 +31,12 @@ def get_doc_attributes(document_id):
                 break
             else:
                 count += 1
-
         org_list = split_name[:count]
         org_list.sort()
-
         org = add_hyphens(org_list)
-
         docket_id = add_hyphens(split_name[:len(split_name) - 1])
-
         document_id = add_hyphens(split_name[:len(split_name)])
-
-        return org,docket_id,document_id
+        return org,docket_id, document_id
 
 
 def add_hyphens(list):
@@ -56,18 +48,13 @@ def add_hyphens(list):
 
     hyphened_string = ""
     for x in range(len(list)):
-
         if x == 0:
             if len(list) == 1:
                 hyphened_string = list[x]
             else:
                 hyphened_string = list[x] + "-"
-
         elif x == len(list) - 1:
             hyphened_string = hyphened_string + list[x]
-
         else:
             hyphened_string = hyphened_string + list[x] + "-"
-
-
     return hyphened_string

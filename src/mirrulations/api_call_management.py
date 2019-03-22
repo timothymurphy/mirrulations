@@ -19,14 +19,12 @@ def api_call_manager(url):
     :return: returns the resulting information of the documents
     """
 
-
     pause = 0
     while pause < 51:
         try:
             result = call(url)
             return result
         except TemporaryException:
-
             logger.error('Error: waiting 5 minutes...')
             time.sleep(300)
             pause += 1
