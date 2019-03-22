@@ -5,12 +5,7 @@ import redis
 import mirrulations.redis_manager as redis_manager
 import mirrulations.endpoints as endpoints
 import mirrulations_core.config as config
-import logging
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='redis_log.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'REDIS'}
-logger = logging.getLogger('tcpserver')
+from mirrulations.mirrulations_logging import logger
 
 
 def monolith():
@@ -20,13 +15,9 @@ def monolith():
     or not it would mess with things outside of / calling this script, so I just made one giant method so I can return when needed.
     :return:
     """
-
     url_base = "https://api.data.gov/regulations/v3/documents.json?rpp=1000"
-
     r = redis_manager.RedisManager(redis.Redis())
-
     regulations_key = config.read_value('key')
-
     current_page = 0
 
     if regulations_key != "":
@@ -58,7 +49,6 @@ def monolith():
             # Makes a JSON from the list of URLs and send it to the queue as a job
             docs_work = [''.join(random.choices(string.ascii_letters + string.digits, k=16)), "docs", url_list]
             r.add_to_queue(endpoints.generate_json(docs_work))
-
     else:
         print("No API Key!")
 

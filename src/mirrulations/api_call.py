@@ -1,14 +1,8 @@
 import requests
-import logging
 import mirrulations_core.config as config
+from mirrulations.mirrulations_logging import logger
 
 key = config.read_value('key')
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='api_call.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'CLIENT'}
-logger = logging.getLogger('tcpserver')
-
 
 def call(url):
     """
@@ -23,15 +17,12 @@ def call(url):
     logger.warning('Making API call...')
     result = requests.get(url)
     if 300 <= result.status_code < 400:
-        logger.debug('Exception: %s', 'TemporaryException for return docs', extra=d)
         logger.warning('API call failed')
         raise TemporaryException
     if result.status_code == 429:
-        logger.debug('Exception: %s', 'ApiCountZeroException for return docs', extra=d)
         logger.warning('API call failed')
         raise ApiCountZeroException
     if 400 <= result.status_code < 600:
-        logger.debug('Exception: %s', 'PermanentException for return docs', extra=d)
         logger.warning('API call failed')
         raise PermanentException
     logger.warning('API call successfully made')
@@ -52,7 +43,6 @@ class TemporaryException(Exception):
     Raise an exception if there is an error communicating with either the work server or regulations
     """
     def __init__(self):
-        logger.debug('EXCEPTION: %s', 'TemporaryException: There seems to be a connection error', extra=d)
         logger.error('Error connecting to API')
 
 
@@ -61,7 +51,6 @@ class ApiCountZeroException(Exception):
     Raise an exception if the user is out of API calls
     """
     def __init__(self):
-        logger.debug('EXCEPTION: %s', 'ApiCountZeroException: You have used all of your api calls', extra=d)
         logger.error('Error - ran out of API calls')
 
 
@@ -70,5 +59,4 @@ class PermanentException(Exception):
     Raise an exception if there is an error with the API call
     """
     def __init__(self):
-        logger.debug('EXCEPTION: %s', 'PermanentException: There is an error with your api call', extra=d)
         logger.error('Error with the API call')
