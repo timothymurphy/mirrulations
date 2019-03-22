@@ -1,13 +1,14 @@
-"""This program does the validation of data from the docs jobs and then creates doc jobs using that data"""
+"""This program does the validation of data from
+the docs jobs and then creates doc jobs using that data"""
 import random
 import json
 import string
-from mirrulations.mirrulations_logging import logger
 import os
 import zipfile
 import tempfile
 import shutil
 import mirrulations_core.documents_core as dc
+from mirrulations.mirrulations_logging import logger
 
 
 VERSION = "0.0.0"
