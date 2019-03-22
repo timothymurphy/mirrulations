@@ -25,9 +25,7 @@ def get_document_id(file_name):
     :param file_name: name of the file that the id will be extracted from
     :return id: the string of the document id from the file name
     """
-
     doc,id,ending = file_name.split(".")
-
     return id
 
 
@@ -37,11 +35,8 @@ def get_file_name(path):
     :param path: location of the file in which the name will be extracted from
     :return: file_name: The file name from the path
     """
-
     split_path = path.split("/")
     file_name = split_path[len(split_path) - 1]
-
-
     return file_name
 
 
@@ -52,12 +47,8 @@ def ending_is_number(document_id):
     :param document_id: the document id being checked
     :return: True if the number is a digit, else it will return False
     """
-
     list = re.split("-", document_id)
-
     number = list[-1]
-
-
     return number.isdigit()
 
 
@@ -68,14 +59,11 @@ def id_matches(path, doc_id):
     :param doc_id: the document id to check
     :return: True if the document_id equals the doc_id, else it will return False
     """
-
     f = open(path, "r")
-
     j = json.load(f)
-
     document_id = j["documentId"]["value"]
-
     result = document_id == doc_id
+
     if result is True:
         return True
     else:
@@ -107,24 +95,12 @@ def save_single_file_locally(cur_path, destination):
     :param destination: location that the file should be saved
     :return:
     """
-
     file_name = get_file_name(cur_path)
-
-
-
     doc_id = get_document_id(file_name)
     org, docket_id, document_id = dc.get_doc_attributes(doc_id)
-
-
     destination_path = destination + org + "/" + docket_id + "/" + document_id + "/"
-
-
     create_new_dir(destination_path)
-
-
-
     shutil.copy(cur_path, destination_path + '/' + file_name)
-
 
 
 def create_new_dir(path):
@@ -133,10 +109,7 @@ def create_new_dir(path):
     :param path: the path to the directory to be created
     :return:
     """
-
-
     if not os.path.exists(path):
-
         os.makedirs(path)
 
 
@@ -149,23 +122,12 @@ def get_file_list(compressed_file, PATHstr, client_id):
     :param client_id: the id of the client that did the job
     :return: The list of file names in the compressed file
     """
-
     home = os.getenv("HOME")
     client_path = home + '/client-logs/' + str(client_id) + '/'
-
-
-
     files = zipfile.ZipFile(compressed_file, "r")
-
-
-
     files.extractall(PATHstr)
-
-
     # Create a list of all the files in the directory
-
     file_list = os.listdir(PATHstr)
-
 
     final_list = []
     for file in file_list:
@@ -177,7 +139,6 @@ def get_file_list(compressed_file, PATHstr, client_id):
                 shutil.copy(PATHstr + file, client_path)
             else:
                 shutil.copy(PATHstr + file, client_path)
-
 
     return final_list, PATHstr
 
@@ -191,7 +152,6 @@ def process_doc(redis_server, json_data, compressed_file):
     :return:
     """
     if redis_server.does_job_exist_in_progress(json_data["job_id"]):
-
         PATH = tempfile.mkdtemp()
         PATHstr = str(PATH + "/")
 
@@ -201,13 +161,9 @@ def process_doc(redis_server, json_data, compressed_file):
         for file in file_list:
             ifRenew = check_single_document(file, json_data, path)
             if ifRenew is True:
-
                 redis_server.renew_job(json_data)
-
-
         else:
             save_all_files_locally(file_list, path)
-
             remove_job(redis_server, json_data)
 
 

@@ -14,7 +14,6 @@ d = {'clientip': '192.168.0.1', 'user': 'FLASK'}
 logger = logging.getLogger('tcpserver')
 
 app = Flask(__name__)
-
 version = 'v1.3'
 
 

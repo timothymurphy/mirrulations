@@ -60,8 +60,6 @@ def download_document(dirpath, documentId, result, type):
     :param type: the type of file that will be saved
     :return:
     """
-
-
     # These are special cases where the api representation is different from the user's interpretation
     if(type == "excel12book"):
         type = "xlsx"
@@ -83,8 +81,6 @@ def get_extra_documents(result, dirpath, documentId):
     :param documentId: the string of a documentId
     :return: the total number of requests required to download all of them
     """
-
-
     doc_json = json.loads(result.text)
     save_document(dirpath, doc_json, documentId)
     total_requests = 0
@@ -102,8 +98,6 @@ def download_doc_formats(dirpath, doc_json, documentId):
     :param documentId: the string of a documentId
     :return: the total number of requests used to download the extra formats
     """
-
-
     total_requests = 0
     try:
         extra_formats = doc_json["fileFormats"]
@@ -129,8 +123,6 @@ def download_attachments(dirpath, doc_json, documentId):
     :param documentId: the string of a documentId
     :return: the total number of requests used to download the extra attachments
     """
-
-
     total_requests = 0
     try:
         extra_attachments = doc_json["attachments"]
