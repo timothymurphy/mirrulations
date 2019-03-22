@@ -22,7 +22,7 @@ api = APICallManager(key)
 def get_max_page_hit(results_per_page):
 
     try:
-        records = api.documents_call(counts_only=True, results_per_page=results_per_page).json
+        records = api.make_documents_call(counts_only=True, results_per_page=results_per_page).json
         return records["totalNumRecords"] // results_per_page
     except api.CallFailException:
         logger.error('Error occured with API request')

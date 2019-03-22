@@ -13,7 +13,7 @@ logger = logging.getLogger('tcpserver')
 workfiles = []
 
 
-def documents_processor(man, docs_info_list, job_id, client_id):
+def documents_processor(api_manager, docs_info_list, job_id, client_id):
     """
     Call each url in the list, process the results of the calls and then form a json file to send back the results
     :param urls: list of urls that have to be called
@@ -26,7 +26,7 @@ def documents_processor(man, docs_info_list, job_id, client_id):
     logger.info('Processing documents into JSON...')
     for docs_info in docs_info_list:
         try:
-            result = man.make_documents_call(page_offset=docs_info[0], results_per_page=docs_info[1])
+            result = api_manager.make_documents_call(page_offset=docs_info[0], results_per_page=docs_info[1])
             process_results(result)
         except:
             logger.error('Error - URL processing failed')

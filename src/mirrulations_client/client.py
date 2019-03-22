@@ -1,5 +1,6 @@
 import mirrulations_client.document_processor as doc
 import mirrulations_client.documents_processor as docs
+from mirrulations_client.server_call_manager import ServerCallManager
 from mirrulations_core.api_call_manager import APICallManager
 import requests
 import json
@@ -14,7 +15,6 @@ API_KEY = config.read_value('CLIENT', 'API_KEY')
 CLIENT_ID = config.read_value('CLIENT', 'CLIENT_ID')
 SERVER_ADDRESS = config.read_value('CLIENT', 'SERVER_ADDRESS')
 VERSION = "v1.3"
-CLIENT_HEALTH_URL = 'https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08'
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(filename='client.log', format=FORMAT)
@@ -22,19 +22,36 @@ d = {'clientip': '192.168.0.1', 'user': CLIENT_ID}
 logger = logging.getLogger('tcpserver')
 
 
-def get_work(man):
+class ClientHealthCallManager:
+
+    def __init__(self):
+        self.base_url = 'https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08'
+
+    def make_call(self):
+        requests.get(self.base_url)
+
+    def make_fail_call(self):
+        requests.get(self.base_url + '/fail')
+
+
+api_manager = APICallManager(API_KEY)
+server_manager = ServerCallManager(CLIENT_ID, SERVER_ADDRESS)
+client_health_manager = ClientHealthCallManager()
+
+
+def get_work():
     """
     Calls the /get_work endpoint of the server to fetch work to process
     :return: the result of making a call to get work
     """
     logger.debug('Returning: %s', 'get_work: the respond from the api call to get_work', extra=d)
-    work = man.make_call('http://' + SERVER_ADDRESS + "/get_work?client_id=" + CLIENT_ID)
+    work = server_manager.make_work_call()
     logger.debug('Call Successful: %s', 'get_work: call made successfully', extra=d)
 
     return work
 
 
-def do_work(man, work_json):
+def do_work(work_json):
 
     work_type = work_json['type']
 
@@ -49,20 +66,20 @@ def do_work(man, work_json):
             logger.info('Work is ' + work_type + ' job')
 
             if work_type == 'doc':
-                return_doc(man, work_json)
+                return_doc(work_json)
             else:
-                return_docs(man, work_json)
+                return_docs(work_json)
 
             logger.debug('Function Successful: %s', 'do_work: return_' + work_type + ' call successful', extra=d)
 
-        requests.get(CLIENT_HEALTH_URL)
+        client_health_manager.make_call()
 
     else:
 
         logger.debug('Exception: %s', 'do_work: type specified in json object was not in - doc, docs, none')
         logger.error('Job type unexpected')
 
-        requests.get(CLIENT_HEALTH_URL + "/fail")
+        client_health_manager.make_fail_call()
 
 
 def get_json_info(json_result):
@@ -90,7 +107,7 @@ def get_json_info(json_result):
     return job_id, data
 
 
-def return_docs(man, json_result):
+def return_docs(json_result):
     """
     Handles the documents processing necessary for a job
     Calls the /return_docs endpoint of the server to return data for the job it completed
@@ -107,7 +124,7 @@ def return_docs(man, json_result):
     logger.debug('Function Successful: %s', 'return_docs: job_id and urls retrieved successfully', extra=d)
     logger.debug('Calling Function: %s','return_docs: call documents_processor',extra=d)
 
-    json_info = docs.documents_processor(man, docs_info_list, job_id, CLIENT_ID)
+    json_info = docs.documents_processor(api_manager, docs_info_list, job_id, CLIENT_ID)
 
     logger.debug('Function Successful: %s', 'return_docs: successful call to documents processor', extra=d)
 
@@ -121,13 +138,11 @@ def return_docs(man, json_result):
     shutil.make_archive("result", "zip", path.name)
     logger.debug('Archive Success: %s', 'return_docs: archive successfully made', extra=d)
     logger.debug('Assign Variable: %s', 'return_docs: opening the zip file to send', extra=d)
-    fileobj = open('result.zip', 'rb')
+    file_obj = open('result.zip', 'rb')
     logger.debug('Variable Success: %s', 'return_docs: zip file opened', extra=d)
 
     logger.debug('Calling Function: %s', 'return_docs: post to /return_docs endpoint', extra=d)
-    r = requests.post('http://' + SERVER_ADDRESS + "/return_docs",
-                      files={'file': fileobj},
-                      data={'json': json.dumps(json_info)})
+    r = server_manager.make_docs_return_call(file_obj, json_info)
     logger.debug('Function Successful: %s', 'return_docs: successful call to /return_doc', extra=d)
 
     r.raise_for_status()
@@ -138,7 +153,7 @@ def return_docs(man, json_result):
     return r
 
 
-def return_doc(man, json_result):
+def return_doc(json_result):
     """
     Handles the document processing necessary for a job
     Calls the /return_doc endpoint of the server to return data for the job it completed
@@ -169,7 +184,7 @@ def return_doc(man, json_result):
     logger.debug('Function Successful: %s', 'return_doc: result.zip created successfully', extra=d)
     logger.debug('Calling Function: %s', 'return_doc: call document_processor with the list of document ids', extra=d)
 
-    path = doc.document_processor(man, doc_ids)
+    path = doc.document_processor(api_manager, doc_ids)
 
     add_client_log_files(path.name, ".")
     logger.debug('Function Successful: %s', 'return_doc: document_processor executed successfully', extra=d)
@@ -183,12 +198,8 @@ def return_doc(man, json_result):
     file_obj = open('result.zip', 'rb')
     logger.debug('Variable Success: %s', 'return_doc: zip opened', extra=d)
     logger.debug('Calling Function: %s', 'return_doc: post to /return_doc endpoint', extra=d)
-    r = requests.post('http://' + SERVER_ADDRESS + "/return_doc",
-                      files={'file': ('result.zip', file_obj)},
-                      data={'json': json.dumps({'job_id' : job_id,
-                                                'type' : 'doc',
-                                                'user': CLIENT_ID,
-                                                'version': VERSION})})
+    json_info = {'job_id': job_id, 'type': 'doc', 'user': CLIENT_ID, 'version': VERSION}
+    r = server_manager.make_doc_return_call(file_obj, json_info)
 
     logger.info('Doc file created')
 
@@ -256,28 +267,26 @@ def run():
     logger.debug('Call Successful: %s', 'run: called successfully', extra=d)
     logger.info('Beginning client process...')
 
-    man = APICallManager(API_KEY)
-
     while True:
 
         try:
             logger.debug('Calling Function: %s', 'run: call to get_work', extra=d)
             logger.info('Attempting to retrieve work...')
-            work = get_work(man)
+            work = get_work()
             logger.debug('Function Successful: %s', 'run: api call successful', extra=d)
             logger.info('Work successfully retrieved')
-        except man.CallFailException:
+        except api_manager.CallFailException:
             logger.debug("API Call Failed...")
             logger.info("Waiting an hour until retry...")
             time.sleep(3600)
             continue
 
-        requests.get(CLIENT_HEALTH_URL)
+        client_health_manager.make_call()
 
         logger.debug('Assign Variable: %s', 'run: decode the json variable from get_work', extra=d)
         work_json = json.loads(work.content.decode('utf-8'))
         logger.debug('Variable Success: %s', 'run: decode the json of work successfully', extra=d)
 
-        do_work(man, work_json)
+        do_work(work_json)
         logger.debug('Function Successful: %s', 'run: successful iteration in do work', extra=d)
         logger.info('Work completed')

@@ -29,7 +29,7 @@ def get_document_id(file_name):
                    'get_document_id: get_document_id successfully called from get_doc_attributes', extra=d)
     logger.info('Retrieving document ID...')
 
-    doc,id,ending = file_name.split(".")
+    doc, id, ending = file_name.split(".")
 
     logger.debug('Returning: %s',
                    'get_document_id: returning document_id', extra=d)

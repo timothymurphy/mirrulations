@@ -10,7 +10,7 @@ d = {'clientip': '192.168.0.1', 'user': client_id}
 logger = logging.getLogger('tcpserver')
 
 
-def document_processor(man, doc_ids):
+def document_processor(api_manager, doc_ids):
 
     logger.debug('Call Successful: %s', 'document_processor: processing document ID list', extra=d)
     logger.info('Writing documents to temporary directory...')
@@ -18,8 +18,8 @@ def document_processor(man, doc_ids):
     for doc_id in doc_ids:
         logger.debug('Call Successful: %s', 'document_processor: processing document: ' + doc_id, extra=d)
         try:
-            result = man.make_document_call(doc_id)
-            total = get_extra_documents(man, result, dirpath.name, doc_id)
+            result = api_manager.make_document_call(doc_id)
+            total = get_extra_documents(api_manager, result, dirpath.name, doc_id)
         except man.CallFailException:
             logger.debug('CallFailException: %s', 'document_processor: error with doc_id ' + doc_id, extra=d)
             logger.error('Doc ID error')
@@ -68,7 +68,7 @@ def download_document(dirpath, documentId, result, type):
     logger.info('Additional formats saved')
 
 
-def get_extra_documents(man, result, dirpath, documentId):
+def get_extra_documents(api_manager, result, dirpath, documentId):
     """
     Download the json of the result from the original api call
     Determine if the document has additional file formats that need to be downloaded
@@ -85,14 +85,14 @@ def get_extra_documents(man, result, dirpath, documentId):
     doc_json = json.loads(result.text)
     save_document(dirpath, doc_json, documentId)
     total_requests = 0
-    total_requests += download_doc_formats(man, dirpath, doc_json, documentId)
-    total_requests += download_attachments(man, dirpath, doc_json, documentId)
+    total_requests += download_doc_formats(api_manager, dirpath, doc_json, documentId)
+    total_requests += download_attachments(api_manager, dirpath, doc_json, documentId)
 
     logger.info('Found {} additional documents'.format(total_requests))
     return total_requests
 
 
-def download_doc_formats(man, dirpath, doc_json, documentId):
+def download_doc_formats(api_manager, dirpath, doc_json, documentId):
     """
     Download the other formats for the document
     :param dirpath: path to the directory where the download will be saved
@@ -109,13 +109,13 @@ def download_doc_formats(man, dirpath, doc_json, documentId):
         extra_formats = doc_json["fileFormats"]
         total_requests += len(extra_formats)
         for extra_doc in extra_formats:
-            result = man.make_call(extra_doc)
+            result = api_manager.make_call(extra_doc)
             here = extra_doc.index("contentType") + 12
             type = extra_doc[here:]
             download_document(dirpath, documentId, result, type)
     except KeyError:
         pass
-    except man.CallFailException:
+    except api_manager.CallFailException:
         logger.debug('CallFailException: %s', 'download_doc_formats: Exception trying to download attachment for '
                      + documentId, extra=d)
         logger.error('Error - Call failed')
@@ -124,7 +124,7 @@ def download_doc_formats(man, dirpath, doc_json, documentId):
     return total_requests
 
 
-def download_attachments(man, dirpath, doc_json, documentId):
+def download_attachments(api_manager, dirpath, doc_json, documentId):
     """
     Download the other attachments for the document
     :param dirpath: path to the directory where the download will be saved
@@ -145,11 +145,11 @@ def download_attachments(man, dirpath, doc_json, documentId):
             for a_format in attachment_formats:
                 here = str(a_format).index("contentType") + 12
                 type = str(a_format)[here:]
-                result = man.make_document_call(a_format)
+                result = api_manager.make_document_call(a_format)
                 download_document(dirpath, documentId, result, type)
     except KeyError:
         pass
-    except man.CallFailException:
+    except api_manager.CallFailException:
         logger.debug('CallFailException: %s', 'download_attachments: error trying to download attachment for '
                      + documentId, extra=d)
         logger.error('Error - Call failed')
