@@ -14,9 +14,6 @@ class APICallManager:
         self.api_key = api_key
 
     class CallFailException(Exception):
-        """
-        Raise an exception is there is an error making the API call
-        """
 
         def __init__(self):
             logger.debug('EXCEPTION: %s', 'CallFailException: There seems to be an error with your API call',
