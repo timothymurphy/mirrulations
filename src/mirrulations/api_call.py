@@ -1,14 +1,8 @@
 import requests
-import logging
 import mirrulations_core.config as config
+from mirrulations.mirrulations_logging import logger
 
 key = config.read_value('key')
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='api_call.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'CLIENT'}
-logger = logging.getLogger('tcpserver')
-
 
 def call(url):
     """

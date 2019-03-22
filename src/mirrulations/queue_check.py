@@ -1,10 +1,5 @@
-import redis, logging
+import redis
 from mirrulations.redis_manager import RedisManager
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='redis_log.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'REDIS'}
-logger = logging.getLogger('tcpserver')
 
 
 def queue_check(r):

@@ -1,11 +1,6 @@
 import json
-import logging
+from mirrulations.mirrulations_logging import logger
 import os
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='client.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'CONFIG'}
-logger = logging.getLogger('tcpserver')
 
 
 def read_value(value):

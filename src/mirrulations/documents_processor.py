@@ -1,6 +1,6 @@
 from mirrulations.api_call_management import *
 import json
-import logging
+from mirrulations.mirrulations_logging import logger
 import mirrulations_core.config as config
 
 workfiles = []
@@ -8,11 +8,6 @@ version = "v1.3"
 
 key = config.read_value('key')
 client_id = config.read_value('client_id')
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='documents_processor.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': client_id}
-logger = logging.getLogger('tcpserver')
 
 
 def documents_processor(urls, job_id, client_id):

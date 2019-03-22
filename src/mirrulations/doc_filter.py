@@ -5,13 +5,8 @@ import json
 import shutil
 import re
 import zipfile
-import logging
+from mirrulations.mirrulations_logging import logger
 import mirrulations_core.documents_core as dc
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='doc_filter.log', format=FORMAT)
-d = { 'clientip': '192.168.0.1', 'user': 'FILTERS'}
-logger = logging.getLogger('tcpserver')
 
 """
 This program does the validation of data from the doc jobs and then saves that data locally

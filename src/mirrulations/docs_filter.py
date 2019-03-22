@@ -1,17 +1,12 @@
 import random
 import json
 import string
-import logging
+from mirrulations.mirrulations_logging import logger
 import os
 import zipfile
 import tempfile
 import shutil
 import mirrulations_core.documents_core as dc
-
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='docs_filter.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': 'FILTERS'}
-logger = logging.getLogger('tcpserver')
 
 """
 This program does the validation of data from the docs jobs and then creates doc jobs using that data
@@ -54,7 +49,7 @@ def check_document_exists(json_data):
     :return:
     """
     logger.warning('Function Successful: % s',
-                   'workfile_length_checker: workfile_length_checker successfully called from process_docs', extra=d)
+                   'workfile_length_checker: workfile_length_checker successfully called from process_docs')
 
     home = os.getenv("HOME")
     path = home + "/regulations_data/"
