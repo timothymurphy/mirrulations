@@ -48,7 +48,7 @@ def test_process_doc(savefile_tempdir):
     PATHstr = savefile_tempdir
 
     json_data = json.dumps({'job_id': '1', 'type': 'doc',
-                            'client_id': 'Alex', 'VERSION': '0.0.0'})
+                            'client_id': 'Alex', 'version': '0.0.0'})
     redis_server.add_to_progress(json_data)
     json_data = json.loads(json_data)
 
@@ -65,7 +65,7 @@ def test_process_doc_bad_file(savefile_tempdir):
     PATHstr = savefile_tempdir
 
     json_data = json.dumps({'job_id': '1', 'type': 'doc',
-                            'client_id': 'Alex', 'VERSION': '0.0.0'})
+                            'client_id': 'Alex', 'version': '0.0.0'})
     redis_server.add_to_progress(json_data)
     json_data = json.loads(json_data)
 

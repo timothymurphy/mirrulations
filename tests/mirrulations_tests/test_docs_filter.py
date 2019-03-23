@@ -26,7 +26,7 @@ def generate_json_data(file_name):
 def test_process_docs():
     redis_server = make_database()
     json_data = json.dumps({'job_id': '1', 'type': 'docs', 'data': [[{"id": "AHRQ_FRDOC_0001-0036", "count": 1}]],
-                            'client_id': 'Alex', 'VERSION': '0.0.0'})
+                            'client_id': 'Alex', 'version': '0.0.0'})
     redis_server.add_to_progress(json_data)
     json_data = json.loads(json_data)
     compressed_file = PATH + 'Archive.zip'
