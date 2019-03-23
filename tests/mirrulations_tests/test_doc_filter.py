@@ -37,6 +37,12 @@ def make_database(reset, lock):
     return r
 
 
+def make_temp_file(path):
+    with open(path, 'w') as f:
+        f.write('Stuff was written here')
+    return f.name
+
+
 def test_process_doc(savefile_tempdir):
     redis_server = make_database()
     PATHstr = savefile_tempdir
@@ -48,7 +54,26 @@ def test_process_doc(savefile_tempdir):
 
     compressed_file = PATH + 'result.zip'
     df.process_doc(redis_server, json_data, compressed_file, PATHstr)
+    queue = redis_server.get_all_items_in_queue()
     progress = redis_server.get_all_items_in_progress()
+    assert len(queue) == 0
+    assert len(progress) == 0
+
+
+def test_process_doc_bad_file(savefile_tempdir):
+    redis_server = make_database()
+    PATHstr = savefile_tempdir
+
+    json_data = json.dumps({'job_id': '1', 'type': 'doc',
+                            'client_id': 'Alex', 'VERSION': '0.0.0'})
+    redis_server.add_to_progress(json_data)
+    json_data = json.loads(json_data)
+
+    compressed_file = PATH + 'bad_result.zip'
+    df.process_doc(redis_server, json_data, compressed_file, PATHstr)
+    queue = redis_server.get_all_items_in_queue()
+    progress = redis_server.get_all_items_in_progress()
+    assert len(queue) == 1
     assert len(progress) == 0
 
 
@@ -128,6 +153,18 @@ def test_get_file_list_and_bad_number_work(savefile_tempdir):
     assert condition is False
 
 
+def test_check_if_document_needs_renew():
+    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.tif', {'type': 'doc'}, PATH) is False
+
+
+def test_check_if_document_needs_renew_json():
+    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.json', {'type': 'doc'}, PATH) is False
+
+
+def test_check_if_document_needs_renew_bad_json():
+    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21653.json', {'type': 'doc'}, PATH) is True
+
+
 def test_get_document_id():
     assert df.get_document_id('doc.mesd-2018-234234-0001.json') == 'mesd-2018-234234-0001'
 
@@ -148,6 +185,10 @@ def test_is_document_beginning_bad():
     assert df.document_id_beginning_is_letter('9147_FRDOC_0001-0036') is False
 
 
+def test_id_matches_good():
+    assert df.document_id_matches_json_id(PATH + 'doc.FMCSA-1997-2350-21654.json', 'FMCSA-1997-2350-21654') is True
+
+
 def test_is_document_ending_a_number():
     assert df.document_id_ending_is_number('FDA-2018-N-0073-0002') is True
 
@@ -164,38 +205,34 @@ def test_is_document_ending_a_word_special():
     assert df.document_id_ending_is_number('AHRQ_FRDOC_0001-WXyz') is False
 
 
-def test_id_matches_good():
-    assert df.document_id_matches_json_id(PATH + 'doc.FMCSA-1997-2350-21654.json', 'FMCSA-1997-2350-21654') is True
-
-
 def test_id_matches_bad():
     assert df.document_id_matches_json_id(PATH + 'doc.FMCSA-1997-2350-21653.json', 'FMCSA-1997-2350-21653') is False
 
 
-def test_save_single_file_locally(workfile_tempdir, savefile_tempdir):
-    filename = 'doc.FMCSA-1997-2350-21654.json'
-    full_path = '/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21654/doc.FMCSA-1997-2350-21654.json'
+def test_save_files_locally(workfile_tempdir, savefile_tempdir):
+    filename1 = 'doc.FMCSA-1997-2350-21654.json'
+    filename2 = 'doc.FMCSA-1997-2350-21655.json'
+    filename3 = 'doc.FMCSA-1997-2350-21656.json'
 
-    path = workfile_tempdir + '/' + filename
-    with open(path, 'w') as f:
-        f.write('Stuff was written here')
+    full_path1 = '/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21654/doc.FMCSA-1997-2350-21654.json'
+    full_path2 = '/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21655/doc.FMCSA-1997-2350-21655.json'
+    full_path3 = '/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21656/doc.FMCSA-1997-2350-21656.json'
 
-    df.save_single_file_locally(path, savefile_tempdir + '/')
-    final_path = savefile_tempdir + full_path
+    make_temp_file(workfile_tempdir + '/' + filename1)
+    make_temp_file(workfile_tempdir + '/' + filename2)
+    make_temp_file(workfile_tempdir + '/' + filename3)
 
-    assert os.path.exists(final_path)
+    final_path1 = savefile_tempdir + full_path1
+    final_path2 = savefile_tempdir + full_path2
+    final_path3 = savefile_tempdir + full_path3
 
+    file_list = [filename1, filename2, filename3]
+    path = workfile_tempdir + '/'
+    df.save_all_files_locally(file_list, path, savefile_tempdir + '/')
 
-def test_check_if_document_needs_renew():
-    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.tif', {'type': 'doc'}, PATH) is False
-
-
-def test_check_if_document_needs_renew_json():
-    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.json', {'type': 'doc'}, PATH) is False
-
-
-def test_check_if_document_needs_renew_bad_json():
-    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21653.json', {'type': 'doc'}, PATH) is True
+    assert os.path.exists(final_path1)
+    assert os.path.exists(final_path2)
+    assert os.path.exists(final_path3)
 
 
 def test_get_file_name():

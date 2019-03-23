@@ -1,4 +1,5 @@
-"""This is the document filter used to process all document jobs"""
+"""This program does the validation of data from
+the doc jobs and then saves that data locally"""
 import os
 import os.path
 import tempfile
@@ -9,11 +10,8 @@ import zipfile
 from mirrulations.mirrulations_logging import logger
 import mirrulations_core.documents_core as dc
 
-"""
-This program does the validation of data from the doc jobs and then saves that data locally
-"""
-
-HOME_REGULATION_PATH = os.getenv('HOME') + '/regulations-data/'
+HOME_REGULATION_PATH = os.getenv('HOME') + '/mnt/regulations-data/'
+CLIENT_LOG_PATH = os.getenv("HOME") + '/client-logs/'
 
 
 def process_doc(redis_server, json_data, compressed_file, destination=HOME_REGULATION_PATH):
@@ -34,7 +32,8 @@ def process_doc(redis_server, json_data, compressed_file, destination=HOME_REGUL
         for file in file_list:
             job_needs_renew = check_if_document_needs_renew(file, json_data, temp_directory_path)
             if job_needs_renew is True:
-                redis_server.renew_job(json_data)
+                print("Renew is True")
+                redis_server.renew_job(json_data['job_id'])
                 break_check = True
                 break
         if break_check is False:
@@ -50,7 +49,7 @@ def get_file_list(compressed_file, compressed_file_path, client_id):
     :param client_id: the id of the client that did the job
     :return: The list of file names in the compressed file
     """
-    client_path = os.getenv("HOME") + '/client-logs/' + str(client_id) + '/'
+    client_path = CLIENT_LOG_PATH + str(client_id) + '/'
     files = zipfile.ZipFile(compressed_file, 'r')
     files.extractall(compressed_file_path)
 
@@ -69,17 +68,6 @@ def get_file_list(compressed_file, compressed_file_path, client_id):
     return final_list, compressed_file_path
 
 
-def ending_is_number(document_id):
-    """
-    Ensure that the document id ends in a number
-    :param document_id: the document id being checked
-    :return: True if the number is a digit, else it will return False
-    """
-    list = re.split("-", document_id)
-    number = list[-1]
-    return number.isdigit()
-
-
 def check_if_document_needs_renew(file, json_data, path):
     """
     Checks to see if a document conforms to our naming conventions
@@ -93,7 +81,8 @@ def check_if_document_needs_renew(file, json_data, path):
     file_ends_with_json = file.endswith('.json')
     file_job_type_is_doc = json_data['type'] == 'doc'
 
-    file_combined_check = file_starts_with_doc and file_begin_with_doc_letter and file_end_is_doc_num and file_job_type_is_doc
+    file_combined_check = file_starts_with_doc and file_begin_with_doc_letter and \
+                          file_end_is_doc_num and file_job_type_is_doc
     file_combined_check_and_json = file_combined_check and file_ends_with_json
 
     if file_combined_check_and_json:
@@ -125,9 +114,8 @@ def document_id_beginning_is_letter(document_id):
     result = letter.isalpha()
     if result is True:
         return True
-    else:
-        logger.warning('Document ID does not begin with a letter')
-        return False
+    logger.warning('Document ID does not begin with a letter')
+    return False
 
 
 def document_id_ending_is_number(document_id):
@@ -182,27 +170,6 @@ def save_single_file_locally(current_path, destination):
     destination_path = destination + org + "/" + docket_id + "/" + document_id + "/"
     create_new_directory_for_path(destination_path)
     shutil.copy(current_path, destination_path + '/' + file_name)
-
-
-def check_single_document(file, json_data, path):
-    """
-    Checks to see if a document conforms to our naming conventions
-    :param file:
-    :param json_data:
-    :param path:
-    :return:
-    """
-    org, docket_id, document_id = dc.get_doc_attributes(file)
-    ifFileStartsWithDoc = file.startswith("doc.")
-    ifBeginWithDocLetter = document_id_beginning_is_letter(document_id)
-    ifEndIsDocNum = ending_is_number(document_id)
-    ifFileEndsWithJson = file.endswith(".json")
-    job_type = json_data["type"] == "doc"
-    ifDocumentsChecks = ifFileStartsWithDoc and ifBeginWithDocLetter and ifEndIsDocNum and job_type
-    ifDocumentsChecksAndJson = ifDocumentsChecks and ifFileEndsWithJson
-
-    if ifDocumentsChecksAndJson:
-        return True
 
 
 def get_file_name(file_path):

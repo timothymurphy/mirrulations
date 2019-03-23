@@ -12,6 +12,8 @@ from mirrulations.mirrulations_logging import logger
 
 
 VERSION = "0.0.0"
+HOME_REGULATION_PATH = os.getenv('HOME') + '/mnt/regulations-data/'
+CLIENT_LOG_PATH = os.getenv("HOME") + '/client-logs/'
 
 
 def process_docs(redis_server, json_data, compressed_file):
@@ -32,8 +34,6 @@ def process_docs(redis_server, json_data, compressed_file):
             json_data = check_document_exists(json_data)
             add_document_job_to_queue(redis_server, json_data)
             dc.remove_job_from_progress(redis_server, json_data)
-            #key = redis_server.get_keys_from_progress(json_data['job_id'])
-            #redis_server.remove_job_from_progress(key)
         else:
             redis_server.renew_job(json_data['job_id'])
 
@@ -44,7 +44,7 @@ def save_client_log(client_id, compressed_file):
     :param compressed_file:
     :return:
     """
-    client_path = os.getenv('HOME') + '/client-logs/' + str(client_id) + '/'
+    client_path = CLIENT_LOG_PATH + str(client_id) + '/'
 
     files = zipfile.ZipFile(compressed_file, "r")
 
@@ -84,13 +84,11 @@ def check_workfile_length(json_data):
         if is_file_count_too_big or is_attachment_count_too_big:
             return False
 
-        file_count = 0
-        attachment_count = 0
         logger.warning('Workfile length check completed')
         return True
 
 
-def check_document_exists(json_data, path=os.getenv('HOME') + '/regulations_data/'):
+def check_document_exists(json_data, path=HOME_REGULATION_PATH):
     """
     Checks to see if a document was already downloaded or already in one of the queues.
     If the document has already been downloaded it will be removed from its workfile.
@@ -128,7 +126,6 @@ def check_if_file_exists_locally(full_path, count):
 
 def remove_empty_lists(json_data):
     """
-
     :param json_data:
     :return:
     """

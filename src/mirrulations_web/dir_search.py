@@ -7,10 +7,10 @@ logging.basicConfig(filename='doc_filter.log', format=FORMAT)
 d = { 'clientip': '192.168.0.1', 'user': 'FILTERS'}
 logger = logging.getLogger('tcpserver')
 
-PATH = os.getenv("HOME") + "/regulations-data/"
+HOME_REGULATION_PATH = os.getenv("HOME") + "/regulations-data/"
 
 
-def search_for_document_in_directory(document_id, directory_path=PATH):
+def search_for_document_in_directory(document_id, directory_path=HOME_REGULATION_PATH):
     """
     Called by the server to check to see if a document exists in the directory structure
     :param document_id: the document id being searched
