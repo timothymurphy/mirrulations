@@ -44,7 +44,7 @@ def make_json():
                  }
             ]
         ],
-        "VERSION":version
+        "version":version
     }
 
 
@@ -90,7 +90,7 @@ def test_get_queue_item(client):
 def test_generate_json():
     list = ["a", "b", ["a", "b"]]
     json1 = endpoints.generate_json(list)
-    assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "VERSION": version})
+    assert json1 == json.dumps({"job_id":"a", "type":"b", "data":["a", "b"], "version": version})
 
 
 def test_return_docs_call_success(client):
