@@ -52,7 +52,7 @@ def test_process_doc(savefile_tempdir):
     redis_server.add_to_progress(json_data)
     json_data = json.loads(json_data)
 
-    compressed_file = PATH + 'result.zip'
+    compressed_file = PATH + 'test_result.zip'
     df.process_doc(redis_server, json_data, compressed_file, PATHstr)
     queue = redis_server.get_all_items_in_queue()
     progress = redis_server.get_all_items_in_progress()
