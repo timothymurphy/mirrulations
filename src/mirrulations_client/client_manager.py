@@ -130,9 +130,9 @@ def copy_file_safely(directory, file_path):
     :param file_path: File to copy
     """
 
-    if Path(filepath).exists():
+    if Path(file_path).exists():
         if Path(directory).exists():
-            shutil.copy(filepath, directory)
+            shutil.copy(file_path, directory)
         else:
             logger.warning('File not copied, directory does not exist')
     else:
@@ -153,14 +153,12 @@ def add_client_log_files(directory, log_directory):
     copy_file_safely(directory, log_directory + "/api_call_management.log")
 
 
-
 def run():
     """
     Working loop
     Get work - Determine type of work - Do work - Return work
     If there is no work in the server, sleep for an hour
     """
-
 
     while True:
 
