@@ -13,6 +13,25 @@ class APICallManager:
         def __init__(self):
             logger.warning('API call failed...')
 
+    def make_api_call_url(self, search_type, suffix):
+        return 'https://api.data.gov/regulations/v3/' + search_type + '.json?api_key=' + self.api_key + suffix
+
+    def make_docket_call_url(self, docket_id):
+        return self.make_api_call_url('docket', '&docketId=' + docket_id)
+
+    def make_document_call_url(self, document_id, attachment_number=None, content_type=None):
+        return self.make_api_call_url('document',
+                                      '&documentId=' + document_id
+                                      + ('' if attachment_number is None else '&attachmentNumber='
+                                                                              + str(attachment_number))
+                                      + ('' if content_type is None else '&contentType=' + content_type))
+
+    def make_documents_call_url(self, counts_only=False, page_offset=None, results_per_page=None):
+        return self.make_api_call_url('documents',
+                                      ('&countsOnly=1' if counts_only else '')
+                                      + ('' if page_offset is None else '&po=' + str(page_offset))
+                                      + ('' if results_per_page is None else '&rpp=' + str(results_per_page)))
+
     def make_call(self, url):
 
         pause = 0
@@ -40,27 +59,14 @@ class APICallManager:
         logger.error('API call failed...')
         raise self.CallFailException
 
-    def make_api_call_url(self, search_type, suffix):
-        return 'https://api.data.gov/regulations/v3/' + search_type + '.json?api_key=' + self.api_key + suffix
-
     def make_docket_call(self, docket_id):
-        return self.make_call(self.make_api_call_url('docket.json', '&docketId=' + docket_id))
+        return self.make_call(self.make_docket_call_url(docket_id))
 
     def make_document_call(self, document_id, attachment_number=None, content_type=None):
-        return self.make_call(self.make_api_call_url('document',
-                                                     '&documentId=' + document_id
-                                                     + ('' if attachment_number is None
-                                                         else '&attachmentNumber=' + str(attachment_number))
-                                                     + ('' if content_type is None
-                                                         else '&contentType=' + content_type)))
+        return self.make_call(self.make_document_call_url(document_id, attachment_number, content_type))
 
     def make_documents_call(self, counts_only=False, page_offset=None, results_per_page=None):
-        return self.make_call(self.make_api_call_url('documents',
-                                                     ('&countsOnly=1' if counts_only else '')
-                                                     + ('' if page_offset is None
-                                                         else '&po=' + str(page_offset))
-                                                     + ('' if results_per_page is None
-                                                         else '&rpp=' + str(results_per_page))))
+        return self.make_call(self.make_documents_call_url(counts_only, page_offset, results_per_page))
 
 
 def verify_key(key_input):
