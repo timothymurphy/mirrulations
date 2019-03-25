@@ -3,6 +3,8 @@ from mirrulations_core.mirrulations_logging import logger
 
 version = 'v1.3'
 
+workfiles = []
+
 
 def documents_processor(api_manager, docs_info_list, job_id, client_id):
     """
