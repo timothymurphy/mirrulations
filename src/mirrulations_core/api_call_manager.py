@@ -41,8 +41,10 @@ class APICallManager:
         raise self.CallFailException
 
     def make_api_call_url(self, search_type, suffix):
-
         return 'https://api.data.gov/regulations/v3/' + search_type + '.json?api_key=' + self.api_key + suffix
+
+    def make_docket_call(self, docket_id):
+        return self.make_call(self.make_api_call_url('docket.json', '&docketId=' + docket_id))
 
     def make_document_call(self, document_id, attachment_number=None, content_type=None):
         return self.make_call(self.make_api_call_url('document',
@@ -59,9 +61,6 @@ class APICallManager:
                                                          else '&po=' + str(page_offset))
                                                      + ('' if results_per_page is None
                                                          else '&rpp=' + str(results_per_page))))
-
-    def make_docket_call(self, docket_id):
-        return self.make_call(self.make_api_call_url('docket.json', '&docketId=' + docket_id))
 
 
 def verify_key(key_input):

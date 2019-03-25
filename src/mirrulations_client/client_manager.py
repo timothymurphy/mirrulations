@@ -26,9 +26,7 @@ def get_work():
     Calls the /get_work endpoint of the server to fetch work to process
     :return: the result of making a call to get work
     """
-    logger.debug('Returning: %s', 'get_work: the respond from the api call to get_work', extra=d)
     work = server_manager.make_work_call()
-    logger.debug('Call Successful: %s', 'get_work: call made successfully', extra=d)
 
     return work
 
@@ -77,9 +75,8 @@ def return_docs(json_result):
     """
 
     job_id, data = get_json_info(json_result)
-    json_info = docs.documents_processor(api_manager, data, job_id, client_id)
+    json_info = docs.documents_processor(api_manager, data, job_id)
     path = tempfile.TemporaryDirectory()
-    add_client_log_files(path.name, ".")
     shutil.make_archive("result", "zip", path.name)
     file_obj = open('result.zip', 'rb')
     r = server_manager.make_docs_return_call(file_obj, json_info)
@@ -100,7 +97,6 @@ def return_doc(json_result):
     for dic in doc_dicts:
         doc_ids.append(dic['id'])
     path = doc.document_processor(api_manager, doc_ids)
-    add_client_log_files(path.name, ".")
     shutil.make_archive("result", "zip", path.name)
     file_obj = open('result.zip', 'rb')
     json_info = {'job_id': job_id, 'type': 'doc', 'user': CLIENT_ID, 'version': VERSION}
@@ -123,20 +119,6 @@ def copy_file_safely(directory, file_path):
             logger.warning('File not copied, directory does not exist')
     else:
         logger.warning('File not copied, file does not exist')
-
-
-def add_client_log_files(directory, log_directory):
-    """
-    Used to copy client log files into the temp directory to be sent to the server.
-    :param directory: Directory to write files to
-    :param log_directory: Directory to get files from
-    """
-
-    copy_file_safely(directory, log_directory + "/client.log")
-    copy_file_safely(directory, log_directory + "/document_processor.log")
-    copy_file_safely(directory, log_directory + "/documents_processor.log")
-    copy_file_safely(directory, log_directory + "/api_call.log")
-    copy_file_safely(directory, log_directory + "/api_call_management.log")
 
 
 def run():
