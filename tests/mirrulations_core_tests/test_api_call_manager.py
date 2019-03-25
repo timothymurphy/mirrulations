@@ -19,11 +19,6 @@ def set_time():
     return mock_time
 
 
-def test_happy_path(mock_req):
-    mock_req.get('http://docurl', status_code=200, text='{}')
-    assert man.make_call('http://docurl').text == '{}'
-
-
 def test_success(mock_req):
     mock_req.get('http://docurl', status_code=200, text='{}')
     assert man.make_call('http://docurl').text == '{}'
