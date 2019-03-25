@@ -75,7 +75,7 @@ def return_docs(json_result):
     """
 
     job_id, data = get_json_info(json_result)
-    json_info = docs.documents_processor(api_manager, data, job_id)
+    json_info = docs.documents_processor(api_manager, data, job_id, CLIENT_ID)
     path = tempfile.TemporaryDirectory()
     shutil.make_archive("result", "zip", path.name)
     file_obj = open('result.zip', 'rb')

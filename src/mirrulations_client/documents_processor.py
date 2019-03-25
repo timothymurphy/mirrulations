@@ -1,12 +1,10 @@
 import json
 from mirrulations_core.mirrulations_logging import logger
-import mirrulations_core.config as config
 
-client_id = config.read_value('CLIENT', 'CLIENT_ID')
 version = 'v1.3'
 
 
-def documents_processor(api_manager, docs_info_list, job_id):
+def documents_processor(api_manager, docs_info_list, job_id, client_id):
     """
     Call each url in the list, process the results of the calls and then form a json file to send back the results
     :param urls: list of urls that have to be called

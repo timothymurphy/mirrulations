@@ -1,11 +1,9 @@
 from mirrulations_client.client_manager import *
 import pytest
 import requests_mock
-import mirrulations_core.config as config
 
-server_url = config.read_value('CLIENT', 'SERVER_ADDRESS')
-fake_url = 'https://website.com/random?api_key=' + config.read_value('CLIENT', 'API_KEY')
-client_id = config.read_value('CLIENT', 'CLIENT_ID')
+SERVER_URL = 'https://' + SERVER_ADDRESS
+FAKE_URL = 'https://website.com/random?api_key=' + API_KEY
 
 
 @pytest.fixture
@@ -14,38 +12,32 @@ def mock_req():
         yield m
 
 
-# def test_get_work(mock_req):
-#     url = server_url + "/get_work?client_id=" + str(client_id)
-#     mock_req.get(url, status_code=200, text='RANDOM')
-#     man = APICallManager('API_KEY')
-#     result = get_work(man)
-#     assert result.status_code == 200
-#
-#
-# def test_return_docs(mock_req):
-#     mock_req.post(server_url + "/return_docs", status_code=200)
-#     mock_req.get(fake_url, status_code=200, text='{"documents": \
-#                                                   [{"documentId": "CMS-2005-0001-0001", "attachmentCount": 4},\
-#                                                    {"documentId": "CMS-2005-0001-0002", "attachmentCount": 999}]}')
-#     r = return_docs({'job_id': 'qwerty', 'data': ['http://website.com/random']})
-#     assert r.status_code == 200
-#
-#
-# def ignore_test_return_docs_error(mock_req):
-#
-#     mock_req.get(fake_url, status_code=400, text='{"documents": \
-#                                                   [{"documentId": "CMS-2005-0001-0001", "attachmentCount": 4},\
-#                                                    {"documentId": "CMS-2005-0001-0002", "attachmentCount": 999}]}')
-#     with pytest.raises(CallFailException):
-#         r = return_docs({'job_id': 'qwerty', 'data': ['http://website.com/random']})
-#
-#
-# def test_return_doc(mock_req):
-#     mock_req.post(server_url + "/return_doc", status_code=200)
-#     mock_req.get(get_document_url('website-com'),
-#                  status_code=200, text='{ "something": '
-#                                        '["https://api.data.gov/regulations/v3/download?'
-#                                        'documentId=OSHA-H117-2006-0947-0647&'
-#                                        'attachmentNumber=1&contentType=pdf"] }')
-#     r = return_doc({'job_id': 'qwerty', 'data': [{'id': 'website-com', 'count': 4}]})
-#     assert r.status_code == 200
+def test_get_work(mock_req):
+    mock_req.get(SERVER_URL + "/get_work?client_id=" + str(CLIENT_ID), status_code=200, text='RANDOM')
+    result = get_work()
+    assert result.status_code == 200
+
+
+def test_return_doc(mock_req):
+    doc_id = 'OSHA-H117-2006-0947-0647'
+    doc_url = api_manager.make_api_call_url('document', '&documentId=OSHA-H117-2006-0947-0647')
+    mock_req.post(SERVER_URL + "/return_doc", status_code=200)
+    mock_req.get(doc_url, status_code=200, text='{"id": "' + doc_id + '", "count": 4}')
+    r = return_doc({'job_id': 'qwerty', 'data': [{'id': doc_id, 'count': 4}]})
+    assert r.status_code == 200
+
+
+def test_return_docs(mock_req):
+    mock_req.post(SERVER_URL + "/return_docs", status_code=200)
+    docs_po = 0
+    docs_rpp = 2
+    docs_url = api_manager.make_api_call_url('documents', '&po=' + str(docs_po) + '&rpp=' + str(docs_rpp))
+    doc_id_a = 'CMS-2005-0001-0001'
+    doc_ac_a = 4
+    doc_id_b = 'CMS-2005-0001-0002'
+    doc_ac_b = 999
+    mock_req.get(docs_url, status_code=200, text='{"documents": [{"documentId": "' + doc_id_a + '", "attachmentCount": '
+                                                 + str(doc_ac_a) + '},{"documentId": "' + doc_id_b
+                                                 + '", "attachmentCount": ' + str(doc_ac_b) + '}]}')
+    r = return_docs({'job_id': 'qwerty', 'data': [[0, 2]]})  # 'http://website.com/random']})
+    assert r.status_code == 200

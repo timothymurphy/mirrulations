@@ -30,7 +30,7 @@ def get_work():
     """
     Endpoint the user will use to get work from the queue
     client_id will be one of the parameters given for logging purposes
-    :return: Returns the json containing the job_id, the type of work to be done, the work that nees to be done, and
+    :return: Returns the json containing the job_id, the type of work to be done, the work that needs to be done, and
     the version number
     """
     logger.warning("Successful API Call: %s", 'get_work: get_work')
@@ -75,7 +75,7 @@ def return_doc():
 
     try:
         files = request.files['file'].read()
-        json_info= request.form['json']
+        json_info = request.form['json']
     except:
         logger.error('Error - bad parameter')
         return 'Bad Parameter', 400

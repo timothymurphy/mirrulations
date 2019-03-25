@@ -4,12 +4,12 @@ import requests_mock
 import mirrulations_core.config as config
 from mirrulations_core.api_call_manager import APICallManager
 
-key = config.read_value('CLIENT', 'API_KEY')
-client_id = config.read_value('CLIENT', 'CLIENT_ID')
-
-fake_url = 'https://www.website.com/regulations/v3/documents.json?api_key=' + key
+API_KEY = config.read_value('CLIENT', 'API_KEY')
+CLIENT_ID = config.read_value('CLIENT', 'CLIENT_ID')
+DOCS_URL = 'https://www.website.com/regulations/v3/documents.json?api_key=' + API_KEY
 
 version = 'v1.3'
+
 
 @pytest.fixture
 def mock_req():
@@ -19,8 +19,9 @@ def mock_req():
 
 def test_documents_processor_basic():
     docs_info_list = []
-    docs = documents_processor(APICallManager(key), docs_info_list, 'JobID')
-    assert docs == {'client_id': client_id, "type": "docs",
+    docs = documents_processor(APICallManager(API_KEY), docs_info_list, 'JobID', CLIENT_ID)
+    assert docs == {'client_id': CLIENT_ID,
+                    "type": "docs",
                     'data': [],
                     'job_id': 'JobID',
                     'version': version}
@@ -45,9 +46,9 @@ def test_make_docs_complex():
 
 def test_documents_processor_empty():
     docs_info_list = []
-    docs = documents_processor(APICallManager(key), docs_info_list, 'JobID')
-    assert docs == {'client_id': client_id,
-                    'type':'docs',
+    docs = documents_processor(APICallManager(API_KEY), docs_info_list, 'JobID', CLIENT_ID)
+    assert docs == {'client_id': CLIENT_ID,
+                    'type': 'docs',
                     'data': [],
                     'job_id': 'JobID',
                     'version': version}

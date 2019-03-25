@@ -20,7 +20,7 @@ def pytest_sessionstart(session):
         cfg = configparser.ConfigParser()
         cfg['CLIENT'] = {'API_KEY': ''.join(random.choices(string.ascii_letters + string.digits, k=40)),
                          'CLIENT_ID': ''.join(random.choices(string.ascii_letters + string.digits, k=16)),
-                         'SERVER_ADDRESS': '0.0.0.0:0'}
+                         'SERVER_ADDRESS': '0.0.0.0'}
         cfg['SERVER'] = {'API_KEY': ''.join(random.choices(string.ascii_letters + string.digits, k=40))}
         cfg['WEB'] = {}
 
