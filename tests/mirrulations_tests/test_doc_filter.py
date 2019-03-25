@@ -9,7 +9,9 @@ import mirrulations.doc_filter as df
 from mirrulations.redis_manager import RedisManager
 
 
-PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../tests/test_files/mirrulations_files/')
+PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                    '../../tests/test_files/mirrulations_files/')
+
 
 @pytest.fixture
 def mock_req():
@@ -92,7 +94,8 @@ def test_get_file_list_and_work(workfile_tempdir, savefile_tempdir):
     condition = True
     for file in file_list[0]:
         document_id = df.get_document_id(file)
-        if file.startswith('doc.') and df.document_id_ending_is_number(document_id) \
+        if file.startswith('doc.') and \
+                df.document_id_ending_is_number(document_id) \
                 and df.document_id_beginning_is_letter(document_id):
             pass
         else:
@@ -110,7 +113,8 @@ def test_get_file_list_and_bad_work(savefile_tempdir):
     condition = True
     for file in file_list[0]:
         document_id = df.get_document_id(file)
-        if file.startswith('doc.') and df.document_id_ending_is_number(document_id) \
+        if file.startswith('doc.') and \
+                df.document_id_ending_is_number(document_id) \
                 and df.document_id_beginning_is_letter(document_id):
             pass
         else:
@@ -127,7 +131,8 @@ def test_get_file_list_and_more_bad_work(savefile_tempdir):
     condition = True
     for file in file_list[0]:
         document_id = df.get_document_id(file)
-        if file.startswith('doc.') and df.document_id_ending_is_number(document_id) \
+        if file.startswith('doc.') and \
+                df.document_id_ending_is_number(document_id) \
                 and df.document_id_beginning_is_letter(document_id):
             pass
         else:
@@ -144,7 +149,8 @@ def test_get_file_list_and_bad_number_work(savefile_tempdir):
     condition = True
     for file in file_list[0]:
         document_id = df.get_document_id(file)
-        if file.startswith('doc.') and df.document_id_ending_is_number(document_id) \
+        if file.startswith('doc.') and \
+                df.document_id_ending_is_number(document_id) \
                 and df.document_id_beginning_is_letter(document_id):
             pass
         else:
@@ -154,27 +160,33 @@ def test_get_file_list_and_bad_number_work(savefile_tempdir):
 
 
 def test_check_if_document_needs_renew():
-    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.tif', {'type': 'doc'}, PATH) is False
+    assert df.check_if_document_needs_renew(
+        'doc.FMCSA-1997-2350-21654.tif', {'type': 'doc'}, PATH) is False
 
 
 def test_check_if_document_needs_renew_json():
-    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21654.json', {'type': 'doc'}, PATH) is False
+    assert df.check_if_document_needs_renew(
+        'doc.FMCSA-1997-2350-21654.json', {'type': 'doc'}, PATH) is False
 
 
 def test_check_if_document_needs_renew_bad_json():
-    assert df.check_if_document_needs_renew('doc.FMCSA-1997-2350-21653.json', {'type': 'doc'}, PATH) is True
+    assert df.check_if_document_needs_renew(
+        'doc.FMCSA-1997-2350-21653.json', {'type': 'doc'}, PATH) is True
 
 
 def test_get_document_id():
-    assert df.get_document_id('doc.mesd-2018-234234-0001.json') == 'mesd-2018-234234-0001'
+    assert df.get_document_id('doc.mesd-2018-234234-0001.json') == \
+           'mesd-2018-234234-0001'
 
 
 def test_get_document_id_special():
-    assert df.get_document_id('doc.AHRQ_FRDOC_0001-0036.json') == 'AHRQ_FRDOC_0001-0036'
+    assert df.get_document_id('doc.AHRQ_FRDOC_0001-0036.json') == \
+           'AHRQ_FRDOC_0001-0036'
 
 
 def test_get_document_id_other_special():
-    assert df.get_document_id('doc.FDA-2018-N-0073-0002.json') == 'FDA-2018-N-0073-0002'
+    assert df.get_document_id('doc.FDA-2018-N-0073-0002.json') == \
+           'FDA-2018-N-0073-0002'
 
 
 def test_is_document_beginning_good():
@@ -186,7 +198,9 @@ def test_is_document_beginning_bad():
 
 
 def test_id_matches_good():
-    assert df.document_id_matches_json_id(PATH + 'doc.FMCSA-1997-2350-21654.json', 'FMCSA-1997-2350-21654') is True
+    assert df.document_id_matches_json_id(
+        PATH + 'doc.FMCSA-1997-2350-21654.json',
+        'FMCSA-1997-2350-21654') is True
 
 
 def test_is_document_ending_a_number():
@@ -206,7 +220,9 @@ def test_is_document_ending_a_word_special():
 
 
 def test_id_matches_bad():
-    assert df.document_id_matches_json_id(PATH + 'doc.FMCSA-1997-2350-21653.json', 'FMCSA-1997-2350-21653') is False
+    assert df.document_id_matches_json_id(
+        PATH + 'doc.FMCSA-1997-2350-21653.json',
+        'FMCSA-1997-2350-21653') is False
 
 
 def test_save_files_locally(workfile_tempdir, savefile_tempdir):
@@ -214,9 +230,15 @@ def test_save_files_locally(workfile_tempdir, savefile_tempdir):
     filename2 = 'doc.FMCSA-1997-2350-21655.json'
     filename3 = 'doc.FMCSA-1997-2350-21656.json'
 
-    full_path1 = '/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21654/doc.FMCSA-1997-2350-21654.json'
-    full_path2 = '/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21655/doc.FMCSA-1997-2350-21655.json'
-    full_path3 = '/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21656/doc.FMCSA-1997-2350-21656.json'
+    full_path1 = \
+        '/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21654/' \
+        'doc.FMCSA-1997-2350-21654.json'
+    full_path2 = \
+        '/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21655/' \
+        'doc.FMCSA-1997-2350-21655.json'
+    full_path3 = \
+        '/FMCSA/FMCSA-1997-2350/FMCSA-1997-2350-21656/' \
+        'doc.FMCSA-1997-2350-21656.json'
 
     make_temp_file(workfile_tempdir + '/' + filename1)
     make_temp_file(workfile_tempdir + '/' + filename2)
@@ -236,7 +258,8 @@ def test_save_files_locally(workfile_tempdir, savefile_tempdir):
 
 
 def test_get_file_name():
-    assert df.get_file_name(PATH + 'doc.mesd-2018-234234-0001.json') == 'doc.mesd-2018-234234-0001.json'
+    assert df.get_file_name(PATH + 'doc.mesd-2018-234234-0001.json') == \
+           'doc.mesd-2018-234234-0001.json'
 
 
 def test_create_new_directory():

@@ -14,7 +14,8 @@ HOME_REGULATION_PATH = os.getenv('HOME') + '/mnt/regulations-data/'
 CLIENT_LOG_PATH = os.getenv("HOME") + '/client-logs/'
 
 
-def process_doc(redis_server, json_data, compressed_file, destination=HOME_REGULATION_PATH):
+def process_doc(redis_server, json_data,
+                compressed_file, destination=HOME_REGULATION_PATH):
     """
     Main document function, called by the server to check and
     save document files returned from the client
@@ -30,7 +31,8 @@ def process_doc(redis_server, json_data, compressed_file, destination=HOME_REGUL
                                                        json_data['client_id'])
         break_check = False
         for file in file_list:
-            job_needs_renew = check_if_document_needs_renew(file, json_data, temp_directory_path)
+            job_needs_renew = check_if_document_needs_renew(
+                file, json_data, temp_directory_path)
             if job_needs_renew is True:
                 print("Renew is True")
                 redis_server.renew_job(json_data['job_id'])
@@ -76,14 +78,18 @@ def check_if_document_needs_renew(file, json_data, path):
     document_id = dc.get_doc_attributes(file_name)[2]
 
     file_starts_with_doc = file.startswith('doc.')
-    file_begin_with_doc_letter = document_id_beginning_is_letter(document_id)
-    file_end_is_doc_num = document_id_ending_is_number(document_id)
+    file_begin_with_doc_letter = \
+        document_id_beginning_is_letter(document_id)
+    file_end_is_doc_num = \
+        document_id_ending_is_number(document_id)
     file_ends_with_json = file.endswith('.json')
     file_job_type_is_doc = json_data['type'] == 'doc'
 
-    file_combined_check = file_starts_with_doc and file_begin_with_doc_letter and \
-                          file_end_is_doc_num and file_job_type_is_doc
-    file_combined_check_and_json = file_combined_check and file_ends_with_json
+    file_combined_check = \
+        file_starts_with_doc and file_begin_with_doc_letter and \
+        file_end_is_doc_num and file_job_type_is_doc
+    file_combined_check_and_json = \
+        file_combined_check and file_ends_with_json
 
     if file_combined_check_and_json:
         if document_id_matches_json_id(path + file, document_id):
@@ -167,7 +173,8 @@ def save_single_file_locally(current_path, destination):
     file_name = get_file_name(current_path)
     doc_id = get_document_id(file_name)
     org, docket_id, document_id = dc.get_doc_attributes(doc_id)
-    destination_path = destination + org + "/" + docket_id + "/" + document_id + "/"
+    destination_path = \
+        destination + org + "/" + docket_id + "/" + document_id + "/"
     create_new_directory_for_path(destination_path)
     shutil.copy(current_path, destination_path + '/' + file_name)
 

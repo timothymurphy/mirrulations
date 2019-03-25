@@ -90,19 +90,25 @@ def check_workfile_length(json_data):
 
 def check_document_exists(json_data, path=HOME_REGULATION_PATH):
     """
-    Checks to see if a document was already downloaded or already in one of the queues.
-    If the document has already been downloaded it will be removed from its workfile.
-    If a workfile were to become empty it will be removed to prevent empty doc jobs from existing.
+    Checks to see if a document was already downloaded or
+        already in one of the queues.
+    If the document has already been downloaded
+        it will be removed from its workfile.
+    If a workfile were to become empty it will be removed
+        to prevent empty doc jobs from existing.
     """
     for workfile in json_data["data"]:
         count = 0
         for line in workfile:
             document = line['id']
-            alpha_doc_org, docket_id, document_id = dc.get_doc_attributes(document)
-            full_path = path + alpha_doc_org + '/' + docket_id + '/' + \
-                        document_id + '/' + 'doc.' + document + '.json'
+            alpha_doc_org, docket_id, document_id = \
+                dc.get_doc_attributes(document)
+            full_path = \
+                path + alpha_doc_org + '/' + docket_id + '/' + document_id + \
+                '/' + 'doc.' + document + '.json'
 
-            count, local_verdict = check_if_file_exists_locally(full_path, count)
+            count, local_verdict = \
+                check_if_file_exists_locally(full_path, count)
 
             if local_verdict:
                 workfile.pop(count)
@@ -116,7 +122,8 @@ def check_if_file_exists_locally(full_path, count):
     Checks to see if the document exists.
     If the document does not, then the counter is increased
     :param count: The current count of the workfile
-    :return: Returns the count and True if the file does exist, else it will return False
+    :return: Returns the count and True if the file does exist,
+             else it will return False
     """
     if os.path.isfile(full_path):
         return count, True
@@ -129,7 +136,8 @@ def remove_empty_lists(json_data):
     :param json_data:
     :return:
     """
-    json_data['data'] = [workfile for workfile in json_data['data'] if workfile != []]
+    json_data['data'] = \
+        [workfile for workfile in json_data['data'] if workfile != []]
     return json_data
 
 
@@ -142,7 +150,8 @@ def add_document_job_to_queue(redis_server, json_data):
     logger.warning('Adding document job to the queue...')
 
     for work_file in json_data["data"]:
-        random_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+        random_id = \
+            ''.join(random.choices(string.ascii_letters + string.digits, k=16))
         job = create_document_job(work_file, random_id)
         redis_server.add_to_queue(job)
         logger.warning('Document job successfully added to queue')
@@ -156,5 +165,8 @@ def create_document_job(work_file, job_id):
     :return: A json in the form of a dictionary
     """
     logger.warning('Creating document job...')
-    dictionary = {'job_id': job_id, 'type': 'doc', 'data': work_file, 'version': VERSION}
+    dictionary = {'job_id': job_id,
+                  'type': 'doc',
+                  'data': work_file,
+                  'version': VERSION}
     return json.dumps(dictionary)

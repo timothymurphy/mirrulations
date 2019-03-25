@@ -5,8 +5,10 @@ import mock
 import mirrulations.docs_filter as dsf
 from mirrulations.redis_manager import RedisManager
 
-PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../tests/test_files/mirrulations_files/')
-REGULATIONS_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../tests/test_files/regulations-data/')
+PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                    '../../tests/test_files/mirrulations_files/')
+REGULATIONS_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                '../../tests/test_files/regulations-data/')
 
 
 @mock.patch('mirrulations.redis_manager.reset_lock')
@@ -25,7 +27,10 @@ def generate_json_data(file_name):
 
 def test_process_docs():
     redis_server = make_database()
-    json_data = json.dumps({'job_id': '1', 'type': 'docs', 'data': [[{"id": "AHRQ_FRDOC_0001-0036", "count": 1}]],
+    json_data = json.dumps({'job_id': '1',
+                            'type': 'docs',
+                            'data': [[{"id": "AHRQ_FRDOC_0001-0036",
+                                       "count": 1}]],
                             'client_id': 'Alex', 'version': '0.0.0'})
     redis_server.add_to_progress(json_data)
     json_data = json.loads(json_data)
@@ -75,7 +80,9 @@ def test_check_document_exists():
 
 
 def test_file_exists_local():
-    path = REGULATIONS_PATH + 'AHRQ_FRDOC/AHRQ_FRDOC_0001/AHRQ_FRDOC_0001-0036/doc.AHRQ_FRDOC_0001-0036.json'
+    path = REGULATIONS_PATH + \
+           'AHRQ_FRDOC/AHRQ_FRDOC_0001/AHRQ_FRDOC_0001-0036/' \
+           'doc.AHRQ_FRDOC_0001-0036.json'
     count = 0
     count, verdict = dsf.check_if_file_exists_locally(path, count)
     assert count == 0
@@ -83,7 +90,9 @@ def test_file_exists_local():
 
 
 def test_file_doesnt_exists_local():
-    path = REGULATIONS_PATH + 'AHRQ_FRDOC/AHRQ_FRDOC_0001/AHRQ_FRDOC_0001-0037/doc.AHRQ_FRDOC_0001-0037.json'
+    path = REGULATIONS_PATH + \
+           'AHRQ_FRDOC/AHRQ_FRDOC_0001/AHRQ_FRDOC_0001-0037/' \
+           'doc.AHRQ_FRDOC_0001-0037.json'
     count = 0
     count, verdict = dsf.check_if_file_exists_locally(path, count)
     assert count == 1
