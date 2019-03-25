@@ -1,5 +1,17 @@
 import pytest
+import json
+import mock
+import fakeredis
+from mirrulations.redis_manager import RedisManager
 import mirrulations_core.documents_core as dc
+
+
+@mock.patch('mirrulations.redis_manager.reset_lock')
+@mock.patch('mirrulations.redis_manager.set_lock')
+def make_database(reset, lock):
+    r = RedisManager(fakeredis.FakeRedis())
+    r.delete_all()
+    return r
 
 
 def test_get_doc_attributes():
@@ -28,3 +40,16 @@ def test_get_doc_attributes_other_special():
     assert org == "FDA"
     assert docket == "FDA-2018-N-0073"
     assert document == "FDA-2018-N-0073-0002"
+
+
+def test_remove_doc_from_progress():
+    redis_server = make_database()
+
+    json_data = json.dumps({'job_id': '1', 'type': 'doc',
+                            'client_id': 'Alex', 'VERSION': '0.0.0'})
+    redis_server.add_to_progress(json_data)
+    json_data = json.loads(json_data)
+
+    dc.remove_job_from_progress(redis_server, json_data)
+    progress = redis_server.get_all_items_in_progress()
+    assert len(progress) == 0
