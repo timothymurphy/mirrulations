@@ -4,7 +4,6 @@ import re
 def get_doc_attributes(document_id):
     """
     Get the organization(s), the docket_id and the document_id from a file name
-    :param file_name: name of the file to extract attributes of the document name
     :return: orgs: The organizations(s),
              docket_id: the docket_id,
              document_id: the document_id

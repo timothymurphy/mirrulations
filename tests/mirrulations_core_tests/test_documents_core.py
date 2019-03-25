@@ -13,6 +13,7 @@ def make_database(reset, lock):
     r.delete_all()
     return r
 
+
 def test_get_doc_attributes():
     org, docket, document = dc.get_doc_attributes('mesd-2018-234234-0001')
     assert org == "mesd"
