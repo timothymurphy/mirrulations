@@ -1,4 +1,4 @@
-from mirrulations_client.client import run
+from mirrulations_client.client_manager import run
 
 
 def main():

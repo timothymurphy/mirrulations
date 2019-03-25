@@ -1,11 +1,11 @@
 import json
-import logging
 import random
 import redis
 import string
 import time
 from mirrulations_server.redis_manager import RedisManager
 from mirrulations_core.api_call_manager import APICallManager
+from mirrulations_core.mirrulations_logging import logger
 import mirrulations_core.config as config
 
 key = config.read_value('SERVER', 'API_KEY')
@@ -43,7 +43,7 @@ def get_work(results_per_page):
 
         # Makes a JSON from the list of URLs and send it to the queue as a job
         redis_manager.add_to_queue(json.dumps([''.join(random.choices(string.ascii_letters + string.digits, k=16)),
-                                   'docs',
+                                               'docs',
                                                docs_info_list]))
 
 

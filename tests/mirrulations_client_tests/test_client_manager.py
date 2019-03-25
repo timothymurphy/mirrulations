@@ -1,4 +1,4 @@
-from mirrulations_client.client import *
+from mirrulations_client.client_manager import *
 import pytest
 import requests_mock
 import mirrulations_core.config as config
