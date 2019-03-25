@@ -35,6 +35,3 @@ def test_user_out_of_api_calls_sleeps(mock_req):
                           'http://docurl',
                           [{'text': 'resp1', 'status_code': 429}, {'text': '{}', 'status_code': 200}])
     assert man.make_call('http://docurl').text == '{}'
-
-
-
