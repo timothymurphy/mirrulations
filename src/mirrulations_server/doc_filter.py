@@ -1,3 +1,7 @@
+
+"""This program does the validation of data from
+the doc jobs and then saves that data locally"""
+
 import json
 import os
 import re

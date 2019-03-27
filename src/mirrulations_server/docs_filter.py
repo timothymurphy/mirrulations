@@ -1,3 +1,7 @@
+
+"""This program does the validation of data from
+the docs jobs and then creates doc jobs using that data"""
+
 import json
 import os
 import random
@@ -108,7 +112,7 @@ def check_document_exists(json_data, path=HOME_REGULATION_PATH):
             count, local_verdict = \
                 check_if_file_exists_locally(full_path, count)
 
-            if local_verdict:  # and redis_verdict:
+            if local_verdict:
                 work_file.pop(count)
 
     json_data = remove_empty_lists(json_data)
