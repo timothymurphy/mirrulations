@@ -2,7 +2,7 @@ import os
 
 import mirrulations_core.documents_core as dc
 
-PATH = os.getenv('HOME') + '/regulations-data/'
+from mirrulations_web import PATH
 
 
 def search_for_document_in_directory(document_id, directory_path=PATH):

@@ -4,23 +4,11 @@ import shutil
 import tempfile
 import time
 
-from mirrulations_core.api_call_manager import APICallManager
-import mirrulations_core.config as config
-from mirrulations_core.mirrulations_logging import logger
-
 import mirrulations_client.document_processor as doc
 import mirrulations_client.documents_processor as docs
-from mirrulations_client.server_call_manager import ServerCallManager
-from mirrulations_client.client_health_call_manager import ClientHealthCallManager
 
-API_KEY = config.read_value('CLIENT', 'API_KEY')
-CLIENT_ID = config.read_value('CLIENT', 'CLIENT_ID')
-SERVER_ADDRESS = config.read_value('CLIENT', 'SERVER_ADDRESS')
-VERSION = 'v1.3'
-
-API_MANAGER = APICallManager(API_KEY)
-SERVER_MANAGER = ServerCallManager(CLIENT_ID, SERVER_ADDRESS)
-CLIENT_HEALTH_MANAGER = ClientHealthCallManager()
+from mirrulations_core import VERSION, LOGGER
+from mirrulations_client import CLIENT_ID, API_MANAGER, CLIENT_HEALTH_MANAGER, SERVER_MANAGER
 
 
 def do_work(work_json):
@@ -30,10 +18,10 @@ def do_work(work_json):
     if work_type in ['doc', 'docs', 'none']:
 
         if work_type == 'none':
-            logger.info('No work, sleeping...')
+            LOGGER.info('No work, sleeping...')
             time.sleep(3600)
         else:
-            logger.info('Work is ' + work_type + ' job')
+            LOGGER.info('Work is ' + work_type + ' job')
 
             if work_type == 'doc':
                 return_doc(work_json)
@@ -43,7 +31,7 @@ def do_work(work_json):
         CLIENT_HEALTH_MANAGER.make_call()
 
     else:
-        logger.error('Job type unexpected')
+        LOGGER.error('Job type unexpected')
         CLIENT_HEALTH_MANAGER.make_fail_call()
 
 
@@ -108,9 +96,9 @@ def copy_file_safely(directory, file_path):
         if Path(directory).exists():
             shutil.copy(file_path, directory)
         else:
-            logger.warning('File not copied, directory does not exist')
+            LOGGER.warning('File not copied, directory does not exist')
     else:
-        logger.warning('File not copied, file does not exist')
+        LOGGER.warning('File not copied, file does not exist')
 
 
 def run():
@@ -125,8 +113,8 @@ def run():
         try:
             work = SERVER_MANAGER.make_work_call()
         except API_MANAGER.CallFailException:
-            logger.debug('API Call Failed...')
-            logger.info('Waiting an hour until retry...')
+            LOGGER.debug('API Call Failed...')
+            LOGGER.info('Waiting an hour until retry...')
             time.sleep(3600)
             continue
 

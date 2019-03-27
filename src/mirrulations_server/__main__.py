@@ -1,15 +1,16 @@
+import os
 from threading import Thread
+
+from mirrulations_server import FLASK_APP
 
 
 def main():
 
     def run_redis():
-        from mirrulations_server.redis_manager import run
-        run()
+        os.system('redis-server')
 
     def run_flask():
-        from mirrulations_server.flask_manager import run
-        run()
+        FLASK_APP.run('0.0.0.0', '8080')
 
     def run_work():
         from mirrulations_server.work_manager import run

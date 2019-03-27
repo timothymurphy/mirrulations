@@ -7,12 +7,12 @@ import tempfile
 import zipfile
 
 import mirrulations_core.documents_core as dc
-from mirrulations_core.mirrulations_logging import logger
+
+from mirrulations_core import LOGGER, VERSION
 
 """
 This program does the validation of data from the docs jobs and then creates doc jobs using that data
 """
-VERSION = 'v1.3'
 
 
 # Validation Function
@@ -37,7 +37,7 @@ def work_file_length_checker(json_data):
         else:
             file_count = 0
             attachment_count = 0
-    logger.warning('Workfile length check completed')
+    LOGGER.warning('Workfile length check completed')
     return True
 
 
@@ -49,7 +49,7 @@ def check_document_exists(json_data):
     :param json_data: the json containing the work files
     :return:
     """
-    logger.warning('Function Successful: % s',
+    LOGGER.warning('Function Successful: % s',
                    'work_file_length_checker: work_file_length_checker successfully called from process_docs')
 
     home = os.getenv("HOME")
@@ -103,14 +103,14 @@ def add_document_job(redis_server, json_data):
     :param json_data: the json data containing all the work files
     :return:
     """
-    logger.warning('Adding document job to the queue...')
+    LOGGER.warning('Adding document job to the queue...')
 
     for work_file in json_data["data"]:
         random_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
 
         job = create_document_job(work_file, random_id)
         redis_server.add_to_queue(job)
-        logger.warning('Document job successfully added to queue')
+        LOGGER.warning('Document job successfully added to queue')
 
 
 def create_document_job(work_file, job_id):
@@ -120,7 +120,7 @@ def create_document_job(work_file, job_id):
     :param job_id: The id for the job
     :return: A json in the form of a dictionary
     """
-    logger.warning('Creating document job...')
+    LOGGER.warning('Creating document job...')
 
     return json.dumps({"job_id": job_id, "type": "doc", "data": work_file, "version": VERSION})
 

@@ -1,7 +1,7 @@
 import requests
 import time
 
-from mirrulations_core.mirrulations_logging import logger
+from mirrulations_core import LOGGER
 
 
 class APICallManager:
@@ -12,7 +12,7 @@ class APICallManager:
     class CallFailException(Exception):
 
         def __init__(self):
-            logger.warning('API call failed...')
+            LOGGER.warning('API call failed...')
 
     def make_api_call_url(self, search_type, suffix):
         return 'https://api.data.gov/regulations/v3/' + search_type + '.json?api_key=' + self.api_key + suffix
@@ -41,23 +41,23 @@ class APICallManager:
             result = requests.get(url)
 
             if result.status_code == 429:
-                logger.error('Error: ran out of API calls')
+                LOGGER.error('Error: ran out of API calls')
                 time.sleep(3600)
 
             elif 300 < result.status_code < 400:
-                logger.error('Error: waiting 5 minutes...')
+                LOGGER.error('Error: waiting 5 minutes...')
                 time.sleep(300)
                 pause += 1
 
             elif 400 <= result.status_code < 600:
-                logger.error('Error with the API call')
+                LOGGER.error('Error with the API call')
                 break
 
             else:
-                logger.warning('API call successfully made')
+                LOGGER.warning('API call successfully made')
                 return result
 
-        logger.error('API call failed...')
+        LOGGER.error('API call failed...')
         raise self.CallFailException
 
     def make_docket_call(self, docket_id):

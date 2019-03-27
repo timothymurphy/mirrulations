@@ -1,9 +1,7 @@
-import os
-
 import mirrulations_web.directory_search as ds
 import mirrulations_web.directory_zip as dz
 
-PATH = os.getenv('HOME') + '/regulations-data/'
+from mirrulations_web import PATH
 
 
 def download_zip(document_id, download_path=PATH):

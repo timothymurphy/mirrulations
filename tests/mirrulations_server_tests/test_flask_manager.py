@@ -1,16 +1,20 @@
 from ast import literal_eval
 import fakeredis
-import mock
 import os
+import mock
 import pytest
 import requests_mock
+import sys
 
+from mirrulations_server.redis_manager import RedisManager
+
+from mirrulations_core import VERSION
+
+sys.modules['mirrulations_server.REDIS_MANAGER'] = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
 from mirrulations_server.flask_manager import *
 
 PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../test_files/mirrulations_files/filename.txt')
-VERSION = 'v1.3'
 
-redis_server = mock.MagicMock(return_value=RedisManager(fakeredis.FakeRedis()))
 
 
 @pytest.fixture
@@ -21,8 +25,8 @@ def mock_req():
 
 @pytest.fixture
 def client():
-    APP.config['TESTING'] = True
-    client = APP.test_client()
+    FLASK_APP.config['TESTING'] = True
+    client = FLASK_APP.test_client()
     yield client
 
 
@@ -39,6 +43,10 @@ def make_database():
     test_list = json.dumps(['a', ['b', 'c']])
     r.lpush('queue', test_list)
     return r
+
+
+def test_general():
+    return True
 
 
 def test_default_path(client):

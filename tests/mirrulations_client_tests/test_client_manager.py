@@ -3,6 +3,8 @@ import requests_mock
 
 from mirrulations_client.client_manager import *
 
+from mirrulations_client import SERVER_ADDRESS, API_KEY
+
 SERVER_URL = 'https://' + SERVER_ADDRESS
 FAKE_URL = 'https://website.com/random?api_key=' + API_KEY
 

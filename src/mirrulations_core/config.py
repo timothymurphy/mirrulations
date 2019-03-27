@@ -5,7 +5,7 @@ import string
 
 from mirrulations_core.api_call_manager import verify_key
 
-CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../.config/config.ini')
+from mirrulations_core import CONFIG_PATH
 
 
 def check_config(section):

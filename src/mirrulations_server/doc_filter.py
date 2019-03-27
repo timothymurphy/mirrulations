@@ -6,7 +6,8 @@ import tempfile
 import zipfile
 
 import mirrulations_core.documents_core as dc
-from mirrulations_core.mirrulations_logging import logger
+
+from mirrulations_core import LOGGER
 
 """
 This program does the validation of data from the doc jobs and then saves that data locally
@@ -60,7 +61,7 @@ def id_matches(path, doc_id):
     if result is True:
         return True
     else:
-        logger.warning('Document IDs do not match')
+        LOGGER.warning('Document IDs do not match')
         return False
 
 
@@ -76,7 +77,7 @@ def beginning_is_letter(document_id):
     if result is True:
         return True
     else:
-        logger.warning('Document ID does not begin with a letter')
+        LOGGER.warning('Document ID does not begin with a letter')
         return False
 
 
