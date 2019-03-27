@@ -6,9 +6,10 @@ import mirrulations_core.config as config
 
 from mirrulations_client.documents_processor import *
 
+from mirrulations_core import VERSION
+
 API_KEY = config.read_value('CLIENT', 'API_KEY')
 CLIENT_ID = config.read_value('CLIENT', 'CLIENT_ID')
-VERSION = 'v1.3'
 
 API_MANAGER = APICallManager(API_KEY)
 
