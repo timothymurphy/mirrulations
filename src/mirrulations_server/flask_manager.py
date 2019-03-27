@@ -1,6 +1,5 @@
-import io
-
 from flask import request
+import io
 import json
 
 from mirrulations_server.doc_filter import process_doc

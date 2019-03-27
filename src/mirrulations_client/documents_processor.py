@@ -1,8 +1,7 @@
 import json
 
-from mirrulations_core.mirrulations_logging import logger
+from mirrulations_core import LOGGER, VERSION
 
-VERSION = 'v1.3'
 WORK_FILES = []
 
 
@@ -24,7 +23,7 @@ def documents_processor(api_manager, docs_info_list, job_id, client_id):
             result = api_manager.make_documents_call(page_offset=docs_info[0], results_per_page=docs_info[1])
             process_results(result)
         except api_manager.CallFailException:
-            logger.error('Error - URL processing failed')
+            LOGGER.error('Error - URL processing failed')
 
     result = json.loads(json.dumps({'job_id' : job_id,
                                     'type': 'docs',
@@ -49,7 +48,7 @@ def process_results(result):
         doc_list = docs_json['documents']
         make_docs(doc_list)
     except TypeError:
-        logger.error('Error - bad JSON')
+        LOGGER.error('Error - bad JSON')
 
     return True
 

@@ -10,7 +10,7 @@ def document_processor(api_manager, doc_ids):
             result = api_manager.make_document_call(doc_id)
             total = get_extra_documents(api_manager, result, dir_path.name, doc_id)
         except api_manager.CallFailException:
-            logger.error('Doc ID error')
+            LOGGER.error('Doc ID error')
     return dir_path
 
 
@@ -86,7 +86,7 @@ def download_doc_formats(api_manager, dirpath, doc_json, documentId):
     except KeyError:
         pass
     except api_manager.CallFailException:
-        logger.error('Error - Call failed')
+        LOGGER.error('Error - Call failed')
         pass
     return total_requests
 
@@ -113,6 +113,6 @@ def download_attachments(api_manager, dirpath, doc_json, documentId):
     except KeyError:
         pass
     except api_manager.CallFailException:
-        logger.error('Error - Call failed')
+        LOGGER.error('Error - Call failed')
         pass
     return total_requests
