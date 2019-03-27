@@ -25,6 +25,7 @@ setup(
     test_suite='pytest',
     packages=find_packages('src'),
     package_dir={'': 'src'},
+    include_package_data=True,
     entry_points={'console_scripts': ['mirrulations=mirrulations_core.__main__:main',
                                       'mirrulations-queue-check=mirrulations_server.redis_mananger:print_queue']}
 )
