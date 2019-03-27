@@ -85,22 +85,6 @@ def return_doc(json_result):
     return r
 
 
-def copy_file_safely(directory, file_path):
-    """
-    Safely copies a file to a directory; if the file isn't there to be copied, it won't be copied.
-    :param directory: Directory to copy to
-    :param file_path: File to copy
-    """
-
-    if Path(file_path).exists():
-        if Path(directory).exists():
-            shutil.copy(file_path, directory)
-        else:
-            LOGGER.warning('File not copied, directory does not exist')
-    else:
-        LOGGER.warning('File not copied, file does not exist')
-
-
 def run():
     """
     Working loop
