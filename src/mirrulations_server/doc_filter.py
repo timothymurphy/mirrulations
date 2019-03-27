@@ -1,14 +1,16 @@
 """This program does the validation of data from
 the doc jobs and then saves that data locally"""
-import os
-import os.path
-import tempfile
+
 import json
-import shutil
+import os
 import re
+import shutil
+import tempfile
 import zipfile
-from mirrulations.mirrulations_logging import logger
+
 import mirrulations_core.documents_core as dc
+
+from mirrulations_core import LOGGER
 
 HOME_REGULATION_PATH = os.getenv('HOME') + '/mnt/regulations-data/'
 CLIENT_LOG_PATH = os.getenv("HOME") + '/client-logs/'
@@ -120,7 +122,7 @@ def document_id_beginning_is_letter(document_id):
     result = letter.isalpha()
     if result is True:
         return True
-    logger.warning('Document ID does not begin with a letter')
+    LOGGER.warning('Document ID does not begin with a letter')
     return False
 
 

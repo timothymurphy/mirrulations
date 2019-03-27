@@ -1,10 +1,8 @@
-import logging
-import os.path
-from mirrulations.mirrulations_logging import logger
+import os
+
 import mirrulations_core.documents_core as dc
 
-HOME_REGULATION_PATH = os.getenv("HOME") + "/regulations-data/"
-
+from mirrulations_web import HOME_REGULATION_PATH
 
 def search_for_document_in_directory(document_id,
                                      directory_path=HOME_REGULATION_PATH):
@@ -18,10 +16,10 @@ def search_for_document_in_directory(document_id,
     """
     orgs, dock_id, doc_id = dc.get_doc_attributes(document_id)
 
-    full_path = directory_path + orgs + "/" + dock_id + "/" + doc_id
-    doc_json = "doc." + doc_id + ".json"
+    full_path = directory_path + orgs + '/' + dock_id + '/' + doc_id
+    doc_json = 'doc.' + doc_id + '.json'
 
-    if os.path.isfile(full_path + "/" + doc_json):
+    if os.path.isfile(full_path + '/' + doc_json):
         return full_path
     else:
-        return ""
+        return ''
