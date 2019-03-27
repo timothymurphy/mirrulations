@@ -1,12 +1,12 @@
-import os
-import os.path
-import tempfile
 import json
-import shutil
+import os
 import re
+import shutil
+import tempfile
 import zipfile
-from mirrulations_core.mirrulations_logging import logger
+
 import mirrulations_core.documents_core as dc
+from mirrulations_core.mirrulations_logging import logger
 
 """
 This program does the validation of data from the doc jobs and then saves that data locally
@@ -20,8 +20,7 @@ def get_document_id(file_name):
     :param file_name: name of the file that the id will be extracted from
     :return id: the string of the document id from the file name
     """
-    doc, id, ending = file_name.split(".")
-    return id
+    return file_name.split('.')[1]
 
 
 def get_file_name(path):
@@ -30,7 +29,7 @@ def get_file_name(path):
     :param path: location of the file in which the name will be extracted from
     :return: file_name: The file name from the path
     """
-    split_path = path.split("/")
+    split_path = path.split('/')
     file_name = split_path[len(split_path) - 1]
     return file_name
 
@@ -42,8 +41,7 @@ def ending_is_number(document_id):
     :param document_id: the document id being checked
     :return: True if the number is a digit, else it will return False
     """
-    list = re.split("-", document_id)
-    number = list[-1]
+    number = re.split('-', document_id)[-1]
     return number.isdigit()
 
 
@@ -54,9 +52,9 @@ def id_matches(path, doc_id):
     :param doc_id: the document id to check
     :return: True if the document_id equals the doc_id, else it will return False
     """
-    f = open(path, "r")
+    f = open(path, 'r')
     j = json.load(f)
-    document_id = j["documentId"]["value"]
+    document_id = j['documentId']['value']
     result = document_id == doc_id
 
     if result is True:
@@ -93,7 +91,7 @@ def save_single_file_locally(cur_path, destination):
     file_name = get_file_name(cur_path)
     doc_id = get_document_id(file_name)
     org, docket_id, document_id = dc.get_doc_attributes(doc_id)
-    destination_path = destination + org + "/" + docket_id + "/" + document_id + "/"
+    destination_path = destination + org + '/' + docket_id + '/' + document_id + '/'
     create_new_dir(destination_path)
     shutil.copy(cur_path, destination_path + '/' + file_name)
 
@@ -108,34 +106,33 @@ def create_new_dir(path):
         os.makedirs(path)
 
 
-
-def get_file_list(compressed_file, PATHstr, client_id):
+def get_file_list(compressed_file, path_string, client_id):
     """
     Get the list of files to be processed from a compressed file
     :param compressed_file: file containing file list to be uncompressed
-    :param PATHstr: location of the file in string form
+    :param path_string: location of the file in string form
     :param client_id: the id of the client that did the job
     :return: The list of file names in the compressed file
     """
-    home = os.getenv("HOME")
+    home = os.getenv('HOME')
     client_path = home + '/client-logs/' + str(client_id) + '/'
-    files = zipfile.ZipFile(compressed_file, "r")
-    files.extractall(PATHstr)
+    files = zipfile.ZipFile(compressed_file, 'r')
+    files.extractall(path_string)
     # Create a list of all the files in the directory
-    file_list = os.listdir(PATHstr)
+    file_list = os.listdir(path_string)
 
     final_list = []
     for file in file_list:
-        if file.startswith("doc."):
+        if file.startswith('doc.'):
             final_list.append(file)
-        elif file.endswith(".log"):
+        elif file.endswith('.log'):
             if not os.path.exists(client_path):
                 os.makedirs(client_path)
-                shutil.copy(PATHstr + file, client_path)
+                shutil.copy(path_string + file, client_path)
             else:
-                shutil.copy(PATHstr + file, client_path)
+                shutil.copy(path_string + file, client_path)
 
-    return final_list, PATHstr
+    return final_list, path_string
 
 
 # Final Function
@@ -146,45 +143,36 @@ def process_doc(redis_server, json_data, compressed_file):
     :param compressed_file: compressed file of document data
     :return:
     """
-    if redis_server.does_job_exist_in_progress(json_data["job_id"]):
-        PATH = tempfile.mkdtemp()
-        PATHstr = str(PATH + "/")
+    if redis_server.does_job_exist_in_progress(json_data['job_id']):
+        path = tempfile.mkdtemp()
+        path_string = str(path + '/')
 
         # Unzip the zipfile and then remove the tar file and create a list of all the files in the directory
-        file_list, path = get_file_list(compressed_file, PATHstr, json_data['client_id'])
+        file_list, path = get_file_list(compressed_file, path_string, json_data['client_id'])
 
         for file in file_list:
-            ifRenew = check_single_document(file, json_data, path)
-            if ifRenew is True:
+            if_renew = check_single_document(file, json_data)
+            if if_renew is True:
                 redis_server.renew_job(json_data)
         else:
             save_all_files_locally(file_list, path)
             remove_job(redis_server, json_data)
 
 
-
-def check_single_document(file, json_data, path):
+def check_single_document(file, json_data):
     """
     Checks to see if a document conforms to our naming conventions
     :param file:
     :param json_data:
-    :param path:
     :return:
     """
     org, docket_id, document_id = dc.get_doc_attributes(file)
-    ifFileStartsWithDoc = file.startswith("doc.")
-    ifBeginWithDocLetter = beginning_is_letter(document_id)
-    ifEndIsDocNum = ending_is_number(document_id)
-    ifFileEndsWithJson = file.endswith(".json")
-    job_type = json_data["type"] == "doc"
-    ifDocumentsChecks = ifFileStartsWithDoc and ifBeginWithDocLetter and ifEndIsDocNum and job_type
-    ifDocumentsChecksAndJson = ifDocumentsChecks and ifFileEndsWithJson
+    if_file_starts_with_doc = file.startswith('doc.')
+    if_begin_with_doc_letter = beginning_is_letter(document_id)
+    if_end_is_doc_num = ending_is_number(document_id)
+    job_type = json_data['type'] == 'doc'
 
-    if ifDocumentsChecksAndJson:
-        return True
-
-    write_documents_checks_into_logger(ifBeginWithDocLetter, ifEndIsDocNum, ifFileStartsWithDoc, job_type)
-    return ifDocumentsChecks
+    return if_file_starts_with_doc and if_begin_with_doc_letter and if_end_is_doc_num and job_type
 
 
 def remove_job(redis_server, json_data):
@@ -193,7 +181,7 @@ def remove_job(redis_server, json_data):
     :param json_data:
     :return:
     """
-    key = redis_server.get_keys_from_progress(json_data["job_id"])
+    key = redis_server.get_keys_from_progress(json_data['job_id'])
     redis_server.remove_job_from_progress(key)
 
 
@@ -205,18 +193,5 @@ def save_all_files_locally(file_list, path):
     :return:
     """
     for file in file_list:
-        home = os.getenv("HOME")
-        save_single_file_locally(path + file, home + "/regulations-data/")
-
-
-def write_documents_checks_into_logger(ifBeginWithDocLetter, ifEndIsDocNum, ifFileStartsWithDoc, job_type):
-    """
-    Writes the results of a document's individual checks into the log
-    :param ifBeginWithDocLetter:
-    :param ifEndIsDocNum:
-    :param ifFileStartsWithDoc:
-    :param job_type:
-    :return:
-    """
-    list = [ifBeginWithDocLetter, ifEndIsDocNum, ifFileStartsWithDoc, job_type]
-    listNames = ["ifBeginWithDocLetter", "ifEndIsDocNum", "ifFileStartsWithDoc", "job_type"]
+        home = os.getenv('HOME')
+        save_single_file_locally(path + file, home + '/regulations-data/')

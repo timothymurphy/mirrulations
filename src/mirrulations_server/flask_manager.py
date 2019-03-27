@@ -1,22 +1,23 @@
 import io
 from flask import Flask, request
-import redis
 import json
-from mirrulations_server.docs_filter import process_docs
-from mirrulations_server.doc_filter import process_doc
-from mirrulations_server.redis_manager import RedisManager
+import redis
+
 from mirrulations_core.mirrulations_logging import logger
 
+from mirrulations_server.doc_filter import process_doc
+from mirrulations_server.docs_filter import process_docs
+from mirrulations_server.redis_manager import RedisManager
 
-app = Flask(__name__)
-version = 'v1.3'
+APP = Flask(__name__)
+VERSION = 'v1.3'
 
 
 def redis_server():
     return RedisManager(redis.Redis())
 
 
-@app.route('/')
+@APP.route('/')
 def default():
     """
     Default endpoint
@@ -25,7 +26,7 @@ def default():
     return json.dumps({})
 
 
-@app.route('/get_work')
+@APP.route('/get_work')
 def get_work():
     """
     Endpoint the user will use to get work from the queue
@@ -42,11 +43,11 @@ def get_work():
         logger.warning("Exception: %s", 'get_work: BadParameterException, client id was none')
         logger.error('Error - no client ID')
         return 'Bad Parameter', 400
-    json_info = redis_server().get_work()
+    json_info = RedisManager(redis.Redis()).get_work()
     return json.dumps(json_info)
 
 
-@app.route('/return_docs', methods=['POST'])
+@APP.route('/return_docs', methods=['POST'])
 def return_docs():
     """
     The endpoint the client calls to return the document ids received from the regulations docs calls
@@ -62,11 +63,11 @@ def return_docs():
         logger.error('Error - could not post docs')
         return 'Bad Parameter', 400
     files = io.BytesIO(files)
-    process_docs(redis_server(), json.loads(json_info), files)
+    process_docs(RedisManager(redis.Redis()), json.loads(json_info), files)
     return 'Successful!'
 
 
-@app.route('/return_doc', methods=['POST'])
+@APP.route('/return_doc', methods=['POST'])
 def return_doc():
     """
     The endpoint the client calls to return documents they received from the individual regulations doc calls
@@ -80,9 +81,9 @@ def return_doc():
         logger.error('Error - bad parameter')
         return 'Bad Parameter', 400
     files = io.BytesIO(files)
-    process_doc(redis_server(), json.loads(json_info), files)
+    process_doc(RedisManager(redis.Redis()), json.loads(json_info), files)
     return 'Successful!'
 
 
 def run():
-    app.run('0.0.0.0', '8080')
+    APP.run('0.0.0.0', '8080')

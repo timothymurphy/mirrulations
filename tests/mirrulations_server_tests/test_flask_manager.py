@@ -1,18 +1,16 @@
+from ast import literal_eval
+import fakeredis
+import mock
+import os
 import pytest
 import requests_mock
-import mock
-import fakeredis
-import mirrulations_server.flask_manager as flask_manager
-from mirrulations_server.redis_manager import RedisManager
-import json
-import os
-from ast import literal_eval
 
-PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../test_files/mirrulations_files/filename.txt")
+from mirrulations_server.flask_manager import *
 
-version = 'v1.3'
+PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../test_files/mirrulations_files/filename.txt')
+VERSION = 'v1.3'
 
-flask_manager.redis_server = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
+redis_server = mock.MagicMock(return_value=RedisManager(fakeredis.FakeRedis()))
 
 
 @pytest.fixture
@@ -23,36 +21,23 @@ def mock_req():
 
 @pytest.fixture
 def client():
-    flask_manager.app.config['TESTING'] = True
-    client = flask_manager.app.test_client()
+    APP.config['TESTING'] = True
+    client = APP.test_client()
     yield client
 
 
 def make_json():
-    return {
-        "job_id":1,
-        "client_id":2,
-        "data":[
-            [
-                {
-                    "id":1, "attachment_count":1
-                 }
-            ],
-            [
-                {
-                    "id":2, "attachment_count":2
-                 }
-            ]
-        ],
-        "version":version
-    }
+    return {'job_id': 1,
+            'client_id': 2,
+            'data': [[{'id': 1, 'attachment_count': 1}], [{'id': 2, 'attachment_count': 2}]],
+            'version': VERSION}
 
 
 def make_database():
     r = fakeredis.FakeRedis()
     r.flushall()
-    test_list = json.dumps(["a", ["b", "c"]])
-    r.lpush("queue", test_list)
+    test_list = json.dumps(['a', ['b', 'c']])
+    r.lpush('queue', test_list)
     return r
 
 
@@ -83,12 +68,12 @@ def test_get_work_wrong_parameter(client):
 
 def test_get_queue_item(client):
     r = make_database()
-    list = literal_eval(r.lpop("queue").decode("utf-8"))
-    assert list == ['a', ['b', 'c']]
+    lst = literal_eval(r.lpop('queue').decode('utf-8'))
+    assert lst == ['a', ['b', 'c']]
 
 
 def test_return_docs_call_success(client):
-    result = client.post("/return_docs", data={'file':open(PATH, 'rb'), 'json':json.dumps(make_json())})
+    result = client.post('/return_docs', data={'file': open(PATH, 'rb'), 'json': json.dumps(make_json())})
     assert result.status_code == 200
 
 
@@ -98,7 +83,7 @@ def test_return_docs_no_parameter(client):
 
 
 def test_return_doc_call_success(client):
-    result = client.post('/return_doc', data={'file':open(PATH, 'rb'), 'json':json.dumps(make_json())})
+    result = client.post('/return_doc', data={'file': open(PATH, 'rb'), 'json': json.dumps(make_json())})
     assert result.status_code == 200
 
 

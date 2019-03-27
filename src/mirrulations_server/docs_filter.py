@@ -1,21 +1,22 @@
-import random
 import json
-import string
-from mirrulations_core.mirrulations_logging import logger
 import os
-import zipfile
-import tempfile
+import random
 import shutil
+import string
+import tempfile
+import zipfile
+
 import mirrulations_core.documents_core as dc
+from mirrulations_core.mirrulations_logging import logger
 
 """
 This program does the validation of data from the docs jobs and then creates doc jobs using that data
 """
-version = 'v1.3'
+VERSION = 'v1.3'
 
 
 # Validation Function
-def workfile_length_checker(json_data):
+def work_file_length_checker(json_data):
     """
         Checks the file count and attachment count of each work file
         :param json_data: the json containing the work files
@@ -43,27 +44,27 @@ def workfile_length_checker(json_data):
 def check_document_exists(json_data):
     """
     Checks to see if a document was already downloaded or already in one of the queues.
-    If the document has already been downloaded it will be removed from its workfile.
-    If a workfile were to become empty it will be removed to prevent empty doc jobs from existing.
+    If the document has already been downloaded it will be removed from its work_file.
+    If a work_file were to become empty it will be removed to prevent empty doc jobs from existing.
     :param json_data: the json containing the work files
     :return:
     """
     logger.warning('Function Successful: % s',
-                   'workfile_length_checker: workfile_length_checker successfully called from process_docs')
+                   'work_file_length_checker: work_file_length_checker successfully called from process_docs')
 
     home = os.getenv("HOME")
     path = home + "/regulations_data/"
-    for workfile in json_data["data"]:
+    for work_file in json_data["data"]:
         count = 0
-        for line in workfile:
+        for line in work_file:
             document = line["id"]
-            alpha_doc_org,docket_id,document_id = dc.get_doc_attributes("doc." + document + ".json")
+            alpha_doc_org, docket_id, document_id = dc.get_doc_attributes("doc." + document + ".json")
             full_path = path + alpha_doc_org + "/" + docket_id + "/" + document_id + "/" + "doc." + document + ".json"
 
             count, local_verdict = local_files_check(full_path, count)
 
-            if local_verdict: #and redis_verdict:
-                workfile.pop(count)
+            if local_verdict:  # and redis_verdict:
+                work_file.pop(count)
 
     json_data = remove_empty_lists(json_data)
     return json_data
@@ -121,8 +122,7 @@ def create_document_job(work_file, job_id):
     """
     logger.warning('Creating document job...')
 
-    dict = {"job_id": job_id, "type": "doc", "data": work_file, "version": version}
-    return json.dumps(dict)
+    return json.dumps({"job_id": job_id, "type": "doc", "data": work_file, "version": VERSION})
 
 
 def save_client_log(client_id, compressed_file):
@@ -132,24 +132,24 @@ def save_client_log(client_id, compressed_file):
     :param compressed_file: the compressed file containing the client log
     :return:
     """
-    home=os.getenv("HOME")
+    home = os.getenv("HOME")
     client_path = home + '/client-logs/' + str(client_id) + '/'
 
     files = zipfile.ZipFile(compressed_file, "r")
-    PATH = tempfile.mkdtemp()
-    PATHstr = str(PATH + "/")
-    files.extractall(PATHstr)
+    path = tempfile.mkdtemp()
+    path_string = str(path + "/")
+    files.extractall(path_string)
 
     # Create a list of all the files in the directory
-    file_list = os.listdir(PATHstr)
+    file_list = os.listdir(path_string)
 
     for file in file_list:
         if file.endswith(".log"):
             if not os.path.exists(client_path):
                 os.makedirs(client_path)
-                shutil.copy(PATHstr + file, client_path)
+                shutil.copy(path_string + file, client_path)
             else:
-                shutil.copy(PATHstr + file, client_path)
+                shutil.copy(path_string + file, client_path)
 
 
 # Final Function
@@ -162,11 +162,11 @@ def process_docs(redis_server, json_data, compressed_file):
     """
     if redis_server.does_job_exist_in_progress(json_data["job_id"]):
         save_client_log(json_data['client_id'], compressed_file)
-        wklc = workfile_length_checker(json_data)
+        wklc = work_file_length_checker(json_data)
         job_type = json_data["type"] == "docs"
         if wklc and job_type:
             json_data = check_document_exists(json_data)
-            add_document_job(json_data)
+            add_document_job(redis_server, json_data)
             key = redis_server.get_keys_from_progress(json_data["job_id"])
             redis_server.remove_job_from_progress(key)
         else:

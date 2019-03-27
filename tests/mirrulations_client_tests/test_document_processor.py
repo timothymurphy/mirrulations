@@ -1,7 +1,10 @@
 import os
 import pytest
 import requests_mock
+
 from mirrulations_core.api_call_manager import APICallManager
+import mirrulations_core.config as config
+
 from mirrulations_client.document_processor import *
 
 API_KEY = config.read_value('CLIENT', 'API_KEY')

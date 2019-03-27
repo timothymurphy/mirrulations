@@ -4,10 +4,12 @@ import os
 import redis
 import redis_lock
 import time
+
 from mirrulations_core.mirrulations_logging import logger
 
 
 class RedisManager:
+
     def __init__(self, database):
         """
         Initialize the database and create the lock
@@ -87,8 +89,8 @@ class RedisManager:
         """
         with self.lock:
             for item in self.r.hgetall('progress'):
-                if (float(time.time()) - float(item.decode('utf-8')) > 21600):
-                    self.r.hdel('progress',item)
+                if float(time.time()) - float(item.decode('utf-8')) > 21600:
+                    self.r.hdel('progress', item)
                     self.r.rpush("queue", item)
 
     def delete_all(self):
@@ -224,7 +226,8 @@ class RedisManager:
         logger.warning('CLIENT_JOB_ID: %s', 'get_keys_from_progress_no_lock: ' + str(job_id))
         for key in key_list:
             logger.warning('CURRENT_KEY: %s', key)
-            logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: attempt to get the json using the key')
+            logger.warning('Assign Variable: %s',
+                           'get_keys_from_progress_no_lock: attempt to get the json using the key')
 
             json_info = self.get_specific_job_from_progress_no_lock(key)
             info = literal_eval(json_info)

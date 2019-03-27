@@ -1,9 +1,7 @@
 import fakeredis
-import json
 import mock
-from mirrulations_server.redis_manager import RedisManager, queue_check
-from ast import literal_eval
-import time
+
+from mirrulations_server.redis_manager import *
 
 
 def make_empty_database():
@@ -14,10 +12,10 @@ def make_empty_database():
 def make_unlocked_database():
     r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()
-    list = json.dumps({"A":"a", "B":["b", "c"]})
-    list2 = json.dumps({"D":"d", "E":["e", "f"]})
-    list3 = json.dumps({"G":"g", "H":["h", "i"]})
-    r.add_to_queue(list)
+    list1 = json.dumps({'A': 'a', 'B': ['b', 'c']})
+    list2 = json.dumps({'D': 'd', 'E': ['e', 'f']})
+    list3 = json.dumps({'G': 'g', 'H': ['h', 'i']})
+    r.add_to_queue(list1)
     r.add_to_queue(list2)
     r.add_to_progress(list3)
     return r
@@ -28,9 +26,9 @@ def make_unlocked_database():
 def make_locked_database(reset, lock):
     r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()
-    list1 = json.dumps({"A":"a", "B":["b", "c"]})
-    list2 = json.dumps({"D":"d", "E":["e", "f"]})
-    list3 = json.dumps({"G":"g", "H":["h", "i"]})
+    list1 = json.dumps({'A': 'a', 'B': ['b', 'c']})
+    list2 = json.dumps({'D': 'd', 'E': ['e', 'f']})
+    list3 = json.dumps({'G': 'g', 'H': ['h', 'i']})
     r.add_to_queue(list1)
     r.add_to_queue(list2)
     r.add_to_queue(list3)
@@ -43,22 +41,22 @@ def ignore_test_iterate():
         item = literal_eval(item.decode('utf-8'))
         if int(time.time()) - item[2] > 21600:
             print(int(time.time()) - item[2])
-            print("Expired!")
+            print('Expired!')
         else:
             print(int(time.time()) - item[2])
-            print("Still Good!")
+            print('Still Good!')
 
 
 def test_queue_check_empty():
     r = make_empty_database()
-    a,b = queue_check(r)
+    a, b = queue_check(r)
     assert len(a) == 0
     assert len(b) == 0
 
 
 def test_queue_check_items_in_queue():
     r = make_unlocked_database()
-    a,b = queue_check(r)
+    a, b = queue_check(r)
     assert len(a) == 1
     assert len(b) == 2
 
@@ -71,7 +69,7 @@ def test_get_all_item_in_queue():
 
 def test_get_all_item_in_progress():
     r = make_locked_database()
-    list4 = json.dumps(["l", ["m", "n"]])
+    list4 = json.dumps(['l', ['m', 'n']])
     r.add_to_progress(list4)
     assert len(r.get_all_items_in_progress()) == 1
 
@@ -81,14 +79,14 @@ def test_get_work():
     assert len(r.get_all_items_in_queue()) == 3
     assert len(r.get_all_items_in_progress()) == 0
     work = r.get_work()
-    assert work == {"A":"a", "B":["b", "c"]}
+    assert work == {'A': 'a', 'B': ['b', 'c']}
     assert len(r.get_all_items_in_queue()) == 2
     assert len(r.get_all_items_in_progress()) == 1
 
 
 def test_add_to_queue():
     r = make_locked_database()
-    list4 = json.dumps(["j", ["k", "l"]])
+    list4 = json.dumps(['j', ['k', 'l']])
     assert len(r.get_all_items_in_queue()) == 3
     r.add_to_queue(list4)
     assert len(r.get_all_items_in_queue()) == 4
@@ -102,10 +100,10 @@ def test_delete_all():
 
 
 @mock.patch('mirrulations_server.redis_manager.get_curr_time', return_value=1531911498)
-def test_find_expired(time):#time):
+def test_find_expired(time):
     r = make_locked_database()
     r.delete_all()
-    t3 = json.dumps((["g", ["h", "i"]]))
+    t3 = json.dumps((['g', ['h', 'i']]))
     r.add_to_progress(t3)
     assert len(r.get_all_items_in_progress()) == 1
     r.find_expired()
@@ -115,8 +113,8 @@ def test_find_expired(time):#time):
 def test_find_no_expired():
     r = make_locked_database()
     r.delete_all()
-    t3 = json.dumps((["g", ["h", "i"]]))
-    t2 = json.dumps((["j", ["k", "l"]]))
+    t3 = json.dumps((['g', ['h', 'i']]))
+    t2 = json.dumps((['j', ['k', 'l']]))
     r.add_to_progress(t3)
     r.add_to_progress(t2)
     assert len(r.get_all_items_in_progress()) == 2
@@ -127,36 +125,36 @@ def test_find_no_expired():
 def test_get_specific_item_from_queue():
     r = make_locked_database()
     r.delete_all()
-    r.add_to_queue(json.dumps({"A":"B", "job_id":"d"}))
-    assert r.get_specific_job_from_queue("d") == json.dumps({"A": "B", "job_id": "d"})
+    r.add_to_queue(json.dumps({'A': 'B', 'job_id': 'd'}))
+    assert r.get_specific_job_from_queue('d') == json.dumps({'A': 'B', 'job_id': 'd'})
 
 
 def test_get_specific_item_from_queue_does_not_match():
     r = make_locked_database()
     r.delete_all()
-    r.add_to_queue(json.dumps({"A":"B", "job_id":"c"}))
-    assert r.get_specific_job_from_queue("d") == '{"job_id":"null", "type":"none"}'
+    r.add_to_queue(json.dumps({'A': 'B', 'job_id': 'c'}))
+    assert r.get_specific_job_from_queue('d') == '{"job_id":"null", "type":"none"}'
 
 
 def test_remove_specific_job_from_queue():
     r = make_locked_database()
     r.delete_all()
-    r.add_to_queue(json.dumps({"A": "B", "job_id": "c"}))
-    r.add_to_queue(json.dumps({"A": "B", "job_id": "d"}))
+    r.add_to_queue(json.dumps({'A': 'B', 'job_id': 'c'}))
+    r.add_to_queue(json.dumps({'A': 'B', 'job_id': 'd'}))
     assert len(r.get_all_items_in_queue()) == 2
-    r.remove_specific_job_from_queue("c")
+    r.remove_specific_job_from_queue('c')
     assert len(r.get_all_items_in_queue()) == 1
-    r.remove_specific_job_from_queue("d")
+    r.remove_specific_job_from_queue('d')
     assert len(r.get_all_items_in_queue()) == 0
 
 
 def test_remove_specific_job_from_queue_no_item():
     r = make_locked_database()
     r.delete_all()
-    r.add_to_queue(json.dumps({"A": "B", "job_id": "c"}))
-    r.add_to_queue(json.dumps({"A": "B", "job_id": "d"}))
+    r.add_to_queue(json.dumps({'A': 'B', 'job_id': 'c'}))
+    r.add_to_queue(json.dumps({'A': 'B', 'job_id': 'd'}))
     assert len(r.get_all_items_in_queue()) == 2
-    r.remove_specific_job_from_queue("a")
+    r.remove_specific_job_from_queue('a')
     assert len(r.get_all_items_in_queue()) == 2
 
 
@@ -164,24 +162,24 @@ def test_remove_specific_job_from_queue_no_item():
 def test_get_keys_progress(time):
     r = make_locked_database()
     r.delete_all()
-    r.add_to_progress(json.dumps({"A": "B", "job_id": "c"}))
-    r.add_to_progress(json.dumps({"A": "B", "job_id": "d"}))
-    assert r.get_keys_from_progress("d") == "15"
+    r.add_to_progress(json.dumps({'A': 'B', 'job_id': 'c'}))
+    r.add_to_progress(json.dumps({'A': 'B', 'job_id': 'd'}))
+    assert r.get_keys_from_progress('d') == '15'
 
 
 @mock.patch('mirrulations_server.redis_manager.get_curr_time', return_value=15)
 def test_does_job_exist_in_progress(time):
     r = make_locked_database()
     r.delete_all()
-    r.add_to_progress(json.dumps({"A": "B", "job_id": "c"}))
-    assert r.does_job_exist_in_progress("c")
+    r.add_to_progress(json.dumps({'A': 'B', 'job_id': 'c'}))
+    assert r.does_job_exist_in_progress('c')
 
 
 @mock.patch('mirrulations_server.redis_manager.get_curr_time', return_value=15)
 def test_delete_from_progress(time):
     r = make_locked_database()
     r.delete_all()
-    r.add_to_progress(json.dumps({"A": "B", "job_id": "c"}))
+    r.add_to_progress(json.dumps({'A': 'B', 'job_id': 'c'}))
     assert len(r.get_all_items_in_progress()) == 1
     r.remove_job_from_progress(15)
     assert len(r.get_all_items_in_progress()) == 0
@@ -191,7 +189,7 @@ def test_delete_from_progress(time):
 def test_renew_job(time):
     r = make_locked_database()
     r.delete_all()
-    r.add_to_progress(json.dumps({"A": "B", "job_id": "c"}))
+    r.add_to_progress(json.dumps({'A': 'B', 'job_id': 'c'}))
     assert len(r.get_all_items_in_progress()) == 1
     assert len(r.get_all_items_in_queue()) == 0
     r.renew_job("c")

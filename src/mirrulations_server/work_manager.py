@@ -3,10 +3,12 @@ import random
 import redis
 import string
 import time
-from mirrulations_server.redis_manager import RedisManager
+
 from mirrulations_core.api_call_manager import APICallManager
 from mirrulations_core.mirrulations_logging import logger
 import mirrulations_core.config as config
+
+from mirrulations_server.redis_manager import RedisManager
 
 key = config.read_value('SERVER', 'API_KEY')
 

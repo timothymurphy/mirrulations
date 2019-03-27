@@ -1,34 +1,26 @@
+import json
+from pathlib import Path
+import shutil
+import tempfile
+import time
+
+from mirrulations_core.api_call_manager import APICallManager
+import mirrulations_core.config as config
+from mirrulations_core.mirrulations_logging import logger
+
 import mirrulations_client.document_processor as doc
 import mirrulations_client.documents_processor as docs
 from mirrulations_client.server_call_manager import ServerCallManager
 from mirrulations_client.client_health_call_manager import ClientHealthCallManager
-from mirrulations_core.api_call_manager import APICallManager
-import json
-import time
-import shutil
-import tempfile
-from pathlib import Path
-import mirrulations_core.config as config
-from mirrulations_core.mirrulations_logging import logger
 
 API_KEY = config.read_value('CLIENT', 'API_KEY')
 CLIENT_ID = config.read_value('CLIENT', 'CLIENT_ID')
 SERVER_ADDRESS = config.read_value('CLIENT', 'SERVER_ADDRESS')
-VERSION = "v1.3"
+VERSION = 'v1.3'
 
-api_manager = APICallManager(API_KEY)
-server_manager = ServerCallManager(CLIENT_ID, SERVER_ADDRESS)
-client_health_manager = ClientHealthCallManager()
-
-
-def get_work():
-    """
-    Calls the /get_work endpoint of the server to fetch work to process
-    :return: the result of making a call to get work
-    """
-    work = server_manager.make_work_call()
-
-    return work
+API_MANAGER = APICallManager(API_KEY)
+SERVER_MANAGER = ServerCallManager(CLIENT_ID, SERVER_ADDRESS)
+CLIENT_HEALTH_MANAGER = ClientHealthCallManager()
 
 
 def do_work(work_json):
@@ -48,11 +40,11 @@ def do_work(work_json):
             else:
                 return_docs(work_json)
 
-        client_health_manager.make_call()
+        CLIENT_HEALTH_MANAGER.make_call()
 
     else:
         logger.error('Job type unexpected')
-        client_health_manager.make_fail_call()
+        CLIENT_HEALTH_MANAGER.make_fail_call()
 
 
 def get_json_info(json_result):
@@ -61,8 +53,8 @@ def get_json_info(json_result):
     :param json_result: the json returned from
     """
 
-    job_id = json_result["job_id"]
-    data = json_result["data"]
+    job_id = json_result['job_id']
+    data = json_result['data']
     return job_id, data
 
 
@@ -75,11 +67,11 @@ def return_docs(json_result):
     """
 
     job_id, data = get_json_info(json_result)
-    json_info = docs.documents_processor(api_manager, data, job_id, CLIENT_ID)
+    json_info = docs.documents_processor(API_MANAGER, data, job_id, CLIENT_ID)
     path = tempfile.TemporaryDirectory()
-    shutil.make_archive("result", "zip", path.name)
+    shutil.make_archive('result', 'zip', path.name)
     file_obj = open('result.zip', 'rb')
-    r = server_manager.make_docs_return_call(file_obj, json_info)
+    r = SERVER_MANAGER.make_docs_return_call(file_obj, json_info)
     r.raise_for_status()
     return r
 
@@ -96,11 +88,11 @@ def return_doc(json_result):
     doc_ids = []
     for dic in doc_dicts:
         doc_ids.append(dic['id'])
-    path = doc.document_processor(api_manager, doc_ids)
-    shutil.make_archive("result", "zip", path.name)
+    path = doc.document_processor(API_MANAGER, doc_ids)
+    shutil.make_archive('result', 'zip', path.name)
     file_obj = open('result.zip', 'rb')
     json_info = {'job_id': job_id, 'type': 'doc', 'user': CLIENT_ID, 'version': VERSION}
-    r = server_manager.make_doc_return_call(file_obj, json_info)
+    r = SERVER_MANAGER.make_doc_return_call(file_obj, json_info)
     r.raise_for_status()
     return r
 
@@ -131,14 +123,14 @@ def run():
     while True:
 
         try:
-            work = get_work()
-        except api_manager.CallFailException:
-            logger.debug("API Call Failed...")
-            logger.info("Waiting an hour until retry...")
+            work = SERVER_MANAGER.make_work_call()
+        except API_MANAGER.CallFailException:
+            logger.debug('API Call Failed...')
+            logger.info('Waiting an hour until retry...')
             time.sleep(3600)
             continue
 
-        client_health_manager.make_call()
+        CLIENT_HEALTH_MANAGER.make_call()
         work_json = json.loads(work.content.decode('utf-8'))
 
         do_work(work_json)

@@ -1,9 +1,9 @@
 import json
+
 from mirrulations_core.mirrulations_logging import logger
 
-version = 'v1.3'
-
-workfiles = []
+VERSION = 'v1.3'
+WORK_FILES = []
 
 
 def documents_processor(api_manager, docs_info_list, job_id, client_id):
@@ -14,20 +14,23 @@ def documents_processor(api_manager, docs_info_list, job_id, client_id):
     :param client_id: id of the client calling this function
     :return result: the json to be returned to the server after each call is processed
     """
-    global workfiles
-    workfiles = []
+
+    global WORK_FILES
+    WORK_FILES = []
 
     for docs_info in docs_info_list:
+
         try:
             result = api_manager.make_documents_call(page_offset=docs_info[0], results_per_page=docs_info[1])
             process_results(result)
-        except:
+        except api_manager.CallFailException:
             logger.error('Error - URL processing failed')
-    result = json.loads(json.dumps({"job_id" : job_id,
-                                    "type": "docs",
-                                    "data" : workfiles,
-                                    "client_id" : client_id,
-                                    "version" : version}))
+
+    result = json.loads(json.dumps({'job_id' : job_id,
+                                    'type': 'docs',
+                                    'data' : WORK_FILES,
+                                    'client_id' : client_id,
+                                    'version' : VERSION}))
     return result
 
 
@@ -39,9 +42,11 @@ def process_results(result):
     :param result: Result of the api call
     :return: returns True if the processing completed successfully
     """
+
     docs_json = json.loads(result.text)
+
     try:
-        doc_list = docs_json["documents"]
+        doc_list = docs_json['documents']
         make_docs(doc_list)
     except TypeError:
         logger.error('Error - bad JSON')
@@ -56,22 +61,25 @@ def make_docs(doc_list):
     :param doc_list: list of document ids and attachment counts as a dictionary
     :return: the global workfiles variable that contains all of the work in list
     """
-    global workfiles
+    global WORK_FILES
     size = 0
     work_list = []
+
     for doc in doc_list:
-        doc_id = doc["documentId"]
-        calls = doc["attachmentCount"] + 1
+        doc_id = doc['documentId']
+        calls = doc['attachmentCount'] + 1
         if size + calls > 1000:
-            workfiles.append(work_list)
+            WORK_FILES.append(work_list)
             work_list = []
             size = 0
         size += calls
-        document = {"id": doc_id, "count": calls}
+        document = {'id': doc_id, 'count': calls}
         work_list.append(document)
+
     if size != 0:
-        workfiles.append(work_list)
-    return workfiles
+        WORK_FILES.append(work_list)
+
+    return WORK_FILES
 
 
 class BadJsonException(Exception):
