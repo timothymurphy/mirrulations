@@ -4,7 +4,6 @@ import re
 def get_doc_attributes(document_id):
     """
     Get the organization(s), the docket_id and the document_id from a file name
-    :param file_name: name of the file to extract attributes of the document name
     :return: orgs: The organizations(s),
              docket_id: the docket_id,
              document_id: the document_id
@@ -35,7 +34,7 @@ def get_doc_attributes(document_id):
         org = add_hyphens(org_list)
         docket_id = add_hyphens(split_name[:len(split_name) - 1])
         document_id = add_hyphens(split_name[:len(split_name)])
-
+        
         return org, docket_id, document_id
 
 
@@ -49,7 +48,7 @@ def add_hyphens(lst):
     hyphened_string = ''
 
     for x in range(len(lst)):
-        
+
         if x == 0:
             if len(lst) == 1:
                 hyphened_string = lst[x]
@@ -59,5 +58,15 @@ def add_hyphens(lst):
             hyphened_string = hyphened_string + lst[x]
         else:
             hyphened_string = hyphened_string + lst[x] + '-'
-    
+
     return hyphened_string
+
+
+def remove_job_from_progress(redis_server, json_data):
+    """
+    :param redis_server:
+    :param json_data:
+    :return:
+    """
+    key = redis_server.get_keys_from_progress(json_data['job_id'])
+    redis_server.remove_job_from_progress(key)

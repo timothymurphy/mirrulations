@@ -2,15 +2,17 @@ import os
 
 import mirrulations_core.documents_core as dc
 
-from mirrulations_web import PATH
+from mirrulations_web import HOME_REGULATION_PATH
 
-
-def search_for_document_in_directory(document_id, directory_path=PATH):
+def search_for_document_in_directory(document_id,
+                                     directory_path=HOME_REGULATION_PATH):
     """
-    Called by the server to check to see if a document exists in the directory structure
+    Called by the server to check to see if
+    a document exists in the directory structure
     :param document_id: the document id being searched
     :param directory_path: The directory path being searched in
-    :return: Return the full path if the document exists, else return an empty string
+    :return: Return the full path if the document exists,
+             else return an empty string
     """
     orgs, dock_id, doc_id = dc.get_doc_attributes(document_id)
 
