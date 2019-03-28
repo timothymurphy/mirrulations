@@ -1,7 +1,7 @@
 import os
 from threading import Thread
 
-from mirrulations_server import FLASK_APP
+from mirrulations_server.flask_manager import FLASK_APP
 
 
 def main():

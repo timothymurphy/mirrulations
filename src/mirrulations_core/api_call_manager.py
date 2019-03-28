@@ -1,13 +1,15 @@
 import requests
 import time
 
+import mirrulations_core.config as config
+
 from mirrulations_core import LOGGER
 
 
 class APICallManager:
 
-    def __init__(self, api_key):
-        self.api_key = api_key
+    def __init__(self, config_option):
+        self.api_key = config.read_value(config_option, 'API_KEY')
 
     class CallFailException(Exception):
 
@@ -15,7 +17,7 @@ class APICallManager:
             LOGGER.warning('API call failed...')
 
     def make_api_call_url(self, search_type, suffix):
-        return 'https://api.data.gov/regulations/v3/' + search_type + '.json?api_key=' + self.api_key + suffix
+        return 'http://api.data.gov/regulations/v3/' + search_type + '.json?api_key=' + self.api_key + suffix
 
     def make_docket_call_url(self, docket_id):
         return self.make_api_call_url('docket', '&docketId=' + docket_id)
@@ -72,29 +74,26 @@ class APICallManager:
 
 def verify_key(key_input):
 
-    class CannotConnectError(Exception):
-        print('Unable to connect!\n'
-              'We weren\'t able to connect to regulations.gov.\n'
-              'Please try again later.')
-        exit(3)
-
-    class InvalidKeyError(Exception):
-        print('Invalid API key!\n'
-              'Your API key is invalid.\n'
-              'Please visit\n'
-              'https://regulationsgov.github.io/developers/\n'
-              'for an API key.')
-        exit(4)
-
     try:
-        with requests.get('https://api.data.gov/regulations/v3/documents.json?api_key=' + key_input) as r:
+        with requests.get('http://api.data.gov/regulations/v3/documents.json?api_key=' + key_input) as r:
             if r.status_code == 403:
-                raise CannotConnectError
+                print('Unable to connect!\n'
+                      'We weren\'t able to connect to regulations.gov.\n'
+                      'Please try again later.')
+                exit(3)
             elif r.status_code > 299 and r.status_code != 429:
-                raise InvalidKeyError
+                print('Invalid API key!\n'
+                      'Your API key is invalid.\n'
+                      'Please visit\n'
+                      'https://regulationsgov.github.io/developers/\n'
+                      'for an API key.')
+                exit(4)
             else:
                 print('Success!\n'
                       'You are successfully logged in.')
                 return None
     except requests.ConnectionError:
-        raise CannotConnectError
+        print('Unable to connect!\n'
+              'We weren\'t able to connect to regulations.gov.\n'
+              'Please try again later.')
+        exit(5)

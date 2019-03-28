@@ -1,9 +1,6 @@
-import fakeredis
 import mock
 import pytest
 import requests_mock
-
-from mirrulations_server.redis_manager import RedisManager
 
 from mirrulations_server.doc_filter import *
 
@@ -30,8 +27,8 @@ def save_temp_dir():
 
 @mock.patch('mirrulations_server.redis_manager.reset_lock')
 @mock.patch('mirrulations_server.redis_manager.set_lock')
-def make_database(reset, lock):
-    r = RedisManager(fakeredis.FakeRedis())
+def make_database(fake_redis_server, reset, lock):
+    r = fake_redis_server
     r.delete_all()
     return r
 
@@ -42,8 +39,8 @@ def make_temp_file(path):
     return f.name
 
 
-def test_process_doc(save_temp_dir):
-    redis_server = make_database()
+def test_process_doc(save_temp_dir, fake_redis_server):
+    redis_server = make_database(fake_redis_server)
     path_string = save_temp_dir
 
     json_data = json.dumps({'job_id': '1', 'type': 'doc',
@@ -59,8 +56,8 @@ def test_process_doc(save_temp_dir):
     assert len(progress) == 0
 
 
-def test_process_doc_bad_file(save_temp_dir):
-    redis_server = make_database()
+def test_process_doc_bad_file(save_temp_dir, fake_redis_server):
+    redis_server = make_database(fake_redis_server)
     path_string = save_temp_dir
 
     json_data = json.dumps({'job_id': '1', 'type': 'doc',
