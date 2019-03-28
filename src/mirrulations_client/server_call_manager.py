@@ -1,12 +1,14 @@
 import json
 import requests
 
+import mirrulations_core.config as config
+
 
 class ServerCallManager:
 
-    def __init__(self, client_id, address):
-        self.client_id = client_id
-        self.base_url = 'https://' + address
+    def __init__(self):
+        self.client_id = config.read_value('CLIENT', 'client_id')
+        self.base_url = 'https://' + config.read_value('CLIENT', 'server_address')
 
     def make_work_call(self):
         return requests.get(self.base_url + '/get_work?client_id=' + self.client_id)

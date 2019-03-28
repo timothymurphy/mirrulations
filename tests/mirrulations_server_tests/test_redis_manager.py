@@ -4,35 +4,44 @@ import mock
 from mirrulations_server.redis_manager import *
 
 
+def mock_init(self):
+    self.r = fakeredis.FakeRedis()
+    reset_lock(self.r)
+    self.lock = set_lock(self.r)
+
+
 def make_empty_database():
-    r = RedisManager(fakeredis.FakeRedis())
-    return r
+    with mock.patch.object(RedisManager, '__init__', mock_init):
+        r = RedisManager()
+        return r
 
 
 def make_unlocked_database():
-    r = RedisManager(fakeredis.FakeRedis())
-    r.delete_all()
-    list1 = json.dumps({'A': 'a', 'B': ['b', 'c']})
-    list2 = json.dumps({'D': 'd', 'E': ['e', 'f']})
-    list3 = json.dumps({'G': 'g', 'H': ['h', 'i']})
-    r.add_to_queue(list1)
-    r.add_to_queue(list2)
-    r.add_to_progress(list3)
-    return r
+    with mock.patch.object(RedisManager, '__init__', mock_init):
+        r = RedisManager()
+        r.delete_all()
+        list1 = json.dumps({'A': 'a', 'B': ['b', 'c']})
+        list2 = json.dumps({'D': 'd', 'E': ['e', 'f']})
+        list3 = json.dumps({'G': 'g', 'H': ['h', 'i']})
+        r.add_to_queue(list1)
+        r.add_to_queue(list2)
+        r.add_to_progress(list3)
+        return r
 
 
 @mock.patch('mirrulations_server.redis_manager.reset_lock')
 @mock.patch('mirrulations_server.redis_manager.set_lock')
 def make_locked_database(reset, lock):
-    r = RedisManager(fakeredis.FakeRedis())
-    r.delete_all()
-    list1 = json.dumps({'A': 'a', 'B': ['b', 'c']})
-    list2 = json.dumps({'D': 'd', 'E': ['e', 'f']})
-    list3 = json.dumps({'G': 'g', 'H': ['h', 'i']})
-    r.add_to_queue(list1)
-    r.add_to_queue(list2)
-    r.add_to_queue(list3)
-    return r
+    with mock.patch.object(RedisManager, '__init__', mock_init):
+        r = RedisManager()
+        r.delete_all()
+        list1 = json.dumps({'A': 'a', 'B': ['b', 'c']})
+        list2 = json.dumps({'D': 'd', 'E': ['e', 'f']})
+        list3 = json.dumps({'G': 'g', 'H': ['h', 'i']})
+        r.add_to_queue(list1)
+        r.add_to_queue(list2)
+        r.add_to_queue(list3)
+        return r
 
 
 def ignore_test_iterate():

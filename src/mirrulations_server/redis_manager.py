@@ -9,11 +9,11 @@ from mirrulations_core import LOGGER
 
 class RedisManager:
 
-    def __init__(self, database):
+    def __init__(self):
         """
         Initialize the database and create the lock
         """
-        self.r = database
+        self.r = redis.Redis()
         reset_lock(self.r)
         self.lock = set_lock(self.r)
 
@@ -291,6 +291,6 @@ def queue_check(redis_manager):
 
 
 def print_queue():
-    queue = queue_check(RedisManager(redis.Redis()))
+    queue = queue_check(RedisManager())
     print(queue[1])
     print(queue[2])

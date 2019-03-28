@@ -1,13 +1,15 @@
 import requests
 import time
 
+import mirrulations_core.config as config
+
 from mirrulations_core import LOGGER
 
 
 class APICallManager:
 
-    def __init__(self, api_key):
-        self.api_key = api_key
+    def __init__(self, config_option):
+        self.api_key = config.read_value(config_option, 'API_KEY')
 
     class CallFailException(Exception):
 

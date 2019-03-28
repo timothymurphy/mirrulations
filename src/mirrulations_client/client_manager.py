@@ -1,14 +1,18 @@
 import json
-from pathlib import Path
 import shutil
 import tempfile
 import time
+
+import mirrulations_core.config as config
+
+from mirrulations_core.api_call_manager import APICallManager
+from mirrulations_client.client_health_call_manager import ClientHealthCallManager
+from mirrulations_client.server_call_manager import ServerCallManager
 
 import mirrulations_client.document_processor as doc
 import mirrulations_client.documents_processor as docs
 
 from mirrulations_core import VERSION, LOGGER
-from mirrulations_client import CLIENT_ID, API_MANAGER, CLIENT_HEALTH_MANAGER, SERVER_MANAGER
 
 
 def do_work(work_json):
@@ -28,11 +32,11 @@ def do_work(work_json):
             else:
                 return_docs(work_json)
 
-        CLIENT_HEALTH_MANAGER.make_call()
+        ClientHealthCallManager().make_call()
 
     else:
         LOGGER.error('Job type unexpected')
-        CLIENT_HEALTH_MANAGER.make_fail_call()
+        ClientHealthCallManager().make_fail_call()
 
 
 def get_json_info(json_result):
@@ -55,11 +59,14 @@ def return_docs(json_result):
     """
 
     job_id, data = get_json_info(json_result)
-    json_info = docs.documents_processor(API_MANAGER, data, job_id, CLIENT_ID)
+    json_info = docs.documents_processor(APICallManager('CLIENT'),
+                                         data,
+                                         job_id,
+                                         config.read_value('CLIENT', 'client_id'))
     path = tempfile.TemporaryDirectory()
     shutil.make_archive('result', 'zip', path.name)
     file_obj = open('result.zip', 'rb')
-    r = SERVER_MANAGER.make_docs_return_call(file_obj, json_info)
+    r = ServerCallManager().make_docs_return_call(file_obj, json_info)
     r.raise_for_status()
     return r
 
@@ -76,11 +83,14 @@ def return_doc(json_result):
     doc_ids = []
     for dic in doc_dicts:
         doc_ids.append(dic['id'])
-    path = doc.document_processor(API_MANAGER, doc_ids)
+    path = doc.document_processor(APICallManager('CLIENT'), doc_ids)
     shutil.make_archive('result', 'zip', path.name)
     file_obj = open('result.zip', 'rb')
-    json_info = {'job_id': job_id, 'type': 'doc', 'user': CLIENT_ID, 'version': VERSION}
-    r = SERVER_MANAGER.make_doc_return_call(file_obj, json_info)
+    json_info = {'job_id': job_id,
+                 'type': 'doc',
+                 'user': config.read_value('CLIENT', 'client_id'),
+                 'version': VERSION}
+    r = ServerCallManager().make_doc_return_call(file_obj, json_info)
     r.raise_for_status()
     return r
 
@@ -95,14 +105,14 @@ def run():
     while True:
 
         try:
-            work = SERVER_MANAGER.make_work_call()
-        except API_MANAGER.CallFailException:
+            work = ServerCallManager().make_work_call()
+        except APICallManager.CallFailException:
             LOGGER.debug('API Call Failed...')
             LOGGER.info('Waiting an hour until retry...')
             time.sleep(3600)
             continue
 
-        CLIENT_HEALTH_MANAGER.make_call()
+        ClientHealthCallManager().make_call()
         work_json = json.loads(work.content.decode('utf-8'))
 
         do_work(work_json)

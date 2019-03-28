@@ -3,16 +3,18 @@ import random
 import string
 import time
 
+from mirrulations_core.api_call_manager import APICallManager
+from mirrulations_server.redis_manager import RedisManager
+
 from mirrulations_core import LOGGER
-from mirrulations_server import API_MANAGER, REDIS_MANAGER
 
 
 def get_max_page_hit(results_per_page):
 
     try:
-        records = API_MANAGER.make_documents_call(counts_only=True, results_per_page=results_per_page).json
+        records = APICallManager('server').make_documents_call(counts_only=True, results_per_page=results_per_page).json
         return records["totalNumRecords"] // results_per_page
-    except API_MANAGER.CallFailException:
+    except APICallManager.CallFailException:
         LOGGER.error('Error occured with API request')
         print("Error occurred with docs_work_gen regulations API request.")
         exit()
@@ -35,9 +37,9 @@ def get_work(results_per_page):
                 break
 
         # Makes a JSON from the list of URLs and send it to the queue as a job
-        REDIS_MANAGER.add_to_queue(json.dumps([''.join(random.choices(string.ascii_letters + string.digits, k=16)),
-                                               'docs',
-                                               docs_info_list]))
+        RedisManager().add_to_queue(json.dumps([''.join(random.choices(string.ascii_letters + string.digits, k=16)),
+                                                'docs',
+                                                docs_info_list]))
 
 
 def run():
@@ -45,5 +47,5 @@ def run():
     get_work(1000)
 
     while True:
-        REDIS_MANAGER.find_expired()
+        RedisManager().find_expired()
         time.sleep(3600)

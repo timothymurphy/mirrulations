@@ -1,12 +1,15 @@
-from flask import request
+from flask import Flask, request
 import io
 import json
+
+from mirrulations_server.redis_manager import RedisManager
 
 from mirrulations_server.doc_filter import process_doc
 from mirrulations_server.docs_filter import process_docs
 
 from mirrulations_core import LOGGER
-from mirrulations_server import FLASK_APP, REDIS_MANAGER
+
+FLASK_APP = Flask(__name__)
 
 
 @FLASK_APP.route('/')
@@ -35,7 +38,7 @@ def get_work():
         LOGGER.warning("Exception: %s", 'get_work: BadParameterException, client id was none')
         LOGGER.error('Error - no client ID')
         return 'Bad Parameter', 400
-    json_info = REDIS_MANAGER.get_work()
+    json_info = RedisManager().get_work()
     return json.dumps(json_info)
 
 
@@ -55,7 +58,7 @@ def return_docs():
         LOGGER.error('Error - could not post docs')
         return 'Bad Parameter', 400
     files = io.BytesIO(files)
-    process_docs(REDIS_MANAGER, json.loads(json_info), files)
+    process_docs(RedisManager(), json.loads(json_info), files)
     return 'Successful!'
 
 
@@ -73,5 +76,5 @@ def return_doc():
         LOGGER.error('Error - bad parameter')
         return 'Bad Parameter', 400
     files = io.BytesIO(files)
-    process_doc(REDIS_MANAGER, json.loads(json_info), files)
+    process_doc(RedisManager(), json.loads(json_info), files)
     return 'Successful!'

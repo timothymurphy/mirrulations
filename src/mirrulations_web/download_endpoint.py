@@ -1,8 +1,8 @@
-from flask import request
+from flask import Flask, request
 
-from mirrulations_web import FLASK_APP
+FLASK_APP = Flask(__name__)
 
 
-@FLASK_APP.route('/download',methods=['GET'])
+@FLASK_APP.route('/download', methods=['GET'])
 def download():
 	docid = request.args.get('docid')
