@@ -1,6 +1,7 @@
 import configparser
 import os
 import random
+import requests
 import string
 
 from mirrulations_core.api_call_manager import verify_key
@@ -33,6 +34,33 @@ def make_config_if_missing():
         with open(CONFIG_PATH, 'w') as file:
             cfg.write(file)
             file.close()
+
+
+def verify_key(key_input):
+
+    try:
+        with requests.get('http://api.data.gov/regulations/v3/documents.json?api_key=' + key_input) as r:
+            if r.status_code == 403:
+                print('Unable to connect!\n'
+                      'We weren\'t able to connect to regulations.gov.\n'
+                      'Please try again later.')
+                exit(3)
+            elif r.status_code > 299 and r.status_code != 429:
+                print('Invalid API key!\n'
+                      'Your API key is invalid.\n'
+                      'Please visit\n'
+                      'https://regulationsgov.github.io/developers/\n'
+                      'for an API key.')
+                exit(4)
+            else:
+                print('Success!\n'
+                      'You are successfully logged in.')
+                return None
+    except requests.ConnectionError:
+        print('Unable to connect!\n'
+              'We weren\'t able to connect to regulations.gov.\n'
+              'Please try again later.')
+        exit(5)
 
 
 def client_config_setup():
