@@ -4,8 +4,6 @@ import random
 import requests
 import string
 
-from mirrulations_core.api_call_manager import verify_key
-
 from mirrulations_core import CONFIG_PATH
 
 
