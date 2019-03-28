@@ -7,7 +7,9 @@ import time
 import logging
 import shutil
 import tempfile
+import os
 from pathlib import Path
+from mirrulations.mirrulations_logging import logger
 import mirrulations_core.config as config
 
 # These variables are specific to the current implementation
@@ -21,12 +23,10 @@ serverurl = "http://" + ip + ":" + port
 key = config.read_value('key')
 client_id = config.read_value('client_id')
 
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='client.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': client_id}
-logger = logging.getLogger('tcpserver')
-
 client_health_url = "https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08"
+
+PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                    '../../')
 
 
 def get_work(client_id):
@@ -70,7 +70,21 @@ def return_docs(json_result, client_id):
     fileobj = open('result.zip', 'rb')
     r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json': json.dumps(json_info)})
     r.raise_for_status()
+    logger.info('Returned Docs')
+    # local_backup = open('../../mirrulations_local_backup.log', 'a+')
+    # mirrulations_log = open('../../mirrulations.log', 'r')
+    # local_backup.write(mirrulations_log.read())
+    # local_backup.close()
+    # mirrulations_log.close()
+    try:
+        remove_file(PATH + 'mirrulations.log')
+    except:
+        logger.warning('Failed to delete mirrulations.log')
     return r
+
+
+def remove_file(filename):
+    os.remove(filename)
 
 
 def return_doc(json_result, client_id):
@@ -95,6 +109,7 @@ def return_doc(json_result, client_id):
                       data={'json': json.dumps({"job_id": job_id, "type": "doc",
                                                "user": client_id, "version": version})})
     r.raise_for_status()
+    logger.info('Returned Doc')
     return r
 
 
@@ -122,11 +137,7 @@ def add_client_log_files(directory, log_directory):
     :return:
     """
 
-    copy_file_safely(directory, log_directory + "/client.log")
-    copy_file_safely(directory, log_directory + "/document_processor.log")
-    copy_file_safely(directory, log_directory + "/documents_processor.log")
-    copy_file_safely(directory, log_directory + "/api_call.log")
-    copy_file_safely(directory, log_directory + "/api_call_management.log")
+    copy_file_safely(directory, log_directory + "/mirrulations.log")
 
 
 def do_work():
