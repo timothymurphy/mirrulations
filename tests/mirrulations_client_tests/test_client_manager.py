@@ -4,8 +4,8 @@ import requests_mock
 from mirrulations_client.client_manager import *
 
 CLIENT_ID = config.read_value('CLIENT', 'client_id')
-SERVER_URL = 'https://' + config.read_value('CLIENT', 'server_address')
-FAKE_URL = 'https://website.com/random?api_key=' + config.read_value('CLIENT', 'api_key')
+SERVER_URL = 'http://' + config.read_value('CLIENT', 'server_address')
+FAKE_URL = 'http://website.com/random?api_key=' + config.read_value('CLIENT', 'api_key')
 
 
 @pytest.fixture
@@ -15,7 +15,7 @@ def mock_req():
 
 
 def test_get_work(mock_req):
-    mock_req.get(SERVER_URL + "/get_work?client_id=" + str(), status_code=200, text='RANDOM')
+    mock_req.get(SERVER_URL + "/get_work?client_id=" + CLIENT_ID, status_code=200, text='RANDOM')
     result = ServerCallManager().make_work_call()
     assert result.status_code == 200
 

@@ -39,6 +39,7 @@ class RedisManager:
         :return:
         """
         with self.lock:
+            print(work)
             self.r.rpush("queue", work)
 
     def add_to_progress(self, work):

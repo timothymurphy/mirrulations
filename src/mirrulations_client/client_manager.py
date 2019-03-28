@@ -39,17 +39,6 @@ def do_work(work_json):
         ClientHealthCallManager().make_fail_call()
 
 
-def get_json_info(json_result):
-    """
-    Return job information from server json
-    :param json_result: the json returned from
-    """
-
-    job_id = json_result['job_id']
-    data = json_result['data']
-    return job_id, data
-
-
 def return_docs(json_result):
     """
     Handles the documents processing necessary for a job
@@ -58,7 +47,8 @@ def return_docs(json_result):
     :return: result from calling /return_docs
     """
 
-    job_id, data = get_json_info(json_result)
+    job_id = json_result['job_id']
+    data = json_result['data']
     json_info = docs.documents_processor(APICallManager('CLIENT'),
                                          data,
                                          job_id,
@@ -79,7 +69,8 @@ def return_doc(json_result):
     :return: result from calling /return_doc
     """
 
-    job_id, doc_dicts = get_json_info(json_result)
+    job_id = json_result['job_id']
+    doc_dicts = json_result['data']
     doc_ids = []
     for dic in doc_dicts:
         doc_ids.append(dic['id'])
@@ -114,5 +105,8 @@ def run():
 
         ClientHealthCallManager().make_call()
         work_json = json.loads(work.content.decode('utf-8'))
+        work_json_dict = {'job_id': work_json[0],
+                          'type': work_json[1],
+                          'data': work_json[2]}
 
-        do_work(work_json)
+        do_work(work_json_dict)

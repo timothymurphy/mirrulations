@@ -38,9 +38,10 @@ def get_work(results_per_page):
                 break
 
         # Makes a JSON from the list of URLs and send it to the queue as a job
-        RedisManager().add_to_queue(json.dumps([''.join(random.choices(string.ascii_letters + string.digits, k=16)),
-                                                'docs',
-                                                docs_info_list]))
+        RedisManager().add_to_queue(json.dumps({'job_id': ''.join(random.choices(string.ascii_letters + string.digits,
+                                                                                 k=16)),
+                                                'type': 'docs',
+                                                'data': docs_info_list}))
 
 
 def run():

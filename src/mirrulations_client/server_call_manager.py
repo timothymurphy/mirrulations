@@ -8,7 +8,7 @@ class ServerCallManager:
 
     def __init__(self):
         self.client_id = config.read_value('CLIENT', 'client_id')
-        self.base_url = 'https://' + config.read_value('CLIENT', 'server_address')
+        self.base_url = 'http://' + config.read_value('CLIENT', 'server_address')
 
     def make_work_call(self):
         return requests.get(self.base_url + '/get_work?client_id=' + self.client_id)

@@ -17,7 +17,7 @@ class APICallManager:
             LOGGER.warning('API call failed...')
 
     def make_api_call_url(self, search_type, suffix):
-        return 'https://api.data.gov/regulations/v3/' + search_type + '.json?api_key=' + self.api_key + suffix
+        return 'http://api.data.gov/regulations/v3/' + search_type + '.json?api_key=' + self.api_key + suffix
 
     def make_docket_call_url(self, docket_id):
         return self.make_api_call_url('docket', '&docketId=' + docket_id)
@@ -75,7 +75,7 @@ class APICallManager:
 def verify_key(key_input):
 
     try:
-        with requests.get('https://api.data.gov/regulations/v3/documents.json?api_key=' + key_input) as r:
+        with requests.get('http://api.data.gov/regulations/v3/documents.json?api_key=' + key_input) as r:
             if r.status_code == 403:
                 print('Unable to connect!\n'
                       'We weren\'t able to connect to regulations.gov.\n'
