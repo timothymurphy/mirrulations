@@ -74,29 +74,26 @@ class APICallManager:
 
 def verify_key(key_input):
 
-    class CannotConnectError(Exception):
-        print('Unable to connect!\n'
-              'We weren\'t able to connect to regulations.gov.\n'
-              'Please try again later.')
-        exit(3)
-
-    class InvalidKeyError(Exception):
-        print('Invalid API key!\n'
-              'Your API key is invalid.\n'
-              'Please visit\n'
-              'https://regulationsgov.github.io/developers/\n'
-              'for an API key.')
-        exit(4)
-
     try:
         with requests.get('https://api.data.gov/regulations/v3/documents.json?api_key=' + key_input) as r:
             if r.status_code == 403:
-                raise CannotConnectError
+                print('Unable to connect!\n'
+                      'We weren\'t able to connect to regulations.gov.\n'
+                      'Please try again later.')
+                exit(3)
             elif r.status_code > 299 and r.status_code != 429:
-                raise InvalidKeyError
+                print('Invalid API key!\n'
+                      'Your API key is invalid.\n'
+                      'Please visit\n'
+                      'https://regulationsgov.github.io/developers/\n'
+                      'for an API key.')
+                exit(4)
             else:
                 print('Success!\n'
                       'You are successfully logged in.')
                 return None
     except requests.ConnectionError:
-        raise CannotConnectError
+        print('Unable to connect!\n'
+              'We weren\'t able to connect to regulations.gov.\n'
+              'Please try again later.')
+        exit(5)

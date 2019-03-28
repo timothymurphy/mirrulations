@@ -12,8 +12,9 @@ from mirrulations_core import LOGGER
 def get_max_page_hit(results_per_page):
 
     try:
-        records = APICallManager('server').make_documents_call(counts_only=True, results_per_page=results_per_page).json
-        return records["totalNumRecords"] // results_per_page
+        records = APICallManager('SERVER').make_documents_call(counts_only=True, results_per_page=results_per_page)
+        records_json = records.json()
+        return records_json["totalNumRecords"] // results_per_page
     except APICallManager.CallFailException:
         LOGGER.error('Error occured with API request')
         print("Error occurred with docs_work_gen regulations API request.")
