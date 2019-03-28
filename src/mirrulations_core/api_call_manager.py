@@ -70,30 +70,3 @@ class APICallManager:
 
     def make_documents_call(self, counts_only=False, page_offset=None, results_per_page=None):
         return self.make_call(self.make_documents_call_url(counts_only, page_offset, results_per_page))
-
-
-def verify_key(key_input):
-
-    try:
-        with requests.get('http://api.data.gov/regulations/v3/documents.json?api_key=' + key_input) as r:
-            if r.status_code == 403:
-                print('Unable to connect!\n'
-                      'We weren\'t able to connect to regulations.gov.\n'
-                      'Please try again later.')
-                exit(3)
-            elif r.status_code > 299 and r.status_code != 429:
-                print('Invalid API key!\n'
-                      'Your API key is invalid.\n'
-                      'Please visit\n'
-                      'https://regulationsgov.github.io/developers/\n'
-                      'for an API key.')
-                exit(4)
-            else:
-                print('Success!\n'
-                      'You are successfully logged in.')
-                return None
-    except requests.ConnectionError:
-        print('Unable to connect!\n'
-              'We weren\'t able to connect to regulations.gov.\n'
-              'Please try again later.')
-        exit(5)
