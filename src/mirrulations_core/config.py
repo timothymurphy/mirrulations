@@ -16,7 +16,7 @@ def check_config(section):
     cfg = configparser.ConfigParser()
     cfg.read(CONFIG_PATH)
     for key in cfg[section]:
-        if cfg[section][key] is None:
+        if cfg[section][key] is '':
             return False
     return True
 
@@ -25,10 +25,10 @@ def make_config_if_missing():
 
     if not os.path.exists(CONFIG_PATH):
         cfg = configparser.ConfigParser()
-        cfg['CLIENT'] = {'API_KEY': None,
-                         'CLIENT_ID': None,
-                         'SERVER_ADDRESS': None}
-        cfg['SERVER'] = {'API_KEY': None}
+        cfg['CLIENT'] = {'API_KEY': '',
+                         'CLIENT_ID': '',
+                         'SERVER_ADDRESS': ''}
+        cfg['SERVER'] = {'API_KEY': ''}
         cfg['WEB'] = {}
         with open(CONFIG_PATH, 'w') as file:
             cfg.write(file)
