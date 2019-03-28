@@ -21,10 +21,6 @@ serverurl = "http://" + ip + ":" + port
 key = config.read_value('key')
 client_id = config.read_value('client_id')
 
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(filename='client.log', format=FORMAT)
-d = {'clientip': '192.168.0.1', 'user': client_id}
-logger = logging.getLogger('tcpserver')
 
 client_health_url = "https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08"
 

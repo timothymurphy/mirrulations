@@ -1,6 +1,4 @@
-import logging
 import os.path
-from mirrulations.mirrulations_logging import logger
 import mirrulations_core.documents_core as dc
 
 HOME_REGULATION_PATH = os.getenv("HOME") + "/regulations-data/"
