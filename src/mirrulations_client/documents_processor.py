@@ -1,6 +1,6 @@
-from mirrulations.api_call_management import *
+from mirrulations_core.api_call_management import *
 import json
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 import mirrulations_core.config as config
 
 workfiles = []

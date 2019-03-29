@@ -2,8 +2,8 @@ import pytest
 import requests_mock
 import mock
 import fakeredis
-import mirrulations.endpoints as endpoints
-from mirrulations.redis_manager import RedisManager
+import mirrulations_server.endpoints as endpoints
+from mirrulations_server.redis_manager import RedisManager
 import json
 import os
 from ast import literal_eval

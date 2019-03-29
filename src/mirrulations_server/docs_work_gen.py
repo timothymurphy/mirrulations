@@ -2,10 +2,10 @@ import requests
 import random
 import string
 import redis
-import mirrulations.redis_manager as redis_manager
-import mirrulations.endpoints as endpoints
+import mirrulations_server.redis_manager as redis_manager
+import mirrulations_server.endpoints as endpoints
 import mirrulations_core.config as config
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 
 def monolith():

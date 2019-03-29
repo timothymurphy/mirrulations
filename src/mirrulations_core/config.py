@@ -1,5 +1,5 @@
 import json
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 import os
 
 

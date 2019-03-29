@@ -5,8 +5,8 @@ import os
 import fakeredis
 import json
 import mock
-import mirrulations.doc_filter as df
-from mirrulations.redis_manager import RedisManager
+import mirrulations_server.doc_filter as df
+from mirrulations_server.redis_manager import RedisManager
 
 
 PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),

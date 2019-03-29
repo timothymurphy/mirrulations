@@ -1,8 +1,7 @@
-import pytest
 import json
 import mock
 import fakeredis
-from mirrulations.redis_manager import RedisManager
+from mirrulations_server.redis_manager import RedisManager
 import mirrulations_core.documents_core as dc
 
 

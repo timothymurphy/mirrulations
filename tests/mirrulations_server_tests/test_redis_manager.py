@@ -1,9 +1,7 @@
-import pytest
 import fakeredis
 import json
-import redis
 import mock
-from mirrulations.redis_manager import RedisManager
+from mirrulations_server.redis_manager import RedisManager
 from ast import literal_eval
 import time
 

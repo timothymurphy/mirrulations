@@ -7,7 +7,7 @@ import json
 import shutil
 import re
 import zipfile
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 import mirrulations_core.documents_core as dc
 
 HOME_REGULATION_PATH = os.getenv('HOME') + '/mnt/regulations-data/'

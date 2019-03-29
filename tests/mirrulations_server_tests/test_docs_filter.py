@@ -2,8 +2,8 @@ import json
 import os
 import fakeredis
 import mock
-import mirrulations.docs_filter as dsf
-from mirrulations.redis_manager import RedisManager
+import mirrulations_server.docs_filter as dsf
+from mirrulations_server.redis_manager import RedisManager
 
 PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                     '../../tests/test_files/mirrulations_files/')
