@@ -9,11 +9,11 @@ from mirrulations_core import LOGGER
 
 class RedisManager:
 
-    def __init__(self):
+    def __init__(self, database):
         """
         Initialize the database and create the lock
         """
-        self.r = redis.Redis()
+        self.r = database
         reset_lock(self.r)
         self.lock = set_lock(self.r)
 
@@ -39,7 +39,6 @@ class RedisManager:
         :return:
         """
         with self.lock:
-            print(work)
             self.r.rpush("queue", work)
 
     def add_to_progress(self, work):
@@ -292,6 +291,6 @@ def queue_check(redis_manager):
 
 
 def print_queue():
-    queue = queue_check(RedisManager())
+    queue = queue_check(RedisManager(redis.Redis()))
     print(queue[1])
     print(queue[2])
