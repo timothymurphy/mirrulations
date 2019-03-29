@@ -1,7 +1,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
+FORMAT = '%(asctime)-15s %(message)s'
 logger = logging.getLogger('mirrulations')
 handler = RotatingFileHandler('mirrulations.log', mode = 'w', backupCount=1)
 formatter = logging.Formatter(FORMAT)
