@@ -16,10 +16,10 @@ def zip_directory(document_id, directory_path):
                     file_path = os.path.join(directory_path, file_name)
                     parent_path = os.path.relpath(file_path, directory_path)
 
-                    arc_name = os.path.join(root_directory, parent_path)
+                    arcname = os.path.join(root_directory, parent_path)
 
-                    # The arc_name prevents the archive from writing the full path to the zipfile
-                    zip_file.write(file_path, arc_name)
+                    # The arcname prevents the archive from writing the full path to the zipfile
+                    zip_file.write(file_path, arcname)
 
         add_readme(zip_file.filename, document_id)
 

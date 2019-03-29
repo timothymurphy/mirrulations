@@ -1,18 +1,17 @@
 """This program does the validation of data from
 the docs jobs and then creates doc jobs using that data"""
-
-import json
-import os
 import random
-import shutil
+import json
 import string
-import tempfile
+import os
 import zipfile
-
+import tempfile
+import shutil
 import mirrulations_core.documents_core as dc
+from mirrulations.mirrulations_logging import logger
 
-from mirrulations_core import LOGGER, VERSION
 
+VERSION = "0.0.0"
 HOME_REGULATION_PATH = os.getenv('HOME') + '/mnt/regulations-data/'
 CLIENT_LOG_PATH = os.getenv("HOME") + '/client-logs/'
 
@@ -27,7 +26,7 @@ def process_docs(redis_server, json_data, compressed_file):
     """
     if redis_server.does_job_exist_in_progress(json_data["job_id"]) is True:
         save_client_log(json_data['client_id'], compressed_file)
-        workfile_length_passed = work_file_length_checker(json_data)
+        workfile_length_passed = check_workfile_length(json_data)
         file_type_is_docs = json_data['type'] == 'docs'
 
         if workfile_length_passed and file_type_is_docs:
@@ -65,7 +64,7 @@ def save_client_log(client_id, compressed_file):
                 shutil.copy(temp_directory_path + file, client_path)
 
 
-def work_file_length_checker(json_data):
+def check_workfile_length(json_data):
     """
         Checks the file count and attachment count of each work file
         :param json_data: the json containing the work files
@@ -85,7 +84,7 @@ def work_file_length_checker(json_data):
         if is_file_count_too_big or is_attachment_count_too_big:
             return False
 
-        LOGGER.warning('Work file length check completed')
+        logger.warning('Workfile length check completed')
         return True
 
 
@@ -98,9 +97,9 @@ def check_document_exists(json_data, path=HOME_REGULATION_PATH):
     If a workfile were to become empty it will be removed
         to prevent empty doc jobs from existing.
     """
-    for work_file in json_data["data"]:
+    for workfile in json_data["data"]:
         count = 0
-        for line in work_file:
+        for line in workfile:
             document = line['id']
             alpha_doc_org, docket_id, document_id = \
                 dc.get_doc_attributes(document)
@@ -112,7 +111,7 @@ def check_document_exists(json_data, path=HOME_REGULATION_PATH):
                 check_if_file_exists_locally(full_path, count)
 
             if local_verdict:
-                work_file.pop(count)
+                workfile.pop(count)
 
     json_data = remove_empty_lists(json_data)
     return json_data
@@ -148,14 +147,14 @@ def add_document_job_to_queue(redis_server, json_data):
     :param json_data: the json data containing all the work files
     :return:
     """
-    LOGGER.warning('Adding document job to the queue...')
+    logger.warning('Adding document job to the queue...')
 
     for work_file in json_data["data"]:
         random_id = \
             ''.join(random.choices(string.ascii_letters + string.digits, k=16))
         job = create_document_job(work_file, random_id)
         redis_server.add_to_queue(job)
-        LOGGER.warning('Document job successfully added to queue')
+        logger.warning('Document job successfully added to queue')
 
 
 def create_document_job(work_file, job_id):
@@ -165,7 +164,7 @@ def create_document_job(work_file, job_id):
     :param job_id: The id for the job
     :return: A json in the form of a dictionary
     """
-    LOGGER.warning('Creating document job...')
+    logger.warning('Creating document job...')
     dictionary = {'job_id': job_id,
                   'type': 'doc',
                   'data': work_file,

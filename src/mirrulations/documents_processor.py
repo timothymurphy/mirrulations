@@ -1,11 +1,16 @@
+from mirrulations.api_call_management import *
 import json
+from mirrulations.mirrulations_logging import logger
+import mirrulations_core.config as config
 
-from mirrulations_core import LOGGER, VERSION
+workfiles = []
+version = "v1.3"
 
-WORK_FILES = []
+key = config.read_value('key')
+client_id = config.read_value('client_id')
 
 
-def documents_processor(api_manager, docs_info_list, job_id, client_id):
+def documents_processor(urls, job_id, client_id):
     """
     Call each url in the list, process the results of the calls and then form a json file to send back the results
     :param urls: list of urls that have to be called
@@ -13,23 +18,15 @@ def documents_processor(api_manager, docs_info_list, job_id, client_id):
     :param client_id: id of the client calling this function
     :return result: the json to be returned to the server after each call is processed
     """
-
-    global WORK_FILES
-    WORK_FILES = []
-
-    for docs_info in docs_info_list:
-
+    global workfiles
+    workfiles = []
+    for url in urls:
         try:
-            result = api_manager.make_documents_call(page_offset=docs_info[0], results_per_page=docs_info[1])
+            result = api_call_manager(add_api_key(url))
             process_results(result)
-        except api_manager.CallFailException:
-            LOGGER.error('Error - URL processing failed')
-
-    result = json.loads(json.dumps({'job_id' : job_id,
-                                    'type': 'docs',
-                                    'data' : WORK_FILES,
-                                    'client_id' : client_id,
-                                    'version' : VERSION}))
+        except:
+            logger.error('Error - URL processing failed')
+    result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(client_id), "version" : version}))
     return result
 
 
@@ -41,14 +38,12 @@ def process_results(result):
     :param result: Result of the api call
     :return: returns True if the processing completed successfully
     """
-
     docs_json = json.loads(result.text)
-
     try:
-        doc_list = docs_json['documents']
-        make_docs(doc_list)
+        doc_list = docs_json["documents"]
+        work = make_docs(doc_list)
     except TypeError:
-        LOGGER.error('Error - bad JSON')
+        logger.error('Error - bad JSON')
 
     return True
 
@@ -60,25 +55,22 @@ def make_docs(doc_list):
     :param doc_list: list of document ids and attachment counts as a dictionary
     :return: the global workfiles variable that contains all of the work in list
     """
-    global WORK_FILES
+    global workfiles
     size = 0
     work_list = []
-
     for doc in doc_list:
-        doc_id = doc['documentId']
-        calls = doc['attachmentCount'] + 1
+        doc_id = doc["documentId"]
+        calls = doc["attachmentCount"] + 1
         if size + calls > 1000:
-            WORK_FILES.append(work_list)
+            workfiles.append(work_list)
             work_list = []
             size = 0
         size += calls
-        document = {'id': doc_id, 'count': calls}
+        document = {"id" : doc_id, "count" : calls}
         work_list.append(document)
-
     if size != 0:
-        WORK_FILES.append(work_list)
-
-    return WORK_FILES
+        workfiles.append(work_list)
+    return workfiles
 
 
 class BadJsonException(Exception):
