@@ -1,5 +1,0 @@
-include .config/example.ini
-recursive-include docs *.md
-recursive-include src/mirrulations_web/Regulations_Web *
-recursive-include tests/test_files/ *
-include README.md

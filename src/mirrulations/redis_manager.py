@@ -1,14 +1,11 @@
 from ast import literal_eval
-import json
-import redis
 import redis_lock
+import json
 import time
-
-from mirrulations_core import LOGGER
+from mirrulations.mirrulations_logging import logger
 
 
 class RedisManager:
-
     def __init__(self, database):
         """
         Initialize the database and create the lock
@@ -88,8 +85,8 @@ class RedisManager:
         """
         with self.lock:
             for item in self.r.hgetall('progress'):
-                if float(time.time()) - float(item.decode('utf-8')) > 21600:
-                    self.r.hdel('progress', item)
+                if (float(time.time()) - float(item.decode('utf-8')) > 21600):
+                    self.r.hdel('progress',item)
                     self.r.rpush("queue", item)
 
     def delete_all(self):
@@ -202,11 +199,11 @@ class RedisManager:
         with self.lock:
             key_list = self.r.hgetall('progress')
 
-            LOGGER.warning('Variable Success: %s', 'get_keys_from_progress: list of keys successfully received')
-            LOGGER.warning('CLIENT_JOB_ID: %s', job_id)
+            logger.warning('Variable Success: %s', 'get_keys_from_progress: list of keys successfully received')
+            logger.warning('CLIENT_JOB_ID: %s', job_id)
             for key in key_list:
-                LOGGER.warning('CURRENT_KEY: %s', key)
-                LOGGER.warning('Assign Variable: %s', 'get_keys_from_progress: attempt to get the json using the key')
+                logger.warning('CURRENT_KEY: %s', key)
+                logger.warning('Assign Variable: %s', 'get_keys_from_progress: attempt to get the json using the key')
                 json_info = self.get_specific_job_from_progress_no_lock(key)
                 info = literal_eval(json_info)
 
@@ -221,12 +218,11 @@ class RedisManager:
         :return: '' if the job does not exist, or the key if the job does exist
         """
         key_list = self.r.hgetall('progress')
-        LOGGER.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: list of keys successfully received')
-        LOGGER.warning('CLIENT_JOB_ID: %s', 'get_keys_from_progress_no_lock: ' + str(job_id))
+        logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: list of keys successfully received')
+        logger.warning('CLIENT_JOB_ID: %s', 'get_keys_from_progress_no_lock: ' + str(job_id))
         for key in key_list:
-            LOGGER.warning('CURRENT_KEY: %s', key)
-            LOGGER.warning('Assign Variable: %s',
-                           'get_keys_from_progress_no_lock: attempt to get the json using the key')
+            logger.warning('CURRENT_KEY: %s', key)
+            logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: attempt to get the json using the key')
 
             json_info = self.get_specific_job_from_progress_no_lock(key)
             info = literal_eval(json_info)
@@ -238,7 +234,7 @@ class RedisManager:
         """
         Removes a job from the "progress" queue
         :param key: The key of the job that is to be removed
-        :return:
+        :return: 
         """
         with self.lock:
             self.r.hdel('progress', key)
@@ -283,14 +279,3 @@ def get_curr_time():
     :return: Returns the current time
     """
     return float(time.time())
-
-
-def queue_check(redis_manager):
-    LOGGER.info('Checking queue...')
-    return redis_manager.get_all_items_in_progress_no_lock(), redis_manager.get_all_items_in_queue_no_lock()
-
-
-def print_queue():
-    queue = queue_check(RedisManager(redis.Redis()))
-    print(queue[1])
-    print(queue[2])

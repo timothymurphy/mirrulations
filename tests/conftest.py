@@ -1,36 +1,27 @@
-import configparser
 import random
 import string
+import json
 import os
 
-CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../.config/config.ini')
-MOVED_CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../.config/moved_config.ini')
+CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../config.json')
 
 
 def pytest_addoption(parser):
-    parser.addoption('--makeconfig', action='store', default=True)
+    parser.addoption('--makeconfig', action='store', default=(not os.path.exists(CONFIG_PATH)))
 
 
 def pytest_sessionstart(session):
     if session.config.getoption('makeconfig'):
-
-        if os.path.exists(CONFIG_PATH):
-            os.rename(CONFIG_PATH, MOVED_CONFIG_PATH)
-
-        cfg = configparser.ConfigParser()
-        cfg['CLIENT'] = {'API_KEY': ''.join(random.choices(string.ascii_letters + string.digits, k=40)),
-                         'CLIENT_ID': ''.join(random.choices(string.ascii_letters + string.digits, k=16)),
-                         'SERVER_ADDRESS': '0.0.0.0'}
-        cfg['SERVER'] = {'API_KEY': ''.join(random.choices(string.ascii_letters + string.digits, k=40))}
-        cfg['WEB'] = {}
-
-        with open(CONFIG_PATH, 'w') as file:
-            cfg.write(file)
+        with open(CONFIG_PATH, 'wt') as file:
+            file.write(json.dumps({
+                'ip': '0.0.0.0',
+                'port': '8080',
+                'key': ''.join(random.choices(string.ascii_letters + string.digits, k=40)),
+                'client_id': ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+            }, indent=4))
             file.close()
 
 
 def pytest_sessionfinish(session):
     if session.config.getoption('makeconfig'):
         os.remove(CONFIG_PATH)
-        if os.path.exists(MOVED_CONFIG_PATH):
-            os.rename(MOVED_CONFIG_PATH, CONFIG_PATH)
