@@ -8,7 +8,7 @@ import shutil
 import tempfile
 from pathlib import Path
 import mirrulations_core.config as config
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 # These variables are specific to the current implementation
 version = "v1.3"
