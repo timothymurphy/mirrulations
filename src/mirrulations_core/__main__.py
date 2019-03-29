@@ -78,12 +78,12 @@ def main():
             os.system('redis-server')
 
         def run_server():
-            from mirrulations.endpoints import run
+            from mirrulations_server.endpoints import run
             run()
 
         def run_work():
-            from mirrulations.docs_work_gen import monolith
-            from mirrulations.expire import expire
+            from mirrulations_server.docs_work_gen import monolith
+            from mirrulations_server.expire import expire
             monolith()
             expire()
 
@@ -91,7 +91,7 @@ def main():
         Thread(target=run_server).start()
         Thread(target=run_work).start()
     else:
-        from mirrulations.client import do_work
+        from mirrulations_client.client import do_work
         do_work()
 
 

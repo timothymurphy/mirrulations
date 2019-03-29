@@ -1,5 +1,5 @@
 import redis
-from mirrulations.redis_manager import RedisManager
+from mirrulations_server.redis_manager import RedisManager
 import time
 
 r = RedisManager(redis.Redis())

@@ -1,6 +1,6 @@
-import mirrulations.document_processor as doc
-import mirrulations.documents_processor as docs
-import mirrulations.api_call_management as man
+import mirrulations_client.document_processor as doc
+import mirrulations_client.documents_processor as docs
+import mirrulations_core.api_call_management as man
 import requests
 import json
 import time
@@ -8,7 +8,7 @@ import shutil
 import tempfile
 from pathlib import Path
 import mirrulations_core.config as config
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 # These variables are specific to the current implementation
 version = "v1.3"

@@ -1,7 +1,7 @@
 import fakeredis
 import json
-from mirrulations.queue_check import queue_check
-from mirrulations.redis_manager import RedisManager
+from mirrulations_server.queue_check import queue_check
+from mirrulations_server.redis_manager import RedisManager
 
 
 def emptydatabase():
