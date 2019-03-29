@@ -31,8 +31,8 @@ def savefile_tempdir():
         yield tmpdirname
 
 
-@mock.patch('mirrulations.redis_manager.reset_lock')
-@mock.patch('mirrulations.redis_manager.set_lock')
+@mock.patch('mirrulations_server.redis_manager.reset_lock')
+@mock.patch('mirrulations_server.redis_manager.set_lock')
 def make_database(reset, lock):
     r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()
