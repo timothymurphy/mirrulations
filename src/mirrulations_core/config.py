@@ -10,7 +10,7 @@ from mirrulations_core import CONFIG_PATH
 
 def check_config(section):
 
-    if not os.path.exists(CONFIG_PATH):
+    if os.path.exists(CONFIG_PATH):
         return False
 
     cfg = configparser.ConfigParser()

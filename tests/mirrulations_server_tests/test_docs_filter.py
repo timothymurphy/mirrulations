@@ -1,4 +1,7 @@
+import fakeredis
 import mock
+
+from mirrulations_server.redis_manager import RedisManager
 
 from mirrulations_server.docs_filter import *
 
@@ -11,8 +14,8 @@ REGULATIONS_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
 
 @mock.patch('mirrulations_server.redis_manager.reset_lock')
 @mock.patch('mirrulations_server.redis_manager.set_lock')
-def make_database(fake_redis_server, reset, lock):
-    r = fake_redis_server
+def make_database(reset, lock):
+    r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()
     return r
 
@@ -23,8 +26,8 @@ def generate_json_data(file_name):
     return test_data
 
 
-def test_process_docs(fake_redis_server):
-    redis_server = make_database(fake_redis_server)
+def test_process_docs():
+    redis_server = make_database()
     json_data = json.dumps({'job_id': '1',
                             'type': 'docs',
                             'data': [[{"id": "AHRQ_FRDOC_0001-0036",
@@ -112,8 +115,8 @@ def test_remove_empty_lists_save_others():
     ]
 
 
-def test_add_document_job_to_queue(fake_redis_server):
-    redis_server = make_database(fake_redis_server)
+def test_add_document_job_to_queue():
+    redis_server = make_database()
     test_data = generate_json_data(PATH + '1_workfile_1_document.json')
     add_document_job_to_queue(redis_server, test_data)
     items = redis_server.get_all_items_in_queue()

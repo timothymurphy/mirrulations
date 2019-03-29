@@ -1,13 +1,20 @@
 from ast import literal_eval
+import fakeredis
 import os
+import mock
 import pytest
 import requests_mock
+import sys
+
+from mirrulations_server.redis_manager import RedisManager
 
 from mirrulations_core import VERSION
 
+sys.modules['mirrulations_server.REDIS_MANAGER'] = mock.Mock(return_value=RedisManager(fakeredis.FakeRedis()))
 from mirrulations_server.flask_manager import *
 
 PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../test_files/mirrulations_files/filename.txt')
+
 
 
 @pytest.fixture
@@ -30,11 +37,16 @@ def make_json():
             'version': VERSION}
 
 
-def make_database(rm):
-    rm.r.flushall()
+def make_database():
+    r = fakeredis.FakeRedis()
+    r.flushall()
     test_list = json.dumps(['a', ['b', 'c']])
-    rm.r.lpush('queue', test_list)
-    return rm.r
+    r.lpush('queue', test_list)
+    return r
+
+
+def test_general():
+    return True
 
 
 def test_default_path(client):
@@ -47,7 +59,7 @@ def test_non_existent_endpoint(client):
     assert result.status_code == 404
 
 
-def test_get_work_success(client, fake_redis_server):
+def test_get_work_success(client):
     result = client.get('/get_work', query_string={'client_id': '1'})
     assert result.status_code == 200
 
@@ -62,13 +74,13 @@ def test_get_work_wrong_parameter(client):
     assert result.status_code == 400
 
 
-def test_get_queue_item(client, fake_redis_server):
-    r = make_database(fake_redis_server)
+def test_get_queue_item(client):
+    r = make_database()
     lst = literal_eval(r.lpop('queue').decode('utf-8'))
     assert lst == ['a', ['b', 'c']]
 
 
-def test_return_docs_call_success(client, fake_redis_server):
+def test_return_docs_call_success(client):
     result = client.post('/return_docs', data={'file': open(PATH, 'rb'), 'json': json.dumps(make_json())})
     assert result.status_code == 200
 
@@ -78,7 +90,7 @@ def test_return_docs_no_parameter(client):
     assert result.status_code == 400
 
 
-def test_return_doc_call_success(client, fake_redis_server):
+def test_return_doc_call_success(client):
     result = client.post('/return_doc', data={'file': open(PATH, 'rb'), 'json': json.dumps(make_json())})
     assert result.status_code == 200
 

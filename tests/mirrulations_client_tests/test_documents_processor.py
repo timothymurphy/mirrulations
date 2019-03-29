@@ -8,7 +8,10 @@ from mirrulations_client.documents_processor import *
 
 from mirrulations_core import VERSION
 
+API_KEY = config.read_value('CLIENT', 'API_KEY')
 CLIENT_ID = config.read_value('CLIENT', 'CLIENT_ID')
+
+API_MANAGER = APICallManager(API_KEY)
 
 
 @pytest.fixture
@@ -19,7 +22,7 @@ def mock_req():
 
 def test_documents_processor_basic():
     docs_info_list = []
-    docs = documents_processor(APICallManager('CLIENT'), docs_info_list, 'JobID', CLIENT_ID)
+    docs = documents_processor(API_MANAGER, docs_info_list, 'JobID', CLIENT_ID)
     assert docs == {'client_id': CLIENT_ID,
                     "type": "docs",
                     'data': [],
@@ -46,7 +49,7 @@ def test_make_docs_complex():
 
 def test_documents_processor_empty():
     docs_info_list = []
-    docs = documents_processor(APICallManager('CLIENT'), docs_info_list, 'JobID', CLIENT_ID)
+    docs = documents_processor(API_MANAGER, docs_info_list, 'JobID', CLIENT_ID)
     assert docs == {'client_id': CLIENT_ID,
                     'type': 'docs',
                     'data': [],
@@ -74,8 +77,8 @@ def test_documents_processor(mock_req):
     docs_po_a = 0
     docs_po_b = 2
     docs_rpp = 2
-    docs_url_a = APICallManager('CLIENT').make_documents_call_url(page_offset=docs_po_a, results_per_page=docs_rpp)
-    docs_url_b = APICallManager('CLIENT').make_documents_call_url(page_offset=docs_po_b, results_per_page=docs_rpp)
+    docs_url_a = API_MANAGER.make_documents_call_url(page_offset=docs_po_a, results_per_page=docs_rpp)
+    docs_url_b = API_MANAGER.make_documents_call_url(page_offset=docs_po_b, results_per_page=docs_rpp)
 
     mock_req.get(docs_url_a,
                  status_code=200,
@@ -85,7 +88,7 @@ def test_documents_processor(mock_req):
                  status_code=200,
                  text='{"documents":[{"documentId": "CMS-2005-0001-0003", "attachmentCount": 88},\
                                      {"documentId": "CMS-2005-0001-0004", "attachmentCount": 666}]}')
-    docs = documents_processor(APICallManager('CLIENT'), [[docs_po_a, docs_rpp], [docs_po_b, docs_rpp]], 'Job ID', CLIENT_ID)
+    docs = documents_processor(API_MANAGER, [[docs_po_a, docs_rpp], [docs_po_b, docs_rpp]], 'Job ID', CLIENT_ID)
 
     assert docs == ({'job_id': 'Job ID',
                      'type': 'docs',
@@ -97,12 +100,12 @@ def test_documents_processor(mock_req):
 
 
 def test_valid_results(mock_req):
-    docs_url = 'https://www.website.com/regulations/v3/documents.json?api_key=' + config.read_value('CLIENT', 'api_key')
+    docs_url = 'https://www.website.com/regulations/v3/documents.json?api_key=' + API_KEY
 
     mock_req.get(docs_url,
                  status_code=200,
                  text='{"documents":[{"documentId": "CMS-2005-0001-0001", "attachmentCount": 4},'
                       '{"documentId": "CMS-2005-0001-0002", "attachmentCount": 999}]}')
 
-    result = process_results(APICallManager('CLIENT').make_call(docs_url))
+    result = process_results(API_MANAGER.make_call(docs_url))
     assert result
