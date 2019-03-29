@@ -8,7 +8,7 @@ import zipfile
 import tempfile
 import shutil
 import mirrulations_core.documents_core as dc
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 
 VERSION = "0.0.0"

@@ -2,7 +2,7 @@ from ast import literal_eval
 import redis_lock
 import json
 import time
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 
 class RedisManager:

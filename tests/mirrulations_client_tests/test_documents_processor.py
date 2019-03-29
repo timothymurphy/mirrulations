@@ -1,8 +1,8 @@
-from mirrulations.documents_processor import *
+from mirrulations_client.documents_processor import *
 import pytest
 import requests_mock
 
-from mirrulations.api_call import *
+from mirrulations_core.api_call import *
 import mirrulations_core.config as config
 
 key = config.read_value('key')
