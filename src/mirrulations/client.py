@@ -65,6 +65,8 @@ def return_docs(json_result, client_id):
     fileobj = open('result.zip', 'rb')
     r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json': json.dumps(json_info)})
     r.raise_for_status()
+    logger.warning('Returned Docs')
+    logger.handlers[0].doRollover()
     return r
 
 
@@ -90,6 +92,8 @@ def return_doc(json_result, client_id):
                       data={'json': json.dumps({"job_id": job_id, "type": "doc",
                                                "user": client_id, "version": version})})
     r.raise_for_status()
+    logger.warning('Returned Docs')
+    logger.handlers[0].doRollover()
     return r
 
 
