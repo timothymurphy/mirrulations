@@ -3,11 +3,13 @@ import string
 import json
 import os
 
-CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../config.json')
+CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                           '../config.json')
 
 
 def pytest_addoption(parser):
-    parser.addoption('--makeconfig', action='store', default=(not os.path.exists(CONFIG_PATH)))
+    parser.addoption('--makeconfig', action='store',
+                     default=(not os.path.exists(CONFIG_PATH)))
 
 
 def pytest_sessionstart(session):
@@ -16,8 +18,10 @@ def pytest_sessionstart(session):
             file.write(json.dumps({
                 'ip': '0.0.0.0',
                 'port': '8080',
-                'key': ''.join(random.choices(string.ascii_letters + string.digits, k=40)),
-                'client_id': ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+                'key': ''.join(random.choices
+                               (string.ascii_letters + string.digits, k=40)),
+                'client_id': ''.join(random.choices(string.ascii_letters
+                                                    + string.digits, k=16))
             }, indent=4))
             file.close()
 
