@@ -51,7 +51,8 @@ def get_json_info(json_result):
 def return_docs(json_result, client_id):
     """
     Handles the documents processing necessary for a job
-    Calls the /return_docs endpoint of the server to return data for the job it completed
+    Calls the /return_docs endpoint of the
+    server to return data for the job it completed
     :param json_result: the json received from the /get_work endpoint
     :param client_id: the id of the client that is processing the documents job
     :return: result from calling /return_docs
@@ -63,7 +64,9 @@ def return_docs(json_result, client_id):
     add_client_log_files(path.name, ".")
     shutil.make_archive("result", "zip", path.name)
     fileobj = open('result.zip', 'rb')
-    r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json': json.dumps(json_info)})
+    r = requests.post(serverurl + "/return_docs",
+                      files={'file': fileobj},
+                      data={'json': json.dumps(json_info)})
     r.raise_for_status()
     return r
 
@@ -71,7 +74,8 @@ def return_docs(json_result, client_id):
 def return_doc(json_result, client_id):
     """
     Handles the document processing necessary for a job
-    Calls the /return_doc endpoint of the server to return data for the job it completed
+    Calls the /return_doc endpoint of the server
+    to return data for the job it completed
     :param json_result: the json received from the /get_work endpoint
     :param client_id: the id of the client that is processing the documents job
     :return: result from calling /return_doc
@@ -87,15 +91,18 @@ def return_doc(json_result, client_id):
     fileobj = open('result.zip', 'rb')
     r = requests.post(serverurl+"/return_doc",
                       files={'file': ('result.zip', fileobj)},
-                      data={'json': json.dumps({"job_id": job_id, "type": "doc",
-                                               "user": client_id, "version": version})})
+                      data={'json': json.dumps({"job_id": job_id,
+                                                "type": "doc",
+                                                "user": client_id,
+                                                "version": version})})
     r.raise_for_status()
     return r
 
 
 def copy_file_safely(directory, filepath):
     """
-    Safely copies a file to a directory; if the file isn't there to be copied, it won't be copied.
+    Safely copies a file to a directory;
+    if the file isn't there to be copied, it won't be copied.
     :param directory: Directory to copy to
     :param filepath: File to copy
     """
@@ -111,7 +118,8 @@ def copy_file_safely(directory, filepath):
 
 def add_client_log_files(directory, log_directory):
     """
-    Used to copy client log files into the temp directory to be sent to the server.
+    Used to copy client log files into the
+    temp directory to be sent to the server.
     :param directory: Directory to write files to
     :param log_directory: Directory to get files from
     :return:
