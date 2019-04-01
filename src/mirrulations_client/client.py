@@ -13,24 +13,16 @@ from mirrulations_core.mirrulations_logging import logger
 # These variables are specific to the current implementation
 version = "v1.3"
 
-ip = config.read_value('ip')
-port = config.read_value('port')
-
-serverurl = "http://" + ip + ":" + port
-
-key = config.read_value('key')
-client_id = config.read_value('client_id')
-
 client_health_url = "https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08"
 
 
-def get_work(client_id):
+def get_work(server_url, client_id):
     """
     Calls the /get_work endpoint of the server to fetch work to process
     :param client_id: the id of the client calling /get_work
     :return: the result of making a call to get work
     """
-    url = serverurl+"/get_work?client_id="+str(client_id)
+    url = server_url + "/get_work?client_id=" + client_id
     result = man.api_call_manager(url)
     logger.critical('Obtained work from server.')
     return result
@@ -48,7 +40,7 @@ def get_json_info(json_result):
     return job_id, urls
 
 
-def return_docs(json_result, client_id):
+def return_docs(json_result, server_url, client_id):
     """
     Handles the documents processing necessary for a job
     Calls the /return_docs endpoint of the server to return data for the job it completed
@@ -63,12 +55,14 @@ def return_docs(json_result, client_id):
     add_client_log_files(path.name, ".")
     shutil.make_archive("result", "zip", path.name)
     fileobj = open('result.zip', 'rb')
-    r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json': json.dumps(json_info)})
+    r = requests.post(server_url + "/return_docs", files={'file': fileobj}, data={'json': json.dumps(json_info)})
     r.raise_for_status()
+    logger.warning('Returned Docs')
+    logger.handlers[0].doRollover()
     return r
 
 
-def return_doc(json_result, client_id):
+def return_doc(json_result, server_url, client_id):
     """
     Handles the document processing necessary for a job
     Calls the /return_doc endpoint of the server to return data for the job it completed
@@ -85,11 +79,13 @@ def return_doc(json_result, client_id):
     add_client_log_files(path.name, ".")
     shutil.make_archive("result", "zip", path.name)
     fileobj = open('result.zip', 'rb')
-    r = requests.post(serverurl+"/return_doc",
+    r = requests.post(server_url+"/return_doc",
                       files={'file': ('result.zip', fileobj)},
                       data={'json': json.dumps({"job_id": job_id, "type": "doc",
                                                "user": client_id, "version": version})})
     r.raise_for_status()
+    logger.warning('Returned Docs')
+    logger.handlers[0].doRollover()
     return r
 
 
@@ -132,18 +128,25 @@ def do_work():
     :return:
     """
 
+    ip = config.read_value('ip')
+    port = config.read_value('port')
+    client_id = config.read_value('client_id')
+
+    server_url = 'http://' + ip + ':' + port
+
     while True:
         try:
-            work = get_work(client_id)
+            work = get_work(server_url, client_id)
             requests.get(client_health_url)
             work_json = json.loads(work.content.decode('utf-8'))
         except man.CallFailException:
             time.sleep(3600)
+            continue
         if work_json["type"] == "doc":
-            r = return_doc(work_json, client_id)
+            r = return_doc(work_json, server_url, client_id)
             requests.get(client_health_url)
         elif work_json["type"] == "docs":
-            r = return_docs(work_json, client_id)
+            r = return_docs(work_json, server_url, client_id)
             requests.get(client_health_url)
         elif work_json["type"] == "none":
             time.sleep(3600)
