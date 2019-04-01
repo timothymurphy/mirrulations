@@ -2,7 +2,7 @@ import os
 import mirrulations_web.dir_search as ds
 import mirrulations_web.directory_zip as dz
 
-HOME_REGULATION_PATH = os.getenv("HOME") + "/regulations-data/"
+HOME_REGULATION_PATH = "/regulations-data/"
 
 
 def download_zip(document_id, download_path=HOME_REGULATION_PATH):
