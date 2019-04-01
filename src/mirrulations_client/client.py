@@ -30,7 +30,7 @@ def get_work(client_id):
     :param client_id: the id of the client calling /get_work
     :return: the result of making a call to get work
     """
-    url = serverurl+"/get_work?client_id="+str(client_id)
+    url = serverurl+"/get_work?client_id="+client_id
     result = man.api_call_manager(url)
     logger.critical('Obtained work from server.')
     return result
