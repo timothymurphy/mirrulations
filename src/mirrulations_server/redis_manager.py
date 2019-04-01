@@ -79,14 +79,16 @@ class RedisManager:
 
     def find_expired(self):
         """
-        Searches through the work in progress, checks which works have been in progress for over 6 hours,
-        and moves those that have been in progress for over 6 hours back to the queue
+        Searches through the work in progress,
+        checks which works have been in progress for over 6 hours,
+        and moves those that have been in progress
+        for over 6 hours back to the queue
         :return:
         """
         with self.lock:
             for item in self.r.hgetall('progress'):
-                if (float(time.time()) - float(item.decode('utf-8')) > 21600):
-                    self.r.hdel('progress',item)
+                if float(time.time()) - float(item.decode('utf-8')) > 21600:
+                    self.r.hdel('progress', item)
                     self.r.rpush("queue", item)
 
     def delete_all(self):
@@ -99,7 +101,8 @@ class RedisManager:
         """
         Gets a job from the "queue" queue using its job_id
         :param job_id: The id for the job in question
-        :return: Returns the job of the given job_id or '' if the job does not exist
+        :return: Returns the job of the given job_id or
+                 '' if the job does not exist
         """
         with self.lock:
             for element in range(self.r.llen('queue')):
@@ -115,7 +118,8 @@ class RedisManager:
         """
         Gets a job from the "queue" queue using its job_id
         :param job_id: The id for the job in question
-        :return: Returns the job of the given job_id or '' if the job does not exist
+        :return: Returns the job of the given job_id or
+                 '' if the job does not exist
         """
         for element in range(self.r.llen('queue')):
 
@@ -129,7 +133,8 @@ class RedisManager:
         """
         Verifies that a given job is in the "queue" queue exists
         :param job_id: The id for the job in question
-        :return: True if the job is in the "queue", False if it is not in the "queue"
+        :return: True if the job is in the "queue",
+                 False if it is not in the "queue"
         """
         with self.lock:
             job = self.get_specific_job_from_queue_no_lock(job_id)
@@ -167,7 +172,8 @@ class RedisManager:
         """
         Get a specific job that is in the "progress" queue
         :param key: The key of the job requested
-        :return: '' if the job does not exist, otherwise returns the data for the job
+        :return: '' if the job does not exist,
+                 otherwise returns the data for the job
         """
         with self.lock:
             job = self.r.hget('progress', key)
@@ -181,7 +187,8 @@ class RedisManager:
         """
         Get a specific job that is in the "progress" queue
         :param key: The key of the job requested
-        :return: '' if the job does not exist, otherwise returns the data for the job
+        :return: '' if the job does not exist,
+                 otherwise returns the data for the job
         """
         job = self.r.hget('progress', key)
 
@@ -199,11 +206,15 @@ class RedisManager:
         with self.lock:
             key_list = self.r.hgetall('progress')
 
-            logger.warning('Variable Success: %s', 'get_keys_from_progress: list of keys successfully received')
+            logger.warning('Variable Success: %s',
+                           'get_keys_from_progress: '
+                           'list of keys successfully received')
             logger.warning('CLIENT_JOB_ID: %s', job_id)
             for key in key_list:
                 logger.warning('CURRENT_KEY: %s', key)
-                logger.warning('Assign Variable: %s', 'get_keys_from_progress: attempt to get the json using the key')
+                logger.warning('Assign Variable: %s',
+                               'get_keys_from_progress: '
+                               'attempt to get the json using the key')
                 json_info = self.get_specific_job_from_progress_no_lock(key)
                 info = literal_eval(json_info)
 
@@ -218,11 +229,16 @@ class RedisManager:
         :return: '' if the job does not exist, or the key if the job does exist
         """
         key_list = self.r.hgetall('progress')
-        logger.warning('Variable Success: %s', 'get_keys_from_progress_no_lock: list of keys successfully received')
-        logger.warning('CLIENT_JOB_ID: %s', 'get_keys_from_progress_no_lock: ' + str(job_id))
+        logger.warning('Variable Success: %s',
+                       'get_keys_from_progress_no_lock: '
+                       'list of keys successfully received')
+        logger.warning('CLIENT_JOB_ID: %s',
+                       'get_keys_from_progress_no_lock: ' + str(job_id))
         for key in key_list:
             logger.warning('CURRENT_KEY: %s', key)
-            logger.warning('Assign Variable: %s', 'get_keys_from_progress_no_lock: attempt to get the json using the key')
+            logger.warning('Assign Variable: %s',
+                           'get_keys_from_progress_no_lock: '
+                           'attempt to get the json using the key')
 
             json_info = self.get_specific_job_from_progress_no_lock(key)
             info = literal_eval(json_info)
@@ -234,7 +250,7 @@ class RedisManager:
         """
         Removes a job from the "progress" queue
         :param key: The key of the job that is to be removed
-        :return: 
+        :return:
         """
         with self.lock:
             self.r.hdel('progress', key)
@@ -242,7 +258,8 @@ class RedisManager:
     # Combined Functions
     def renew_job(self, job_id):
         """
-        Takes an expired job from the "progress" queue and adds it back into the "queue" queue. It then deletes
+        Takes an expired job from the "progress" queue and adds
+        it back into the "queue" queue. It then deletes
         the expired job from the "progress" queue
         :param job_id: The id for the job in question
         :return:
