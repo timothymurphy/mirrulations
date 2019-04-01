@@ -26,7 +26,7 @@ def documents_processor(urls, job_id, client_id):
             process_results(result)
         except:
             logger.error('Error - URL processing failed')
-    result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : str(client_id), "version" : version}))
+    result = json.loads(json.dumps({"job_id" : job_id, "type": "docs", "data" : workfiles, "client_id" : client_id, "version" : version}))
     return result
 
 
