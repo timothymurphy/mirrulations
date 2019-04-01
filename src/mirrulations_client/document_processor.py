@@ -11,7 +11,8 @@ client_id = config.read_value('client_id')
 
 def document_processor(doc_ids):
     """
-    This process takes all of the document ids given to it and saves all of the data for the documents in a temporary directory.
+    This process takes all of the document ids given to it and
+    saves all of the data for the documents in a temporary directory.
     :param doc_ids: list of document ids that have to be collected.
     :return: temporary directory that data was written to.
     """
@@ -29,7 +30,8 @@ def make_doc_url(documentId):
     """
     Given a documentId as a string append it to the end of the api call
     :param documentId: the string of a documentId
-    :return: the url that will be called with a documentId through regulations.gov API
+    :return: the url that will be called with
+             a documentId through regulations.gov API
     """
     return base_url + documentId
 
@@ -43,7 +45,7 @@ def save_document(dirpath, doc_json, documentId):
     :return:
     """
     location = dirpath + "/doc." + documentId + ".json"
-    with open(location , "w+") as f:
+    with open(location, "w+") as f:
         json.dump(doc_json, f)
 
 
@@ -56,10 +58,11 @@ def download_document(dirpath, documentId, result, type):
     :param type: the type of file that will be saved
     :return:
     """
-    # These are special cases where the api representation is different from the user's interpretation
-    if(type == "excel12book"):
+    # These are special cases where the api representation
+    # is different from the user's interpretation
+    if type == "excel12book":
         type = "xlsx"
-    if(type == "msw12"):
+    if type == "msw12":
         type = "doc"
     with open(dirpath + "/doc." + documentId + "." + type, 'wb') as f:
         for chunk in result.iter_content(chunk_size=1024):
@@ -70,7 +73,8 @@ def download_document(dirpath, documentId, result, type):
 def get_extra_documents(result, dirpath, documentId):
     """
     Download the json of the result from the original api call
-    Determine if the document has additional file formats that need to be downloaded
+    Determine if the document has additional file formats
+    that need to be downloaded
     Determines if the document has attachments that need to be downloaded
     :param result: the result of the api call
     :param dirpath: path to the directory where the download will be saved
@@ -117,7 +121,8 @@ def download_attachments(dirpath, doc_json, documentId):
     :param dirpath: path to the directory where the download will be saved
     :param doc_json: the json from a single document api call
     :param documentId: the string of a documentId
-    :return: the total number of requests used to download the extra attachments
+    :return: the total number of requests used to download the
+             extra attachments
     """
     total_requests = 0
     try:
