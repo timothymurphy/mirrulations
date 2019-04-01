@@ -139,6 +139,7 @@ def do_work():
             work_json = json.loads(work.content.decode('utf-8'))
         except man.CallFailException:
             time.sleep(3600)
+            continue
         if work_json["type"] == "doc":
             r = return_doc(work_json, client_id)
             requests.get(client_health_url)
