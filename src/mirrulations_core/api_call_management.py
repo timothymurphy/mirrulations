@@ -1,6 +1,5 @@
 import time
-from mirrulations.mirrulations_logging import logger
-from mirrulations.api_call import *
+from mirrulations_core.api_call import *
 
 
 def api_call_manager(url):

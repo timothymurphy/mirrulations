@@ -1,6 +1,6 @@
 import requests
 import mirrulations_core.config as config
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 key = config.read_value('key')
 
