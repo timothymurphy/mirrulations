@@ -1,7 +1,7 @@
-import requests
 import random
 import string
 import redis
+import mirrulations_core.api_call_management as api_manager
 import mirrulations_server.redis_manager as redis_manager
 import mirrulations_server.endpoints as endpoints
 import mirrulations_core.config as config
@@ -23,9 +23,9 @@ def monolith():
     if regulations_key != "":
         # Gets number of documents available to download
         try:
-            record_count = requests.get("https://api.data.gov/regulations/v3/documents.json?api_key=" + regulations_key
-                                        + "&countsOnly=1").json()["totalNumRecords"]
-        except:
+            url = "https://api.data.gov/regulations/v3/documents.json?api_key=" + regulations_key + "&countsOnly=1"
+            record_count = api_manager.api_call_manager(url).json()["totalNumRecords"]
+        except api_manager.CallFailException:
             logger.error('Error occured with API request')
             print("Error occurred with docs_work_gen regulations API request.")
             return 0
