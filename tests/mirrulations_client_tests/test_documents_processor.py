@@ -85,7 +85,7 @@ def test_documents_processor(mock_req):
                                                   [{'id': 'CMS-2005-0001-0002', 'count': 1000}],
                                                   [{'id': 'CMS-2005-0001-0003', 'count': 89}, {'id': 'CMS-2005-0001-0004', 'count': 667}]
                                                   ],
-                                                    'version': version, 'client_id': str(client_id)})
+                                                    'version': version, 'client_id': client_id})
 
 
 def test_valid_results(mock_req):

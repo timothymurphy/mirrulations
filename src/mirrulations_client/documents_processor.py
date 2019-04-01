@@ -32,7 +32,7 @@ def documents_processor(urls, job_id, client_id):
     result = json.loads(json.dumps({"job_id": job_id,
                                     "type": "docs",
                                     "data": workfiles,
-                                    "client_id": str(client_id),
+                                    "client_id": client_id,
                                     "version": version}))
     return result
 
