@@ -14,7 +14,7 @@ def call(url):
     :param url: the url that will be used to make the API call
     :return: returns the json format information of the documents
     """
-    logger.warning('Making API call...')
+    logger.warning('Making API call')
     result = requests.get(url)
     if 300 <= result.status_code < 400:
         logger.warning('API call failed')
@@ -43,7 +43,7 @@ class TemporaryException(Exception):
     Raise an exception if there is an error communicating with either the work server or regulations
     """
     def __init__(self):
-        logger.error('Error connecting to API')
+        logger.error('Error - Could not connect to API')
 
 
 class ApiCountZeroException(Exception):
@@ -51,7 +51,7 @@ class ApiCountZeroException(Exception):
     Raise an exception if the user is out of API calls
     """
     def __init__(self):
-        logger.error('Error - ran out of API calls')
+        logger.warning('API calls exhausted')
 
 
 class PermanentException(Exception):

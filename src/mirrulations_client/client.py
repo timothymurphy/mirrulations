@@ -32,7 +32,7 @@ def get_work(client_id):
     """
     url = serverurl+"/get_work?client_id="+str(client_id)
     result = man.api_call_manager(url)
-    logger.critical('Obtained work from server.')
+    logger.warning('Obtained work from server.')
     return result
 
 
@@ -65,7 +65,7 @@ def return_docs(json_result, client_id):
     fileobj = open('result.zip', 'rb')
     r = requests.post(serverurl + "/return_docs", files={'file': fileobj}, data={'json': json.dumps(json_info)})
     r.raise_for_status()
-    logger.warning('Returned Docs')
+    logger.warning('Client returned docs')
     logger.handlers[0].doRollover()
     return r
 
@@ -92,7 +92,7 @@ def return_doc(json_result, client_id):
                       data={'json': json.dumps({"job_id": job_id, "type": "doc",
                                                "user": client_id, "version": version})})
     r.raise_for_status()
-    logger.warning('Returned Docs')
+    logger.warning('Client returned doc')
     logger.handlers[0].doRollover()
     return r
 
@@ -153,7 +153,7 @@ def do_work():
             time.sleep(3600)
             requests.get(client_health_url)
         else:
-            logger.error('Job type unexpected')
+            logger.error('Error - Job type unexpected')
             requests.get(client_health_url + "/fail")
 
 

@@ -33,14 +33,12 @@ def get_work():
     :return: Returns the json containing the job_id, the type of work to be done, the work that nees to be done, and
     the version number
     """
-    logger.warning("Successful API Call: %s", 'get_work: get_work')
     if len(request.args) != 1:
-        logger.error('Error - number of parameters incorrect')
+        logger.error('Incorrect number of parameters')
         return 'Parameter Missing', 400
     client_id = request.args.get('client_id')
     if client_id is None:
-        logger.warning("Exception: %s", 'get_work: BadParameterException, client id was none')
-        logger.error('Error - no client ID')
+        logger.error('No client ID found')
         return 'Bad Parameter', 400
     json_info = redis_server().get_work()
     return json.dumps(json_info)
@@ -56,10 +54,10 @@ def return_docs():
         json_info = request.form['json']
         files = request.files['file'].read()
     except:
-        logger.error('Error - bad parameter')
+        logger.error('Bad parameter')
         return 'Bad Parameter', 400
     if json_info is None:
-        logger.error('Error - could not post docs')
+        logger.error('Could not post docs')
         return 'Bad Parameter', 400
     files = io.BytesIO(files)
     process_docs(redis_server(), json.loads(json_info), files)
@@ -77,7 +75,7 @@ def return_doc():
         files = request.files['file'].read()
         json_info= request.form['json']
     except:
-        logger.error('Error - bad parameter')
+        logger.error('Bad parameter')
         return 'Bad Parameter', 400
     files = io.BytesIO(files)
     process_doc(redis_server(), json.loads(json_info), files)

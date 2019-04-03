@@ -21,7 +21,7 @@ def document_processor(doc_ids):
             result = api_call_manager(add_api_key(make_doc_url(doc_id)))
             total = get_extra_documents(result, dirpath.name, doc_id)
         except CallFailException:
-            logger.error('Doc ID error')
+            logger.error('Error - Bad document ID')
     return dirpath
 
 
@@ -106,7 +106,7 @@ def download_doc_formats(dirpath, doc_json, documentId):
     except KeyError:
         pass
     except CallFailException:
-        logger.error('Error - Call failed')
+        logger.error('Error - API call failed')
         pass
     return total_requests
 
@@ -133,6 +133,6 @@ def download_attachments(dirpath, doc_json, documentId):
     except KeyError:
         pass
     except CallFailException:
-        logger.error('Error - Call failed')
+        logger.error('API call failed')
         pass
     return total_requests

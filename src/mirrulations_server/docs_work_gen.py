@@ -26,7 +26,7 @@ def monolith():
             record_count = requests.get("https://api.data.gov/regulations/v3/documents.json?api_key=" + regulations_key
                                         + "&countsOnly=1").json()["totalNumRecords"]
         except:
-            logger.error('Error occured with API request')
+            logger.error('API request error')
             print("Error occurred with docs_work_gen regulations API request.")
             return 0
 

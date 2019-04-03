@@ -147,14 +147,14 @@ def add_document_job_to_queue(redis_server, json_data):
     :param json_data: the json data containing all the work files
     :return:
     """
-    logger.warning('Adding document job to the queue...')
+    logger.warning('Adding document job to the queue')
 
     for work_file in json_data["data"]:
         random_id = \
             ''.join(random.choices(string.ascii_letters + string.digits, k=16))
         job = create_document_job(work_file, random_id)
         redis_server.add_to_queue(job)
-        logger.warning('Document job successfully added to queue')
+        logger.warning('Document job successfully queued')
 
 
 def create_document_job(work_file, job_id):
@@ -164,7 +164,7 @@ def create_document_job(work_file, job_id):
     :param job_id: The id for the job
     :return: A json in the form of a dictionary
     """
-    logger.warning('Creating document job...')
+    logger.warning('Creating document job')
     dictionary = {'job_id': job_id,
                   'type': 'doc',
                   'data': work_file,
