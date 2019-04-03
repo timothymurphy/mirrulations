@@ -10,8 +10,10 @@ def read_value(value):
     :return: Value read from the JSON
     """
     try:
-        configurationpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../.config/config.json")
-        contents = json.loads(open(configurationpath, "r").read())
+        configurationpath = os.path.join(
+            os.path.abspath(
+                os.path.dirname(__file__)), '../../.config/config.json')
+        contents = json.loads(open(configurationpath, 'r').read())
         result = contents[value]
     except FileNotFoundError:
         logger.error('File Not Found Error')
