@@ -1,10 +1,10 @@
 from flask import Flask, request
 import redis
 import json
-from mirrulations.docs_filter import process_docs
-from mirrulations.doc_filter import process_doc
-from mirrulations.redis_manager import RedisManager
-from mirrulations.mirrulations_logging import logger
+from mirrulations_server.docs_filter import process_docs
+from mirrulations_server.doc_filter import process_doc
+from mirrulations_server.redis_manager import RedisManager
+from mirrulations_core.mirrulations_logging import logger
 import io
 
 
@@ -30,16 +30,20 @@ def get_work():
     """
     Endpoint the user will use to get work from the queue
     client_id will be one of the parameters given for logging purposes
-    :return: Returns the json containing the job_id, the type of work to be done, the work that nees to be done, and
-    the version number
+    :return: Returns the json containing the job_id,
+             the type of work to be done,
+             the work that nees to be done,
+             and the version number
     """
-    logger.warning("Successful API Call: %s", 'get_work: get_work')
+    logger.warning('Successful API Call: %s', 'get_work: get_work')
     if len(request.args) != 1:
         logger.error('Error - number of parameters incorrect')
         return 'Parameter Missing', 400
     client_id = request.args.get('client_id')
     if client_id is None:
-        logger.warning("Exception: %s", 'get_work: BadParameterException, client id was none')
+        logger.warning('Exception: %s',
+                       'get_work: BadParameterException, '
+                       'client id was none')
         logger.error('Error - no client ID')
         return 'Bad Parameter', 400
     json_info = redis_server().get_work()
@@ -49,13 +53,15 @@ def get_work():
 @app.route('/return_docs', methods=['POST'])
 def return_docs():
     """
-    The endpoint the client calls to return the document ids received from the regulations docs calls
-    :return: Returns a string saying successful so the client knows the call was successful
+    The endpoint the client calls to return the
+    document ids received from the regulations docs calls
+    :return: Returns a string saying successful so
+             the client knows the call was successful
     """
     try:
         json_info = request.form['json']
         files = request.files['file'].read()
-    except:
+    except Exception:
         logger.error('Error - bad parameter')
         return 'Bad Parameter', 400
     if json_info is None:
@@ -69,14 +75,16 @@ def return_docs():
 @app.route('/return_doc', methods=['POST'])
 def return_doc():
     """
-    The endpoint the client calls to return documents they received from the individual regulations doc calls
-    :return: Returns a string saying successful so the client knows the call was successful
+    The endpoint the client calls to return documents
+    they received from the individual regulations doc calls
+    :return: Returns a string saying successful so
+             the client knows the call was successful
     """
 
     try:
         files = request.files['file'].read()
-        json_info= request.form['json']
-    except:
+        json_info = request.form['json']
+    except Exception:
         logger.error('Error - bad parameter')
         return 'Bad Parameter', 400
     files = io.BytesIO(files)
@@ -94,10 +102,10 @@ def generate_json(work_list):
     type = work_list[1]
     data = work_list[2]
     converted_json = {
-        "job_id": job_id,
-        "type": type,
-        "data": data,
-        "version": version
+        'job_id': job_id,
+        'type': type,
+        'data': data,
+        'version': version
     }
     return json.dumps(converted_json)
 

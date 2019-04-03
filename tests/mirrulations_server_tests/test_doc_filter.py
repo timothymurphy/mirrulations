@@ -5,8 +5,8 @@ import os
 import fakeredis
 import json
 import mock
-import mirrulations.doc_filter as df
-from mirrulations.redis_manager import RedisManager
+import mirrulations_server.doc_filter as df
+from mirrulations_server.redis_manager import RedisManager
 
 
 PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
@@ -31,8 +31,8 @@ def savefile_tempdir():
         yield tmpdirname
 
 
-@mock.patch('mirrulations.redis_manager.reset_lock')
-@mock.patch('mirrulations.redis_manager.set_lock')
+@mock.patch('mirrulations_server.redis_manager.reset_lock')
+@mock.patch('mirrulations_server.redis_manager.set_lock')
 def make_database(reset, lock):
     r = RedisManager(fakeredis.FakeRedis())
     r.delete_all()

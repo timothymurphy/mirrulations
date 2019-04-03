@@ -1,8 +1,8 @@
-from mirrulations.documents_processor import *
+from mirrulations_client.documents_processor import *
 import pytest
 import requests_mock
 
-from mirrulations.api_call import *
+from mirrulations_core.api_call import *
 import mirrulations_core.config as config
 
 key = config.read_value('key')
@@ -85,7 +85,7 @@ def test_documents_processor(mock_req):
                                                   [{'id': 'CMS-2005-0001-0002', 'count': 1000}],
                                                   [{'id': 'CMS-2005-0001-0003', 'count': 89}, {'id': 'CMS-2005-0001-0004', 'count': 667}]
                                                   ],
-                                                    'version': version, 'client_id': str(client_id)})
+                                                    'version': version, 'client_id': client_id})
 
 
 def test_valid_results(mock_req):

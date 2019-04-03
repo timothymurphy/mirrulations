@@ -1,5 +1,3 @@
-"""This program does the validation of data from
-the doc jobs and then saves that data locally"""
 import os
 import os.path
 import tempfile
@@ -7,11 +5,11 @@ import json
 import shutil
 import re
 import zipfile
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 import mirrulations_core.documents_core as dc
 
-HOME_REGULATION_PATH = os.getenv('HOME') + '/mnt/regulations-data/'
-CLIENT_LOG_PATH = os.getenv("HOME") + '/client-logs/'
+HOME_REGULATION_PATH = '/mnt/regulations-data/'
+CLIENT_LOG_PATH = '/mnt/regulations-data/client-logs/'
 
 
 def process_doc(redis_server, json_data,
@@ -34,7 +32,7 @@ def process_doc(redis_server, json_data,
             job_needs_renew = check_if_document_needs_renew(
                 file, json_data, temp_directory_path)
             if job_needs_renew is True:
-                print("Renew is True")
+                print('Renew is True')
                 redis_server.renew_job(json_data['job_id'])
                 break_check = True
                 break
@@ -174,7 +172,7 @@ def save_single_file_locally(current_path, destination):
     doc_id = get_document_id(file_name)
     org, docket_id, document_id = dc.get_doc_attributes(doc_id)
     destination_path = \
-        destination + org + "/" + docket_id + "/" + document_id + "/"
+        destination + org + '/' + docket_id + '/' + document_id + '/'
     create_new_directory_for_path(destination_path)
     shutil.copy(current_path, destination_path + '/' + file_name)
 

@@ -1,7 +1,7 @@
 import tempfile
-from mirrulations.documents_processor import *
+from mirrulations_client.documents_processor import *
 import mirrulations_core.config as config
-from mirrulations.mirrulations_logging import logger
+from mirrulations_core.mirrulations_logging import logger
 
 base_url = 'https://api.data.gov/regulations/v3/document?documentId='
 
@@ -11,7 +11,8 @@ client_id = config.read_value('client_id')
 
 def document_processor(doc_ids):
     """
-    This process takes all of the document ids given to it and saves all of the data for the documents in a temporary directory.
+    This process takes all of the document ids given to it and
+    saves all of the data for the documents in a temporary directory.
     :param doc_ids: list of document ids that have to be collected.
     :return: temporary directory that data was written to.
     """
@@ -29,7 +30,8 @@ def make_doc_url(documentId):
     """
     Given a documentId as a string append it to the end of the api call
     :param documentId: the string of a documentId
-    :return: the url that will be called with a documentId through regulations.gov API
+    :return: the url that will be called with
+             a documentId through regulations.gov API
     """
     return base_url + documentId
 
@@ -42,8 +44,8 @@ def save_document(dirpath, doc_json, documentId):
     :param documentId: the string of a documentId
     :return:
     """
-    location = dirpath + "/doc." + documentId + ".json"
-    with open(location , "w+") as f:
+    location = dirpath + '/doc.' + documentId + '.json'
+    with open(location, 'w+') as f:
         json.dump(doc_json, f)
 
 
@@ -56,12 +58,13 @@ def download_document(dirpath, documentId, result, type):
     :param type: the type of file that will be saved
     :return:
     """
-    # These are special cases where the api representation is different from the user's interpretation
-    if(type == "excel12book"):
-        type = "xlsx"
-    if(type == "msw12"):
-        type = "doc"
-    with open(dirpath + "/doc." + documentId + "." + type, 'wb') as f:
+    # These are special cases where the api representation
+    # is different from the user's interpretation
+    if type == 'excel12book':
+        type = 'xlsx'
+    if type == 'msw12':
+        type = 'doc'
+    with open(dirpath + '/doc.' + documentId + '.' + type, 'wb') as f:
         for chunk in result.iter_content(chunk_size=1024):
             if chunk:
                 f.write(chunk)
@@ -70,7 +73,8 @@ def download_document(dirpath, documentId, result, type):
 def get_extra_documents(result, dirpath, documentId):
     """
     Download the json of the result from the original api call
-    Determine if the document has additional file formats that need to be downloaded
+    Determine if the document has additional file formats
+    that need to be downloaded
     Determines if the document has attachments that need to be downloaded
     :param result: the result of the api call
     :param dirpath: path to the directory where the download will be saved
@@ -96,11 +100,11 @@ def download_doc_formats(dirpath, doc_json, documentId):
     """
     total_requests = 0
     try:
-        extra_formats = doc_json["fileFormats"]
+        extra_formats = doc_json['fileFormats']
         total_requests += len(extra_formats)
         for extra_doc in extra_formats:
             result = api_call_manager(add_api_key(str(extra_doc)))
-            here = extra_doc.index("contentType") + 12
+            here = extra_doc.index('contentType') + 12
             type = extra_doc[here:]
             download_document(dirpath, documentId, result, type)
     except KeyError:
@@ -117,16 +121,17 @@ def download_attachments(dirpath, doc_json, documentId):
     :param dirpath: path to the directory where the download will be saved
     :param doc_json: the json from a single document api call
     :param documentId: the string of a documentId
-    :return: the total number of requests used to download the extra attachments
+    :return: the total number of requests used to download the
+             extra attachments
     """
     total_requests = 0
     try:
-        extra_attachments = doc_json["attachments"]
+        extra_attachments = doc_json['attachments']
         total_requests += len(extra_attachments)
         for attachment in extra_attachments:
-            attachment_formats = attachment["fileFormats"]
+            attachment_formats = attachment['fileFormats']
             for a_format in attachment_formats:
-                here = str(a_format).index("contentType") + 12
+                here = str(a_format).index('contentType') + 12
                 type = str(a_format)[here:]
                 result = api_call_manager(add_api_key(str(a_format)))
                 download_document(dirpath, documentId, result, type)
