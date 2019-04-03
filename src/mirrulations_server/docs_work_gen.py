@@ -18,21 +18,21 @@ def monolith():
     so I just made one giant method so I can return when needed.
     :return:
     """
-    url_base = "https://api.data.gov/regulations/v3/documents.json?rpp=1000"
+    url_base = 'https://api.data.gov/regulations/v3/documents.json?rpp=1000'
     r = redis_manager.RedisManager(redis.Redis())
     regulations_key = config.read_value('key')
     current_page = 0
 
-    if regulations_key != "":
+    if regulations_key != '':
         # Gets number of documents available to download
         try:
             record_count = requests.get(
-                "https://api.data.gov/regulations/v3/documents.json?api_key="
+                'https://api.data.gov/regulations/v3/documents.json?api_key='
                 + regulations_key
-                + "&countsOnly=1").json()["totalNumRecords"]
+                + '&countsOnly=1').json()['totalNumRecords']
         except Exception:
             logger.error('Error occured with API request')
-            print("Error occurred with docs_work_gen regulations API request.")
+            print('Error occurred with docs_work_gen regulations API request.')
             return 0
 
         # Gets the max page we'll go to; each page is 1000 documents
@@ -45,7 +45,7 @@ def monolith():
             url_list = []
             for i in range(1000):
                 current_page += 1
-                url_full = url_base + "&po=" + str(current_page * 1000)
+                url_full = url_base + '&po=' + str(current_page * 1000)
 
                 url_list.append(url_full)
 
@@ -56,10 +56,10 @@ def monolith():
             # it to the queue as a job
             docs_work = [''.join(
                 random.choices(string.ascii_letters + string.digits, k=16)),
-                "docs", url_list]
+                'docs', url_list]
             r.add_to_queue(endpoints.generate_json(docs_work))
     else:
-        print("No API Key!")
+        print('No API Key!')
 
 
 if __name__ == '__main__':
