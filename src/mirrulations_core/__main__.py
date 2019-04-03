@@ -1,6 +1,10 @@
 import argparse
 import os
 
+from mirrulations_client.__main__ import main as client_main
+from mirrulations_server.__main__ import main as server_main
+from mirrulations_web.__main__ import main as web_main
+
 CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../.config/config.json')
 
 
@@ -15,16 +19,14 @@ def main():
     do_config_setup = args['config'] or not os.path.exists(CONFIG_PATH)
 
     if enum == 'client':
-        from mirrulations_client.__main__ import main
+        client_main(do_config_setup)
     elif enum == 'server':
-        from mirrulations_server.__main__ import main
+        server_main(do_config_setup)
     elif enum == 'web':
-        from mirrulations_web.__main__ import main
+        web_main(do_config_setup)
     else:
         print('Wrong enum!\nRun with client/server/web!')
         exit()
-
-    main(do_config_setup)
 
 
 if __name__ == '__main__':
