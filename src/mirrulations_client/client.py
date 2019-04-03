@@ -53,7 +53,7 @@ def return_docs(json_result, server_url, client_id):
     job_id, urls = get_json_info(json_result)
     json_info = docs.documents_processor(urls, job_id, client_id)
     path = tempfile.TemporaryDirectory()
-    add_client_log_files(path.name, ".")
+    add_client_log_files(path.name, '.')
     shutil.make_archive('result', 'zip', path.name)
     fileobj = open('result.zip', 'rb')
     r = requests.post(server_url + '/return_docs',
@@ -80,15 +80,15 @@ def return_doc(json_result, server_url, client_id):
     for dic in doc_dicts:
         doc_ids.append(dic['id'])
     path = doc.document_processor(doc_ids)
-    add_client_log_files(path.name, ".")
-    shutil.make_archive("result", "zip", path.name)
+    add_client_log_files(path.name, '.')
+    shutil.make_archive('result', 'zip', path.name)
     fileobj = open('result.zip', 'rb')
-    r = requests.post(server_url+"/return_doc",
+    r = requests.post(server_url+'/return_doc',
                       files={'file': ('result.zip', fileobj)},
-                      data={'json': json.dumps({"job_id": job_id,
-                                                "type": "doc",
-                                                "user": client_id,
-                                                "version": version})})
+                      data={'json': json.dumps({'job_id': job_id,
+                                                'type': 'doc',
+                                                'user': client_id,
+                                                'version': version})})
     r.raise_for_status()
     logger.warning('Returned Docs')
     logger.handlers[0].doRollover()
@@ -121,11 +121,11 @@ def add_client_log_files(directory, log_directory):
     :return:
     """
 
-    copy_file_safely(directory, log_directory + "/client.log")
-    copy_file_safely(directory, log_directory + "/document_processor.log")
-    copy_file_safely(directory, log_directory + "/documents_processor.log")
-    copy_file_safely(directory, log_directory + "/api_call.log")
-    copy_file_safely(directory, log_directory + "/api_call_management.log")
+    copy_file_safely(directory, log_directory + '/client.log')
+    copy_file_safely(directory, log_directory + '/document_processor.log')
+    copy_file_safely(directory, log_directory + '/documents_processor.log')
+    copy_file_safely(directory, log_directory + '/api_call.log')
+    copy_file_safely(directory, log_directory + '/api_call_management.log')
 
 
 def do_work():
@@ -150,18 +150,18 @@ def do_work():
         except man.CallFailException:
             time.sleep(3600)
             continue
-        if work_json["type"] == "doc":
+        if work_json['type'] == 'doc':
             r = return_doc(work_json, server_url, client_id)
             requests.get(client_health_url)
-        elif work_json["type"] == "docs":
+        elif work_json['type'] == 'docs':
             r = return_docs(work_json, server_url, client_id)
             requests.get(client_health_url)
-        elif work_json["type"] == "none":
+        elif work_json['type'] == 'none':
             time.sleep(3600)
             requests.get(client_health_url)
         else:
             logger.error('Job type unexpected')
-            requests.get(client_health_url + "/fail")
+            requests.get(client_health_url + '/fail')
 
 
 if __name__ == '__main__':
