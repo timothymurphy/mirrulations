@@ -103,7 +103,7 @@ def test_get_specific_item_from_queue_does_not_match():
     r = make_database()
     r.delete_all()
     r.add_to_queue(json.dumps({"A":"B", "job_id":"c"}))
-    assert r.get_specific_job_from_queue("d") == "{'job_id':'null', 'type':'none'}"
+    assert r.get_specific_job_from_queue("d") == '{"job_id":"null", "type":"none"}'
 
 
 def test_remove_specific_job_from_queue():

@@ -112,7 +112,7 @@ class RedisManager:
                 if job_id == info['job_id']:
                     return current
 
-            return "{'job_id':'null', 'type':'none'}"
+            return '{"job_id":"null", "type":"none"}'
 
     def get_specific_job_from_queue_no_lock(self, job_id):
         """
@@ -127,7 +127,7 @@ class RedisManager:
             info = json.loads(current)
             if job_id == info['job_id']:
                 return current
-        return "{'job_id':'null', 'type':'none'}"
+        return '{"job_id":"null", "type":"none"}'
 
     def does_job_exist_in_queue(self, job_id):
         """
@@ -162,7 +162,7 @@ class RedisManager:
             key = self.get_keys_from_progress_no_lock(job_id)
             if float(key) > -1:
                 job = self.get_specific_job_from_progress_no_lock(key)
-                if job == "{'job_id':'null', 'type':'none'}":
+                if job == '{"job_id":"null", "type":"none"}':
                     return False
                 else:
                     return True
@@ -181,7 +181,7 @@ class RedisManager:
             if job is not None:
                 data = job.decode('utf-8')
                 return data
-            return "{'job_id':'null', 'type':'none'}"
+            return '{"job_id":"null", "type":"none"}'
 
     def get_specific_job_from_progress_no_lock(self, key):
         """
@@ -195,7 +195,7 @@ class RedisManager:
         if job is not None:
             data = job.decode('utf-8')
             return data
-        return "{'job_id':'null', 'type':'none'}"
+        return '{"job_id":"null", "type":"none"}'
 
     def get_keys_from_progress(self, job_id):
         """
