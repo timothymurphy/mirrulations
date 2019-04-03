@@ -24,7 +24,7 @@ def get_work(server_url, client_id):
     """
     url = server_url + '/get_work?client_id=' + client_id
     result = man.api_call_manager(url)
-    logger.warning('Obtained work from server')
+    logger.warning('Obtained work from server.')
     return result
 
 
