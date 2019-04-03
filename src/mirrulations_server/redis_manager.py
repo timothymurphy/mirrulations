@@ -20,13 +20,13 @@ class RedisManager:
         :return: Returns the work to be done from the queue
         """
         with self.lock:
-            item_from_queue = self.r.lpop("queue")
+            item_from_queue = self.r.lpop('queue')
 
             if item_from_queue is None:
-                work = {"type": "none"}
+                work = {'type': 'none'}
             else:
                 work = literal_eval(item_from_queue.decode('utf-8'))
-                self.r.hset("progress", get_curr_time(), json.dumps(work))
+                self.r.hset('progress', get_curr_time(), json.dumps(work))
             return work
 
     def add_to_queue(self, work):
@@ -36,7 +36,7 @@ class RedisManager:
         :return:
         """
         with self.lock:
-            self.r.rpush("queue", work)
+            self.r.rpush('queue', work)
 
     def add_to_progress(self, work):
         """
@@ -45,7 +45,7 @@ class RedisManager:
         :return:
         """
         with self.lock:
-            self.r.hset("progress", get_curr_time(), work)
+            self.r.hset('progress', get_curr_time(), work)
 
     def get_all_items_in_queue(self):
         """
@@ -53,14 +53,14 @@ class RedisManager:
         :return: The list of items in the queue
         """
         with self.lock:
-            return self.r.lrange("queue", 0, -1)
+            return self.r.lrange('queue', 0, -1)
 
     def get_all_items_in_queue_no_lock(self):
         """
         Returns all the items currently in the queue
         :return: The list of items in the queue
         """
-        return self.r.lrange("queue", 0, -1)
+        return self.r.lrange('queue', 0, -1)
 
     def get_all_items_in_progress(self):
         """
@@ -68,14 +68,14 @@ class RedisManager:
         :return: The list of items currently in progress
         """
         with self.lock:
-            return self.r.hgetall("progress")
+            return self.r.hgetall('progress')
 
     def get_all_items_in_progress_no_lock(self):
         """
         Returns all the items currently in progress
         :return: The list of items currently in progress
         """
-        return self.r.hgetall("progress")
+        return self.r.hgetall('progress')
 
     def find_expired(self):
         """
@@ -89,7 +89,7 @@ class RedisManager:
             for item in self.r.hgetall('progress'):
                 if float(time.time()) - float(item.decode('utf-8')) > 21600:
                     self.r.hdel('progress', item)
-                    self.r.rpush("queue", item)
+                    self.r.rpush('queue', item)
 
     def delete_all(self):
         """
@@ -106,13 +106,13 @@ class RedisManager:
         """
         with self.lock:
             for element in range(self.r.llen('queue')):
-                current = (self.r.lindex('queue', element)).decode("utf-8")
+                current = (self.r.lindex('queue', element)).decode('utf-8')
                 info = json.loads(current)
 
                 if job_id == info['job_id']:
                     return current
 
-            return '{"job_id":"null", "type":"none"}'
+            return "{'job_id':'null', 'type':'none'}"
 
     def get_specific_job_from_queue_no_lock(self, job_id):
         """
@@ -123,11 +123,11 @@ class RedisManager:
         """
         for element in range(self.r.llen('queue')):
 
-            current = (self.r.lindex('queue', element)).decode("utf-8")
+            current = (self.r.lindex('queue', element)).decode('utf-8')
             info = json.loads(current)
             if job_id == info['job_id']:
                 return current
-        return '{"job_id":"null", "type":"none"}'
+        return "{'job_id':'null', 'type':'none'}"
 
     def does_job_exist_in_queue(self, job_id):
         """
@@ -162,7 +162,7 @@ class RedisManager:
             key = self.get_keys_from_progress_no_lock(job_id)
             if float(key) > -1:
                 job = self.get_specific_job_from_progress_no_lock(key)
-                if job == '{"job_id":"null", "type":"none"}':
+                if job == "{'job_id':'null', 'type':'none'}":
                     return False
                 else:
                     return True
@@ -179,9 +179,9 @@ class RedisManager:
             job = self.r.hget('progress', key)
 
             if job is not None:
-                data = job.decode("utf-8")
+                data = job.decode('utf-8')
                 return data
-            return '{"job_id":"null", "type":"none"}'
+            return "{'job_id':'null', 'type':'none'}"
 
     def get_specific_job_from_progress_no_lock(self, key):
         """
@@ -193,9 +193,9 @@ class RedisManager:
         job = self.r.hget('progress', key)
 
         if job is not None:
-            data = job.decode("utf-8")
+            data = job.decode('utf-8')
             return data
-        return '{"job_id":"null", "type":"none"}'
+        return "{'job_id':'null', 'type':'none'}"
 
     def get_keys_from_progress(self, job_id):
         """
@@ -218,8 +218,8 @@ class RedisManager:
                 json_info = self.get_specific_job_from_progress_no_lock(key)
                 info = literal_eval(json_info)
 
-                if info["job_id"] == job_id:
-                    return key.decode("utf-8")
+                if info['job_id'] == job_id:
+                    return key.decode('utf-8')
             return -1
 
     def get_keys_from_progress_no_lock(self, job_id):
@@ -242,8 +242,8 @@ class RedisManager:
 
             json_info = self.get_specific_job_from_progress_no_lock(key)
             info = literal_eval(json_info)
-            if info["job_id"] == job_id:
-                return key.decode("utf-8")
+            if info['job_id'] == job_id:
+                return key.decode('utf-8')
         return -1
 
     def remove_job_from_progress(self, key):
@@ -268,7 +268,7 @@ class RedisManager:
             key = self.get_keys_from_progress_no_lock(job_id)
             if float(key) > -1:
                 job = self.get_specific_job_from_progress_no_lock(key)
-                self.r.rpush("queue", job)
+                self.r.rpush('queue', job)
                 self.r.hdel('progress', key)
 
 
@@ -287,7 +287,7 @@ def set_lock(database):
     :param database: The database you are modifying
     :return: Locks the database
     """
-    return redis_lock.Lock(database, "lock72")
+    return redis_lock.Lock(database, 'lock72')
 
 
 def get_curr_time():
