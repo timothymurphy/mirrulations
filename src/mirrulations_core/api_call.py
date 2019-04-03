@@ -39,7 +39,7 @@ def add_api_key(url):
     :param url: the url that will be used to make the API call
     :return: returns the url containing the API key
     """
-    return url + "&api_key=" + str(key)
+    return url + '&api_key=' + str(key)
 
 
 class TemporaryException(Exception):
