@@ -5,7 +5,7 @@ import random
 import requests
 import string
 
-CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json')
+CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../.config/config.json')
 
 connection_error_string = 'Unable to connect!\n' \
                           'We weren\'t able to connect to regulations.gov.\n' \
