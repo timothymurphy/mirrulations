@@ -5,7 +5,8 @@ from mirrulations_core.api_call import *
 def api_call_manager(url):
     """
     If there were no errors in making an API call, get the result
-    If a Temporary error occurred, sleep for 5 minutes and try again. Do this 50 times, and if it continues to fail, raise a CallFailException
+    If a Temporary error occurred, sleep for 5 minutes and try again.
+    Do this 50 times, and if it continues to fail, raise a CallFailException
     If a Permanent error occurs, raise a CallFailException
     If the user's ApiCount is zero, sleep for one hour to refresh the calls
     :param url: the url that will be used to make the API call

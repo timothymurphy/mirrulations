@@ -5,7 +5,10 @@ import random
 import requests
 import string
 
-CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../config.json')
+
+CONFIG_PATH = os.path.join(
+    os.path.abspath(os.path.dirname(__file__)), '../../.config/config.json')
+
 
 connection_error_string = 'Unable to connect!\n' \
                           'We weren\'t able to connect to regulations.gov.\n' \
@@ -26,10 +29,13 @@ def config_setup(is_server):
         port = input('Port:\n')
 
     key = input('API Key:\n')
-    client_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+    client_id = ''.join(
+        random.choices(string.ascii_letters + string.digits, k=16))
 
     try:
-        r = requests.get('https://api.data.gov/regulations/v3/documents.json?api_key=' + key)
+        r = requests.get(
+            'https://api.data.gov/regulations/v3/documents.json?api_key=' +
+            key)
     except requests.ConnectionError:
         print(connection_error_string)
         exit()
@@ -61,8 +67,12 @@ def config_setup(is_server):
 def main():
 
     parser = argparse.ArgumentParser(prog='mirrulations')
-    parser.add_argument('-s', '--server', action='store_true', help='run as server')
-    parser.add_argument('-c', '--config', action='store_true', help='force config setup')
+    parser.add_argument('-s', '--server',
+                        action='store_true',
+                        help='run as server')
+    parser.add_argument('-c', '--config',
+                        action='store_true',
+                        help='force config setup')
     args = vars(parser.parse_args())
 
     is_server = args['server']
