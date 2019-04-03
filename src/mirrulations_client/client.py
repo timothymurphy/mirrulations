@@ -11,9 +11,9 @@ import mirrulations_core.config as config
 from mirrulations_core.mirrulations_logging import logger
 
 # These variables are specific to the current implementation
-version = "v1.3"
+version = 'v1.3'
 
-client_health_url = "https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08"
+client_health_url = 'https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08'
 
 
 def get_work(server_url, client_id):
@@ -22,7 +22,7 @@ def get_work(server_url, client_id):
     :param client_id: the id of the client calling /get_work
     :return: the result of making a call to get work
     """
-    url = server_url + "/get_work?client_id=" + client_id
+    url = server_url + '/get_work?client_id=' + client_id
     result = man.api_call_manager(url)
     logger.critical('Obtained work from server.')
     return result
@@ -35,15 +35,16 @@ def get_json_info(json_result):
     :return:
     """
 
-    job_id = json_result["job_id"]
-    urls = json_result["data"]
+    job_id = json_result['job_id']
+    urls = json_result['data']
     return job_id, urls
 
 
 def return_docs(json_result, server_url, client_id):
     """
     Handles the documents processing necessary for a job
-    Calls the /return_docs endpoint of the server to return data for the job it completed
+    Calls the /return_docs endpoint of the
+    server to return data for the job it completed
     :param json_result: the json received from the /get_work endpoint
     :param client_id: the id of the client that is processing the documents job
     :return: result from calling /return_docs
@@ -52,10 +53,12 @@ def return_docs(json_result, server_url, client_id):
     job_id, urls = get_json_info(json_result)
     json_info = docs.documents_processor(urls, job_id, client_id)
     path = tempfile.TemporaryDirectory()
-    add_client_log_files(path.name, ".")
-    shutil.make_archive("result", "zip", path.name)
+    add_client_log_files(path.name, '.')
+    shutil.make_archive('result', 'zip', path.name)
     fileobj = open('result.zip', 'rb')
-    r = requests.post(server_url + "/return_docs", files={'file': fileobj}, data={'json': json.dumps(json_info)})
+    r = requests.post(server_url + '/return_docs',
+                      files={'file': fileobj},
+                      data={'json': json.dumps(json_info)})
     r.raise_for_status()
     logger.warning('Returned Docs')
     logger.handlers[0].doRollover()
@@ -65,7 +68,8 @@ def return_docs(json_result, server_url, client_id):
 def return_doc(json_result, server_url, client_id):
     """
     Handles the document processing necessary for a job
-    Calls the /return_doc endpoint of the server to return data for the job it completed
+    Calls the /return_doc endpoint of the server
+    to return data for the job it completed
     :param json_result: the json received from the /get_work endpoint
     :param client_id: the id of the client that is processing the documents job
     :return: result from calling /return_doc
@@ -76,13 +80,15 @@ def return_doc(json_result, server_url, client_id):
     for dic in doc_dicts:
         doc_ids.append(dic['id'])
     path = doc.document_processor(doc_ids)
-    add_client_log_files(path.name, ".")
-    shutil.make_archive("result", "zip", path.name)
+    add_client_log_files(path.name, '.')
+    shutil.make_archive('result', 'zip', path.name)
     fileobj = open('result.zip', 'rb')
-    r = requests.post(server_url+"/return_doc",
+    r = requests.post(server_url+'/return_doc',
                       files={'file': ('result.zip', fileobj)},
-                      data={'json': json.dumps({"job_id": job_id, "type": "doc",
-                                               "user": client_id, "version": version})})
+                      data={'json': json.dumps({'job_id': job_id,
+                                                'type': 'doc',
+                                                'user': client_id,
+                                                'version': version})})
     r.raise_for_status()
     logger.warning('Returned Docs')
     logger.handlers[0].doRollover()
@@ -91,7 +97,8 @@ def return_doc(json_result, server_url, client_id):
 
 def copy_file_safely(directory, filepath):
     """
-    Safely copies a file to a directory; if the file isn't there to be copied, it won't be copied.
+    Safely copies a file to a directory;
+    if the file isn't there to be copied, it won't be copied.
     :param directory: Directory to copy to
     :param filepath: File to copy
     """
@@ -107,17 +114,18 @@ def copy_file_safely(directory, filepath):
 
 def add_client_log_files(directory, log_directory):
     """
-    Used to copy client log files into the temp directory to be sent to the server.
+    Used to copy client log files into the
+    temp directory to be sent to the server.
     :param directory: Directory to write files to
     :param log_directory: Directory to get files from
     :return:
     """
 
-    copy_file_safely(directory, log_directory + "/client.log")
-    copy_file_safely(directory, log_directory + "/document_processor.log")
-    copy_file_safely(directory, log_directory + "/documents_processor.log")
-    copy_file_safely(directory, log_directory + "/api_call.log")
-    copy_file_safely(directory, log_directory + "/api_call_management.log")
+    copy_file_safely(directory, log_directory + '/client.log')
+    copy_file_safely(directory, log_directory + '/document_processor.log')
+    copy_file_safely(directory, log_directory + '/documents_processor.log')
+    copy_file_safely(directory, log_directory + '/api_call.log')
+    copy_file_safely(directory, log_directory + '/api_call_management.log')
 
 
 def do_work():
@@ -142,18 +150,18 @@ def do_work():
         except man.CallFailException:
             time.sleep(3600)
             continue
-        if work_json["type"] == "doc":
+        if work_json['type'] == 'doc':
             r = return_doc(work_json, server_url, client_id)
             requests.get(client_health_url)
-        elif work_json["type"] == "docs":
+        elif work_json['type'] == 'docs':
             r = return_docs(work_json, server_url, client_id)
             requests.get(client_health_url)
-        elif work_json["type"] == "none":
+        elif work_json['type'] == 'none':
             time.sleep(3600)
             requests.get(client_health_url)
         else:
             logger.error('Job type unexpected')
-            requests.get(client_health_url + "/fail")
+            requests.get(client_health_url + '/fail')
 
 
 if __name__ == '__main__':

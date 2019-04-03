@@ -5,14 +5,16 @@ from mirrulations_client.__main__ import main as client_main
 from mirrulations_server.__main__ import main as server_main
 from mirrulations_web.__main__ import main as web_main
 
-CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../.config/config.json')
+CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                           '../../.config/config.json')
 
 
 def main():
 
     parser = argparse.ArgumentParser(prog='mirrulations')
     parser.add_argument('enum', help='client/server/web')
-    parser.add_argument('-c', '--config', action='store_true', help='force config setup')
+    parser.add_argument('-c', '--config',
+                        action='store_true', help='force config setup')
     args = vars(parser.parse_args())
 
     enum = args['enum']

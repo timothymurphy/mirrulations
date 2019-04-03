@@ -6,7 +6,8 @@ import string
 
 from mirrulations_core.mirrulations_logging import logger
 
-CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../.config/config.json')
+CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                           '../../.config/config.json')
 
 connection_error_string = 'Unable to connect!\n' \
                           'We weren\'t able to connect to regulations.gov.\n' \
@@ -47,8 +48,8 @@ def read_value(value):
 
 def verify_api_key(api_key):
     try:
-        r = requests.get('https://api.data.gov/regulations/v3/documents.json?api_key='
-                         + api_key)
+        r = requests.get('https://api.data.gov/regulations/v3/documents.json'
+                         '?api_key=' + api_key)
     except requests.ConnectionError:
         print(connection_error_string)
         exit()
@@ -67,7 +68,8 @@ def client_config_setup():
     api_key = input('API Key:\n')
     verify_api_key(api_key)
 
-    client_id = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+    client_id = ''.join(random.choices(string.ascii_letters + string.digits,
+                                       k=16))
     ip = input('IP:\n')
     port = input('Port:\n')
 
