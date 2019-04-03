@@ -138,6 +138,6 @@ def download_attachments(dirpath, doc_json, documentId):
     except KeyError:
         pass
     except CallFailException:
-        logger.error('API call failed')
+        logger.error('Error - API call failed')
         pass
     return total_requests

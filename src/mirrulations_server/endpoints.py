@@ -65,7 +65,7 @@ def return_docs():
         logger.error('Error - bad parameter')
         return 'Bad Parameter', 400
     if json_info is None:
-        logger.error('Could not post docs')
+        logger.error('Error - Could not post docs')
         return 'Bad Parameter', 400
     files = io.BytesIO(files)
     process_docs(redis_server(), json.loads(json_info), files)

@@ -50,7 +50,7 @@ def process_results(result):
         doc_list = docs_json['documents']
         work = make_docs(doc_list)
     except TypeError:
-        logger.error('Eror - cannot process JSON results')
+        logger.error('Error - cannot process JSON results')
 
     return True
 
