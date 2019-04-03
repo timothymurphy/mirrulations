@@ -7,7 +7,7 @@ import mirrulations_core.config as config
 
 
 def get_client_id():
-    return config.read_value('client_id')
+    return config.read_value('client id')
 
 
 def get_server_address():

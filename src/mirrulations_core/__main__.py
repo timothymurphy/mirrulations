@@ -1,11 +1,11 @@
 import argparse
-import json
+from configparser import ConfigParser
 import os
 import random
 import requests
 import string
 
-CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../.config/config.json')
+CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../.config/config.ini')
 
 connection_error_string = 'Unable to connect!\n' \
                           'We weren\'t able to connect to regulations.gov.\n' \
@@ -21,7 +21,9 @@ successful_login_string = 'Success!\n' \
 
 def config_setup(is_server):
 
-    if not is_server:
+    if is_server:
+        ip = port = 'N/A'
+    else:
         ip = input('IP:\n')
         port = input('Port:\n')
 
@@ -41,19 +43,14 @@ def config_setup(is_server):
             print(connection_error_string)
             exit()
 
+        config = ConfigParser()
+        config['CONFIG'] = {'ip': ip,
+                            'port': port,
+                            'key': key,
+                            'client id': client_id}
+
         with open(CONFIG_PATH, 'wt') as file:
-            if is_server:
-                file.write(json.dumps({
-                    'key': key,
-                    'client_id': client_id
-                }, indent=4))
-            else:
-                file.write(json.dumps({
-                    'ip': ip,
-                    'port': port,
-                    'key': key,
-                    'client_id': client_id
-                }, indent=4))
+            config.write(file)
             file.close()
             print(successful_login_string)
 

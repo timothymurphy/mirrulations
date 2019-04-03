@@ -1,4 +1,4 @@
-import json
+from configparser import ConfigParser
 from mirrulations_core.mirrulations_logging import logger
 import os
 
@@ -10,17 +10,15 @@ def read_value(value):
     :return: Value read from the JSON
     """
     try:
-        configurationpath = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../.config/config.json")
-        contents = json.loads(open(configurationpath, "r").read())
-        result = contents[value]
+        config = ConfigParser()
+        config.read(os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                 '../../.config/config.ini'))
+        result = config['CONFIG'][value]
     except FileNotFoundError:
         logger.error('File Not Found Error')
         return None
     except IOError:
         logger.error('Input/Output Error')
-        return None
-    except json.JSONDecodeError:
-        logger.error('JSON Decode Error')
         return None
     except KeyError:
         logger.error('Key Error')

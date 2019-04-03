@@ -7,7 +7,7 @@ workfiles = []
 version = "v1.3"
 
 key = config.read_value('key')
-client_id = config.read_value('client_id')
+client_id = config.read_value('client id')
 
 
 def documents_processor(urls, job_id, client_id):

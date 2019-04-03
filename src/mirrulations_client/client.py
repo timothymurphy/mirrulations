@@ -130,7 +130,7 @@ def do_work():
 
     ip = config.read_value('ip')
     port = config.read_value('port')
-    client_id = config.read_value('client_id')
+    client_id = config.read_value('client id')
 
     server_url = 'http://' + ip + ':' + port
 
