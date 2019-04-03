@@ -35,13 +35,13 @@ def get_work():
              the work that nees to be done,
              and the version number
     """
-    logger.warning("Successful API Call: %s", 'get_work: get_work')
+    logger.warning('Successful API Call: %s', 'get_work: get_work')
     if len(request.args) != 1:
         logger.error('Error - number of parameters incorrect')
         return 'Parameter Missing', 400
     client_id = request.args.get('client_id')
     if client_id is None:
-        logger.warning("Exception: %s",
+        logger.warning('Exception: %s',
                        'get_work: BadParameterException, '
                        'client id was none')
         logger.error('Error - no client ID')
@@ -102,10 +102,10 @@ def generate_json(work_list):
     type = work_list[1]
     data = work_list[2]
     converted_json = {
-        "job_id": job_id,
-        "type": type,
-        "data": data,
-        "version": version
+        'job_id': job_id,
+        'type': type,
+        'data': data,
+        'version': version
     }
     return json.dumps(converted_json)
 
