@@ -4,7 +4,7 @@ from mirrulations_core.mirrulations_logging import logger
 import mirrulations_core.config as config
 
 workfiles = []
-version = "v1.3"
+version = 'v1.3'
 
 key = config.read_value('key')
 client_id = config.read_value('client_id')
@@ -29,11 +29,11 @@ def documents_processor(urls, job_id, client_id):
         except Exception:
             logger.error('Error - URL processing failed')
 
-    result = json.loads(json.dumps({"job_id": job_id,
-                                    "type": "docs",
-                                    "data": workfiles,
-                                    "client_id": client_id,
-                                    "version": version}))
+    result = json.loads(json.dumps({'job_id': job_id,
+                                    'type': 'docs',
+                                    'data': workfiles,
+                                    'client_id': client_id,
+                                    'version': version}))
     return result
 
 
@@ -47,7 +47,7 @@ def process_results(result):
     """
     docs_json = json.loads(result.text)
     try:
-        doc_list = docs_json["documents"]
+        doc_list = docs_json['documents']
         work = make_docs(doc_list)
     except TypeError:
         logger.error('Error - bad JSON')
@@ -68,14 +68,14 @@ def make_docs(doc_list):
     size = 0
     work_list = []
     for doc in doc_list:
-        doc_id = doc["documentId"]
-        calls = doc["attachmentCount"] + 1
+        doc_id = doc['documentId']
+        calls = doc['attachmentCount'] + 1
         if size + calls > 1000:
             workfiles.append(work_list)
             work_list = []
             size = 0
         size += calls
-        document = {"id": doc_id, "count": calls}
+        document = {'id': doc_id, 'count': calls}
         work_list.append(document)
     if size != 0:
         workfiles.append(work_list)
