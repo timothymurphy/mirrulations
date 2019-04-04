@@ -3,6 +3,10 @@ from threading import Thread
 
 from mirrulations_core.config import server_config_setup
 
+from mirrulations_server.docs_work_gen import monolith
+from mirrulations_server.endpoints import run
+from mirrulations_server.expire import expire
+
 
 def main(do_config_setup):
 
@@ -13,12 +17,9 @@ def main(do_config_setup):
         os.system('redis-server')
 
     def run_server():
-        from mirrulations_server.endpoints import run
         run()
 
     def run_work():
-        from mirrulations_server.docs_work_gen import monolith
-        from mirrulations_server.expire import expire
         monolith()
         expire()
 
