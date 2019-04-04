@@ -2,7 +2,6 @@ from ast import literal_eval
 import redis_lock
 import json
 import time
-from mirrulations_core.mirrulations_logging import logger
 
 
 class RedisManager:
@@ -206,15 +205,7 @@ class RedisManager:
         with self.lock:
             key_list = self.r.hgetall('progress')
 
-            logger.warning('Variable Success: %s',
-                           'get_keys_from_progress: '
-                           'list of keys successfully received')
-            logger.warning('CLIENT_JOB_ID: %s', job_id)
             for key in key_list:
-                logger.warning('CURRENT_KEY: %s', key)
-                logger.warning('Assign Variable: %s',
-                               'get_keys_from_progress: '
-                               'attempt to get the json using the key')
                 json_info = self.get_specific_job_from_progress_no_lock(key)
                 info = literal_eval(json_info)
 
@@ -229,17 +220,8 @@ class RedisManager:
         :return: '' if the job does not exist, or the key if the job does exist
         """
         key_list = self.r.hgetall('progress')
-        logger.warning('Variable Success: %s',
-                       'get_keys_from_progress_no_lock: '
-                       'list of keys successfully received')
-        logger.warning('CLIENT_JOB_ID: %s',
-                       'get_keys_from_progress_no_lock: ' + str(job_id))
-        for key in key_list:
-            logger.warning('CURRENT_KEY: %s', key)
-            logger.warning('Assign Variable: %s',
-                           'get_keys_from_progress_no_lock: '
-                           'attempt to get the json using the key')
 
+        for key in key_list:
             json_info = self.get_specific_job_from_progress_no_lock(key)
             info = literal_eval(json_info)
             if info['job_id'] == job_id:

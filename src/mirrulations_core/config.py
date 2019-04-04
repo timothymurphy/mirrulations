@@ -31,16 +31,16 @@ def read_value(value):
         contents = json.loads(open(CONFIG_PATH, "r").read())
         result = contents[value]
     except FileNotFoundError:
-        logger.error('File Not Found Error')
+        logger.error('Error - File Not Found')
         return None
     except IOError:
-        logger.error('Input/Output Error')
+        logger.error('Error - Invalid Input/Output')
         return None
     except json.JSONDecodeError:
-        logger.error('JSON Decode Error')
+        logger.error('Error - Unable to Decode JSON')
         return None
     except KeyError:
-        logger.error('Key Error')
+        logger.error('API Key Error')
         return None
     else:
         return result
