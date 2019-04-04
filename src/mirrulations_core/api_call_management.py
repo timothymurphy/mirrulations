@@ -19,16 +19,16 @@ def api_call_manager(url):
             result = call(url)
             return result
         except TemporaryException:
-            logger.error('Error: waiting 5 minutes...')
+            logger.error('API call Error, waiting 5 minutes')
             time.sleep(300)
             pause += 1
         except PermanentException:
-            logger.error('Error with the API call')
+            logger.error('API call Error')
             break
         except ApiCountZeroException:
-            logger.error('Error: ran out of API calls')
+            logger.warning('API calls exhausted')
             time.sleep(3600)
-    logger.error('API call failed...')
+    logger.error('API call failed')
     raise CallFailException
 
 
@@ -37,4 +37,4 @@ class CallFailException(Exception):
     Raise an exception is there is an error making the API call
     """
     def __init__(self):
-        logger.warning('API call failed...')
+        logger.error('Error - API call failed')

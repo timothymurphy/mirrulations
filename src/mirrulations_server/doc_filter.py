@@ -118,7 +118,6 @@ def document_id_beginning_is_letter(document_id):
     result = letter.isalpha()
     if result is True:
         return True
-    logger.warning('Document ID does not begin with a letter')
     return False
 
 
