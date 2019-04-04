@@ -16,7 +16,7 @@ def main(do_config_setup):
     def run_redis():
         os.system('redis-server')
 
-    def run_server():
+    def run_flask():
         run()
 
     def run_work():
@@ -24,5 +24,5 @@ def main(do_config_setup):
         expire()
 
     Thread(target=run_redis).start()
-    Thread(target=run_server).start()
+    Thread(target=run_flask).start()
     Thread(target=run_work).start()
