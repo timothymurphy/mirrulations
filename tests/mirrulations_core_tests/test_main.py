@@ -51,7 +51,7 @@ def test_client_main_with_config_setup(pa):
         wm.assert_called_with(True)
 
 
-@patch('mirrulations_core.__main__.parse_args', return_value=['wrong_enum', False])
+@patch('mirrulations_core.__main__.parse_args', return_value=['wrong', False])
 def test_wrong_enum(pa):
     with patch('mirrulations_core.__main__.print') as p, \
          patch('mirrulations_core.__main__.exit') as e:
