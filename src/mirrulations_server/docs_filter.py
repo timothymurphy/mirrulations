@@ -10,8 +10,8 @@ from mirrulations_core.mirrulations_logging import logger
 
 
 VERSION = '0.0.0'
-HOME_REGULATION_PATH = '/mnt/regulations-data/'
-CLIENT_LOG_PATH = '/mnt/regulations-data/client-logs/'
+HOME_REGULATION_PATH = os.getenv('HOME') + '/regulations-data/'
+CLIENT_LOG_PATH = os.getenv('HOME') + '/client-logs/'
 
 
 def process_docs(redis_server, json_data, compressed_file):
@@ -42,6 +42,7 @@ def save_client_log(client_id, compressed_file):
     :param compressed_file:
     :return:
     """
+    logger.warning('ms/docs_filter/save_client_log: function called')
     client_path = CLIENT_LOG_PATH + str(client_id) + '/'
 
     files = zipfile.ZipFile(compressed_file, 'r')
@@ -55,11 +56,14 @@ def save_client_log(client_id, compressed_file):
     file_list = os.listdir(temp_directory_path)
     for file in file_list:
         if file.endswith('.log'):
+            logger.warning('ms/docs_filter/save_client_log: found file, ' + str(file) + ', that ends with log')
             if not os.path.exists(client_path):
                 os.makedirs(client_path)
                 shutil.copy(temp_directory_path + file, client_path)
+                logger.warning('ms/docs_filter/save_client_log: saving log to client-logs directory')
             else:
                 shutil.copy(temp_directory_path + file, client_path)
+                logger.warning('ms/docs_filter/save_client_log: saving log to client-logs directory')
 
 
 def check_workfile_length(json_data):
