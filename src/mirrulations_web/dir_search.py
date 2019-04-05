@@ -1,6 +1,5 @@
 import os.path
 import re
-import mirrulations_core.documents_core as dc
 
 HOME_REGULATION_PATH = '/regulations-data/'
 
@@ -16,7 +15,7 @@ def search_for_document_in_directory(document_id,
              else return an empty string
     """
 
-    organisations, dock_id, doc_id = dc.get_doc_attributes(document_id)
+    organisations, dock_id, doc_id = get_doc_attributes(document_id)
 
     full_path = directory_path + organisations + '/' + dock_id + '/' + doc_id
     doc_json = 'doc.' + doc_id + '.json'
