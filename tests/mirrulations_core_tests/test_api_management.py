@@ -31,6 +31,7 @@ def test_retry_calls_failure(mock_req):
     with pytest.raises(CallFailException):
         api_call_manager(add_api_key(base_url))
 
+
 def test_callfailexception(mock_req):
     mock_req.get(add_api_key(base_url), status_code=403)
     with pytest.raises(CallFailException):
@@ -39,8 +40,7 @@ def test_callfailexception(mock_req):
 
 @patch('time.sleep', set_time())
 def test_user_out_of_api_calls_sleeps(mock_req):
-    mock_req.register_uri('GET', add_api_key(base_url), [{'text': 'resp1', 'status_code': 429},{'text': '{}', 'status_code': 200}])
+    mock_req.register_uri('GET', add_api_key(base_url), [{
+        'text': 'resp1', 'status_code': 429}, {
+        'text': '{}', 'status_code': 200}])
     assert api_call_manager(add_api_key(base_url)).text == '{}'
-
-
-
