@@ -16,11 +16,7 @@ version = 'v1.3'
 client_health_url = 'https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08'
 
 
-key = config.read_value('key')
 client_id = config.read_value('client_id')
-
-
-client_health_url = "https://hc-ping.com/457a1034-83d4-4a62-8b69-c71060db3a08"
 
 
 def get_work(server_url, client_id):
