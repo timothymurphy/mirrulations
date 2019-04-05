@@ -5,7 +5,8 @@ from mirrulations_server.__main__ import main
 
 @patch('mirrulations_server.__main__.os.path.exists', return_value=True)
 def test_main_no_config_setup(ospe):
-    with patch('mirrulations_server.__main__.parse_args', return_value={'config': False}) as pa, \
+    with patch('mirrulations_server.__main__.parse_args',
+               return_value={'config': False}) as pa, \
          patch('mirrulations_server.__main__.os.system') as redis, \
          patch('mirrulations_server.__main__.run') as endpoints, \
          patch('mirrulations_server.__main__.monolith') as dwg, \
@@ -20,7 +21,8 @@ def test_main_no_config_setup(ospe):
 
 @patch('mirrulations_server.__main__.os.path.exists', return_value=False)
 def test_main_with_config_setup(ospe):
-    with patch('mirrulations_server.__main__.parse_args', return_value={'config': False}) as pa, \
+    with patch('mirrulations_server.__main__.parse_args',
+               return_value={'config': False}) as pa, \
          patch('mirrulations_server.__main__.server_config_setup') as scs, \
          patch('mirrulations_server.__main__.os.system') as redis, \
          patch('mirrulations_server.__main__.run') as endpoints, \
