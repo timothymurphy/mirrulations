@@ -54,6 +54,7 @@ def ignore_test_return_docs_error(mock_req):
 
 def test_return_doc(mock_req):
     mock_req.post(get_server_address() + "/return_doc", status_code=200)
+
     mock_req.get(add_api_key(
         'https://api.data.gov/regulations/v3/document?documentId=website-com'),
         status_code=200, text='{ "something": '
@@ -64,6 +65,7 @@ def test_return_doc(mock_req):
                     'qwerty', 'data': [{'id': 'website-com',
                                         'count': 4}]}, get_server_address(),
                    get_client_id())
+
     assert r.status_code == 200
 
 
@@ -71,22 +73,11 @@ def test_add_logs():
     path = tempfile.TemporaryDirectory()
     zip_path = tempfile.TemporaryDirectory()
 
-    open(path.name + "/client.log", "w").write("test")
-    open(path.name + "/documents_processor.log", "w").write("test")
-    open(path.name + "/document_processor.log", "w").write("test")
-    open(path.name + "/api_call.log", "w").write("test")
-    open(path.name + "/api_call_management.log", "w").write("test")
+    open(path.name + "/mirrulations.log", "w").write("test")
 
-    add_client_log_files(zip_path.name, path.name)
+    add_client_log(zip_path.name, path.name + '/mirrulations.log')
 
-    assert open(zip_path.name + "/client.log", "r").read() == "test"
-    assert open(zip_path.name +
-                "/documents_processor.log", "r").read() == "test"
-    assert open(zip_path.name +
-                "/document_processor.log", "r").read() == "test"
-    assert open(zip_path.name + "/api_call.log", "r").read() == "test"
-    assert open(zip_path.name +
-                "/api_call_management.log", "r").read() == "test"
+    assert open(zip_path.name + "/mirrulations.log", "r").read() == "test"
 
     path.cleanup()
     zip_path.cleanup()

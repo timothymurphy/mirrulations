@@ -60,7 +60,7 @@ def return_docs(json_result, server_url, client_id):
     job_id, urls = get_json_info(json_result)
     json_info = docs.documents_processor(urls, job_id, client_id)
     path = tempfile.TemporaryDirectory()
-    add_client_log_files(path.name, '.')
+    add_client_log(path.name)
     shutil.make_archive('result', 'zip', path.name)
     fileobj = open('result.zip', 'rb')
     r = requests.post(server_url + '/return_docs',
@@ -87,7 +87,7 @@ def return_doc(json_result, server_url, client_id):
     for dic in doc_dicts:
         doc_ids.append(dic['id'])
     path = doc.document_processor(doc_ids)
-    add_client_log_files(path.name, '.')
+    add_client_log(path.name)
     shutil.make_archive('result', 'zip', path.name)
     fileobj = open('result.zip', 'rb')
     r = requests.post(server_url+'/return_doc',
@@ -102,37 +102,22 @@ def return_doc(json_result, server_url, client_id):
     return r
 
 
-def copy_file_safely(directory, filepath):
+def add_client_log(directory_to_send_to, filepath='./mirrulations.log'):
     """
     Safely copies a file to a directory;
     if the file isn't there to be copied, it won't be copied.
-    :param directory: Directory to copy to
+    :param directory_to_send_to: Directory to copy to
     :param filepath: File to copy
     """
 
     if Path(filepath).exists():
-        if Path(directory).exists():
-            shutil.copy(filepath, directory)
+        if Path(directory_to_send_to).exists():
+            shutil.copy(filepath, directory_to_send_to)
+            logger.warning('mcl/client/add_client_log: mirrulations.log successfully copied')
         else:
-            logger.warning('File not copied, directory does not exist')
+            logger.warning('File not copied, directory_to_send_to does not exist')
     else:
         logger.warning('File not copied, file does not exist')
-
-
-def add_client_log_files(directory, log_directory):
-    """
-    Used to copy client log files into the
-    temp directory to be sent to the server.
-    :param directory: Directory to write files to
-    :param log_directory: Directory to get files from
-    :return:
-    """
-
-    copy_file_safely(directory, log_directory + '/client.log')
-    copy_file_safely(directory, log_directory + '/document_processor.log')
-    copy_file_safely(directory, log_directory + '/documents_processor.log')
-    copy_file_safely(directory, log_directory + '/api_call.log')
-    copy_file_safely(directory, log_directory + '/api_call_management.log')
 
 
 def do_work():
