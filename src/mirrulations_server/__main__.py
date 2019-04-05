@@ -1,3 +1,4 @@
+import argparse
 import os
 from threading import Thread
 
@@ -7,10 +8,21 @@ from mirrulations_server.docs_work_gen import monolith
 from mirrulations_server.endpoints import run
 from mirrulations_server.expire import expire
 
+CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                           '../../.config/config.json')
 
-def main(do_config_setup):
 
-    if do_config_setup:
+def parse_args():
+    parser = argparse.ArgumentParser(prog='mirrulations_server')
+    parser.add_argument('-c', '--config',
+                        action='store_true',
+                        help='force config setup')
+    return vars(parser.parse_args())
+
+
+def main():
+    args = parse_args()
+    if args['config'] or not os.path.exists(CONFIG_PATH):
         server_config_setup()
 
     def run_redis():
