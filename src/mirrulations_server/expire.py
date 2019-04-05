@@ -2,8 +2,6 @@ import redis
 from mirrulations_server.redis_manager import RedisManager
 import time
 
-r = RedisManager(redis.Redis())
-
 
 def expire():
     """
@@ -11,7 +9,7 @@ def expire():
     :return:
     """
     while True:
-        r.find_expired()
+        RedisManager(redis.Redis()).find_expired()
         time.sleep(3600)
 
 

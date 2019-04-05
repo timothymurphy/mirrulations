@@ -45,7 +45,7 @@ From your terminal, in the project directory, set up a virtual environment by
 	source .env/bin/activate
     pip install -e .
 
-Lastly, run `mirrulations` to get it running as a client, or `mirrulations --server` to get it running as a server.
+Lastly, run `mirrulations_client` to get it running as a client, or `mirrulations_server` to get it running as a server.
 
 If you do not have a `config.json` previously made, you will be prompted to make one.
 (You can also force an overwrite of `config.json` with the tag `--config` at the end of your command.)
