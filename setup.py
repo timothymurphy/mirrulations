@@ -22,5 +22,7 @@ setup(
                       'pycodestyle==2.5.0'],
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    entry_points={'console_scripts': ['mirrulations=mirrulations_core.__main__:main']}
+    entry_points={'console_scripts': ['mirrulations_client=mirrulations_client.__main__:main',
+                                      'mirrulations_server=mirrulations_server.__main__:main',
+                                      'mirrulations_web=mirrulations_web.__main__:main']}
 )
