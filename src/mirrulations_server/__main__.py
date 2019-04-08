@@ -3,15 +3,11 @@ import os
 from redis import Redis
 from threading import Thread
 
-from mirrulations_core.config import server_config_setup
+from mirrulations_core.config import SERVER_CONFIG_FILE, server_config_setup
 
 from mirrulations_server.docs_work_gen import monolith
 from mirrulations_server.endpoints import run
 from mirrulations_server.expire import expire
-
-CONFIG_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                                          '../../.config/')
-CONFIG_FILE = CONFIG_DIR + 'config.ini'
 
 
 def parse_args():
@@ -24,7 +20,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    if args['config'] or not os.path.exists(CONFIG_FILE):
+    if args['config'] or not os.path.exists(SERVER_CONFIG_FILE):
         server_config_setup()
 
     if Redis().ping() != 'PONG':

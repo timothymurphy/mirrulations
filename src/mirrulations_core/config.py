@@ -1,5 +1,4 @@
 from configparser import ConfigParser
-from mirrulations_core.mirrulations_logging import logger
 import os
 import random
 import requests
@@ -9,7 +8,9 @@ from mirrulations_core.mirrulations_logging import logger
 
 CONFIG_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                           '../../.config/')
-CONFIG_FILE = CONFIG_DIR + 'config.ini'
+CLIENT_CONFIG_FILE = CONFIG_DIR + 'client.ini'
+SERVER_CONFIG_FILE = CONFIG_DIR + 'server.ini'
+WEB_CONFIG_FILE = CONFIG_DIR + 'web.ini'
 
 connection_error_string = 'Unable to connect!\n' \
                           'We weren\'t able to connect to regulations.gov.\n' \
@@ -23,15 +24,26 @@ successful_login_string = 'Success!\n' \
                           'You are successfully logged in.'
 
 
-def read_value(value):
+def read_value(value, enum):
     """
     Reads a file from the configuration JSON file.
     :param value: Value to be read from the JSON
     :return: Value read from the JSON
     """
+
+    if enum == 'client':
+        config_path = CLIENT_CONFIG_FILE
+    elif enum == 'server':
+        config_path = SERVER_CONFIG_FILE
+    elif enum == 'web':
+        config_path = WEB_CONFIG_FILE
+    else:
+        logger.error('Error - Invalid config option')
+        return None
+
     try:
         config = ConfigParser()
-        config.read(CONFIG_FILE)
+        config.read(config_path)
         result = config['CONFIG'][value]
     except FileNotFoundError:
         logger.error('Error - File Not Found')
@@ -73,7 +85,7 @@ def client_config_setup():
     ip = input('IP:\n')
     port = input('Port:\n')
 
-    with open(CONFIG_FILE, 'wt') as file:
+    with open(CLIENT_CONFIG_FILE, 'wt') as file:
         config = ConfigParser()
         config['CLIENT'] = {
             'api_key': api_key,
@@ -90,7 +102,7 @@ def server_config_setup():
     api_key = input('API Key:\n')
     verify_api_key(api_key)
 
-    with open(CONFIG_FILE, 'wt') as file:
+    with open(SERVER_CONFIG_FILE, 'wt') as file:
         config = ConfigParser()
         config['SERVER'] = {
             'api_key': api_key
