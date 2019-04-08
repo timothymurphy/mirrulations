@@ -15,7 +15,7 @@ def document_processor(doc_ids):
     dirpath = tempfile.TemporaryDirectory()
     for doc_id in doc_ids:
         try:
-            result = api_call_manager(add_api_key(make_doc_url(doc_id)))
+            result = api_call_manager(client_add_api_key(make_doc_url(doc_id)))
             total = get_extra_documents(result, dirpath.name, doc_id)
         except CallFailException:
             logger.error('Error - Bad document ID')
