@@ -1,13 +1,9 @@
 from mirrulations_core.api_call_management import *
 import json
 from mirrulations_core.mirrulations_logging import logger
-import mirrulations_core.config as config
 
 workfiles = []
 version = 'v1.3'
-
-key = config.read_value('key')
-client_id = config.read_value('client id')
 
 
 def documents_processor(urls, job_id, client_id):

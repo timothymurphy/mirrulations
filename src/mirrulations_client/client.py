@@ -121,9 +121,9 @@ def do_work():
     :return:
     """
 
-    ip = config.read_value('ip')
-    port = config.read_value('port')
-    client_id = config.read_value('client id')
+    ip = config.client_read_value('ip')
+    port = config.client_read_value('port')
+    client_id = config.client_read_value('client id')
 
     server_url = 'http://' + ip + ':' + port
 
