@@ -74,12 +74,14 @@ def client_config_setup():
     port = input('Port:\n')
 
     with open(CONFIG_FILE, 'wt') as file:
-        file.write(json.dumps({
+        config = ConfigParser()
+        config['CLIENT'] = {
             'api_key': api_key,
             'client_id': client_id,
             'ip': ip,
             'port': port
-        }, indent=4))
+        }
+        config.write(file)
         file.close()
 
 
@@ -89,9 +91,11 @@ def server_config_setup():
     verify_api_key(api_key)
 
     with open(CONFIG_FILE, 'wt') as file:
-        file.write(json.dumps({
-            'api_key': api_key,
-        }, indent=4))
+        config = ConfigParser()
+        config['SERVER'] = {
+            'api_key': api_key
+        }
+        config.write(file)
         file.close()
 
 
