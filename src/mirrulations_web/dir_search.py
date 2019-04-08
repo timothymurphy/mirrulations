@@ -1,7 +1,7 @@
 import os.path
 import mirrulations_core.documents_core as dc
 
-HOME_REGULATION_PATH = "/regulations-data/"
+HOME_REGULATION_PATH = '/regulations-data/'
 
 
 def search_for_document_in_directory(document_id,
@@ -14,12 +14,12 @@ def search_for_document_in_directory(document_id,
     :return: Return the full path if the document exists,
              else return an empty string
     """
-    orgs, dock_id, doc_id = dc.get_doc_attributes(document_id)
+    organisations, dock_id, doc_id = dc.get_doc_attributes(document_id)
 
-    full_path = directory_path + orgs + "/" + dock_id + "/" + doc_id
-    doc_json = "doc." + doc_id + ".json"
+    full_path = directory_path + organisations + '/' + dock_id + '/' + doc_id
+    doc_json = 'doc.' + doc_id + '.json'
 
-    if os.path.isfile(full_path + "/" + doc_json):
+    if os.path.isfile(full_path + '/' + doc_json):
         return full_path
     else:
-        return ""
+        return ''
