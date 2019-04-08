@@ -5,8 +5,8 @@ import requests_mock
 from mirrulations_core.api_call import *
 import mirrulations_core.config as config
 
-key = config.read_value('key')
-client_id = config.read_value('client id')
+key = config.client_read_value('key')
+client_id = config.client_read_value('client id')
 
 base_url = 'https://api.data.gov:443/regulations/v3/documents.json?'
 base_url2 = 'https://www.website.com/regulations/v3/documents.json?'
@@ -74,7 +74,7 @@ def test_make_docs():
 
 def test_documents_processor(mock_req):
     urls = [base_url, base_url2]
-    mock_req.get(add_api_key(base_url),
+    mock_req.get(client_add_api_key(base_url),
                  status_code=200, text='{"documents": '
                                        '[{"documentId": '
                                        '"CMS-2005-0001-0001",'
@@ -82,7 +82,7 @@ def test_documents_processor(mock_req):
                                        {"documentId": '
                                        '"CMS-2005-0001-0002",'
                                        ' "attachmentCount": 999}]}')
-    mock_req.get(add_api_key(base_url2),
+    mock_req.get(client_add_api_key(base_url2),
                  status_code=200, text='{"documents": '
                                        '[{"documentId": '
                                        '"CMS-2005-0001-0003", '
@@ -106,7 +106,7 @@ def test_documents_processor(mock_req):
 
 def test_valid_results(mock_req):
     urls = [base_url]
-    mock_req.get(add_api_key(base_url),
+    mock_req.get(client_add_api_key(base_url),
                  status_code=200, text='{"documents": '
                                        '[{"documentId": '
                                        '"CMS-2005-0001-0001", '
@@ -114,7 +114,7 @@ def test_valid_results(mock_req):
                                          {"documentId": '
                                        '"CMS-2005-0001-0002", '
                                        '"attachmentCount": 999}]}')
-    result = process_results(api_call_manager(add_api_key(base_url)))
+    result = process_results(api_call_manager(client_add_api_key(base_url)))
     assert result
 
 
