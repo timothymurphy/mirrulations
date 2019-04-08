@@ -85,6 +85,9 @@ def client_config_setup():
     ip = input('IP:\n')
     port = input('Port:\n')
 
+    if not os.path.exists(CONFIG_DIR):
+        os.mkdir(CONFIG_DIR)
+
     with open(CLIENT_CONFIG_FILE, 'wt') as file:
         config = ConfigParser()
         config['CLIENT'] = {
@@ -101,6 +104,9 @@ def server_config_setup():
 
     api_key = input('API Key:\n')
     verify_api_key(api_key)
+
+    if not os.path.exists(CONFIG_DIR):
+        os.mkdir(CONFIG_DIR)
 
     with open(SERVER_CONFIG_FILE, 'wt') as file:
         config = ConfigParser()
