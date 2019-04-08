@@ -7,8 +7,9 @@ import string
 
 from mirrulations_core.mirrulations_logging import logger
 
-CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                                           '../../.config/config.json')
+CONFIG_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                          '../../.config/')
+CONFIG_FILE = CONFIG_DIR + 'config.ini'
 
 connection_error_string = 'Unable to connect!\n' \
                           'We weren\'t able to connect to regulations.gov.\n' \
@@ -30,7 +31,7 @@ def read_value(value):
     """
     try:
         config = ConfigParser()
-        config.read(CONFIG_PATH)
+        config.read(CONFIG_FILE)
         result = config['CONFIG'][value]
     except FileNotFoundError:
         logger.error('Error - File Not Found')
@@ -72,7 +73,7 @@ def client_config_setup():
     ip = input('IP:\n')
     port = input('Port:\n')
 
-    with open(CONFIG_PATH, 'wt') as file:
+    with open(CONFIG_FILE, 'wt') as file:
         file.write(json.dumps({
             'api_key': api_key,
             'client_id': client_id,
@@ -87,7 +88,7 @@ def server_config_setup():
     api_key = input('API Key:\n')
     verify_api_key(api_key)
 
-    with open(CONFIG_PATH, 'wt') as file:
+    with open(CONFIG_FILE, 'wt') as file:
         file.write(json.dumps({
             'api_key': api_key,
         }, indent=4))
