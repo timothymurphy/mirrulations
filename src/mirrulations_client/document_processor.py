@@ -99,7 +99,7 @@ def download_doc_formats(dirpath, doc_json, documentId):
         extra_formats = doc_json['fileFormats']
         total_requests += len(extra_formats)
         for extra_doc in extra_formats:
-            result = api_call_manager(add_api_key(str(extra_doc)))
+            result = api_call_manager(client_add_api_key(str(extra_doc)))
             here = extra_doc.index('contentType') + 12
             type = extra_doc[here:]
             download_document(dirpath, documentId, result, type)
@@ -129,7 +129,7 @@ def download_attachments(dirpath, doc_json, documentId):
             for a_format in attachment_formats:
                 here = str(a_format).index('contentType') + 12
                 type = str(a_format)[here:]
-                result = api_call_manager(add_api_key(str(a_format)))
+                result = api_call_manager(client_add_api_key(str(a_format)))
                 download_document(dirpath, documentId, result, type)
     except KeyError:
         pass

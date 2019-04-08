@@ -20,7 +20,7 @@ def documents_processor(urls, job_id, client_id):
     workfiles = []
     for url in urls:
         try:
-            result = api_call_manager(add_api_key(url))
+            result = api_call_manager(client_add_api_key(url))
             process_results(result)
         except Exception:
             logger.error('Error - URL processing failed')
