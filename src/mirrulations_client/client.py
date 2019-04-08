@@ -106,9 +106,11 @@ def add_client_log(directory_to_send_to, filepath='./mirrulations.log'):
     if Path(filepath).exists():
         if Path(directory_to_send_to).exists():
             shutil.copy(filepath, directory_to_send_to)
-            logger.warning('mcl/client/add_client_log: mirrulations.log successfully copied')
+            logger.warning('mcl/client/add_client_log: '
+                           'mirrulations.log successfully copied')
         else:
-            logger.warning('File not copied, directory_to_send_to does not exist')
+            logger.warning('File not copied, '
+                           'directory_to_send_to does not exist')
     else:
         logger.warning('File not copied, file does not exist')
 

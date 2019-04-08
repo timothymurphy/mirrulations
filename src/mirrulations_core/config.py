@@ -7,7 +7,7 @@ import string
 from mirrulations_core.mirrulations_logging import logger
 
 CONFIG_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                                          '../../.config/')
+                          '../../.config/')
 CLIENT_CONFIG_FILE = CONFIG_DIR + 'client.ini'
 SERVER_CONFIG_FILE = CONFIG_DIR + 'server.ini'
 WEB_CONFIG_FILE = CONFIG_DIR + 'web.ini'
