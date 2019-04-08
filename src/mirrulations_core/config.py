@@ -24,22 +24,12 @@ successful_login_string = 'Success!\n' \
                           'You are successfully logged in.'
 
 
-def read_value(value, enum):
+def read_value(value, config_path):
     """
     Reads a file from the configuration JSON file.
     :param value: Value to be read from the JSON
     :return: Value read from the JSON
     """
-
-    if enum == 'client':
-        config_path = CLIENT_CONFIG_FILE
-    elif enum == 'server':
-        config_path = SERVER_CONFIG_FILE
-    elif enum == 'web':
-        config_path = WEB_CONFIG_FILE
-    else:
-        logger.error('Error - Invalid config option')
-        return None
 
     try:
         config = ConfigParser()
@@ -56,6 +46,18 @@ def read_value(value, enum):
         return None
     else:
         return result
+
+
+def client_read_value(value):
+    read_value(value, CLIENT_CONFIG_FILE)
+
+
+def server_read_value(value):
+    read_value(value, SERVER_CONFIG_FILE)
+
+
+def web_read_value(value):
+    read_value(value, WEB_CONFIG_FILE)
 
 
 def verify_api_key(api_key):
@@ -118,4 +120,11 @@ def server_config_setup():
 
 
 def web_config_setup():
-    pass
+
+    if not os.path.exists(CONFIG_DIR):
+        os.mkdir(CONFIG_DIR)
+
+    with open(WEB_CONFIG_FILE, 'wt') as file:
+        # config = ConfigParser()
+        # config.write(file)
+        file.close()
