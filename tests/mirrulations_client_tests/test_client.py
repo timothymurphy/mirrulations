@@ -17,7 +17,7 @@ def get_client_id():
 def get_server_address():
     return "http://" + config.client_read_value('ip') +\
            ":" + config.client_read_value('port')
-s
+
 
 @pytest.fixture
 def mock_req():

@@ -5,7 +5,7 @@ import json
 import pytest
 import requests_mock
 
-from mirrulations_core.api_call import add_api_key
+from mirrulations_core.api_call import client_add_api_key
 from mirrulations_core.api_call_management import api_call_manager,\
                                                   CallFailException
 import mirrulations_core.config as config

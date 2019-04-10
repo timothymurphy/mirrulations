@@ -1,7 +1,8 @@
 import pytest
 import requests_mock
 from mock import Mock, patch
-from mirrulations_core.api_call import add_api_key
+from mirrulations_core.api_call import client_add_api_key,\
+                                       server_add_api_key
 from mirrulations_core.api_call_management import api_call_manager,\
                                                   CallFailException
 

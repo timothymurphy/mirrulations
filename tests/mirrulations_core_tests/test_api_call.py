@@ -2,7 +2,8 @@ import pytest
 import requests_mock
 
 from mirrulations_core.api_call import call,\
-                                       add_api_key,\
+                                       client_add_api_key,\
+                                       server_add_api_key,\
                                        ApiCountZeroException,\
                                        PermanentException,\
                                        TemporaryException
