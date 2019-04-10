@@ -1,4 +1,5 @@
-from mirrulations_core.api_call_management import *
+from mirrulations_core.api_call import add_api_key
+from mirrulations_core.api_call_management import api_call_manager
 import json
 from mirrulations_core.mirrulations_logging import logger
 import mirrulations_core.config as config
