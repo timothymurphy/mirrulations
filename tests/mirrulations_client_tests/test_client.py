@@ -1,6 +1,10 @@
-from mirrulations_client.client import *
+from mirrulations_client.client import get_work,\
+                                       return_doc,\
+                                       return_docs,\
+                                       add_client_log
 import pytest
 import requests_mock
+import tempfile
 from mirrulations_core.api_call import client_add_api_key
 from mirrulations_core.api_call_management import CallFailException
 import mirrulations_core.config as config
@@ -13,7 +17,7 @@ def get_client_id():
 def get_server_address():
     return "http://" + config.client_read_value('ip') +\
            ":" + config.client_read_value('port')
-
+s
 
 @pytest.fixture
 def mock_req():
