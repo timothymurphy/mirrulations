@@ -25,8 +25,8 @@ def mock_server_config():
     fake_config_dictionary = {
         'key': ''.join(random.choices(
             string.ascii_letters + string.digits, k=40)),
-        'regulations path': 'home/',
-        'client_path': 'home/'
+        'regulations path': 'tests/tests_files',
+        'client_path': 'tests/'
     }
 
     with mock.patch('mirrulations_core.config.server_read_value',
@@ -37,7 +37,7 @@ def mock_server_config():
 @pytest.fixture(scope='session', autouse=True)
 def mock_web_config():
     fake_config_dictionary = {
-        'regulations path': 'home/ubuntu/'
+        'regulations path': 'tests/test_files/'
     }
 
     with mock.patch('mirrulations_core.config.web_read_value',
