@@ -23,9 +23,7 @@ def main():
     if args['config'] or not os.path.exists(SERVER_CONFIG_FILE):
         server_config_setup()
 
-    if Redis().ping() != 'PONG':
-        print('Run redis-server before running mirrulations_server!')
-        exit()
+    Redis().ping()
 
     def run_flask():
         run()
