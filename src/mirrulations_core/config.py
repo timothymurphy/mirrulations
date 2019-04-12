@@ -108,7 +108,12 @@ def server_config_setup():
     verify_api_key(api_key)
 
     regulations_path = input('Location to save Documents:\n')
+    if not regulations_path.endswith('/'):
+        regulations_path = regulations_path + '/'
+
     client_path = input('Location to save Client Logs:\n')
+    if not client_path.endswith('/'):
+        client_path = client_path + '/'
 
     if not os.path.exists(CONFIG_DIR):
         os.mkdir(CONFIG_DIR)
@@ -127,6 +132,8 @@ def server_config_setup():
 def web_config_setup():
 
     regulations_path = input('Location to save Documents:\n')
+    if not regulations_path.endswith('/'):
+        regulations_path = regulations_path + '/'
 
     if not os.path.exists(CONFIG_DIR):
         os.mkdir(CONFIG_DIR)
