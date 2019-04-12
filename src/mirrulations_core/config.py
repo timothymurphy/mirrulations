@@ -24,7 +24,7 @@ successful_login_string = 'Success!\n' \
                           'You are successfully logged in.'
 
 
-def read_value(value, config_path):
+def read_value(value, string, config_path):
     """
     Reads a file from the configuration JSON file.
     :param value: Value to be read from the JSON
@@ -34,7 +34,7 @@ def read_value(value, config_path):
     try:
         config = ConfigParser()
         config.read(config_path)
-        result = config['CONFIG'][value]
+        result = config[string][value]
     except FileNotFoundError:
         logger.error('Error - File Not Found')
         return None
@@ -49,15 +49,15 @@ def read_value(value, config_path):
 
 
 def client_read_value(value):
-    read_value(value, CLIENT_CONFIG_FILE)
+    read_value(value, 'CLIENT', CLIENT_CONFIG_FILE)
 
 
 def server_read_value(value):
-    read_value(value, SERVER_CONFIG_FILE)
+    read_value(value, 'SERVER', SERVER_CONFIG_FILE)
 
 
 def web_read_value(value):
-    read_value(value, WEB_CONFIG_FILE)
+    read_value(value, 'WEB', WEB_CONFIG_FILE)
 
 
 def verify_api_key(api_key):
