@@ -21,7 +21,7 @@ def test_parse_args_config():
 
 
 @patch('mirrulations_server.__main__.os.path.exists', return_value=True)
-@patch('mirrulations_server.__main__.Redis.ping', return_value='')
+@patch('mirrulations_server.__main__.Redis.ping', return_value=Exception)
 def test_main_no_config_setup_no_redis(ospe, rping):
     with patch('mirrulations_server.__main__.parse_args',
                return_value={'config': False}) as pa, \
