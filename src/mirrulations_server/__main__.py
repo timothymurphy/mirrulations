@@ -25,16 +25,16 @@ def main():
 
     try:
         Redis().ping()
-    except:
+    except Exception:
         print('Run redis-server before running mirrulations_server!')
         exit()
+    else:
+        def run_flask():
+            run()
 
-    def run_flask():
-        run()
+        def run_work():
+            monolith()
+            expire()
 
-    def run_work():
-        monolith()
-        expire()
-
-    Thread(target=run_flask).start()
-    Thread(target=run_work).start()
+        Thread(target=run_flask).start()
+        Thread(target=run_work).start()
