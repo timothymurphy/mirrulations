@@ -11,7 +11,8 @@ from mirrulations_core.mirrulations_logging import logger
 
 
 VERSION = '0.0.0'
-HOME_REGULATION_PATH = str(config.server_read_value('regulations path')) + 'regulations-data/'
+HOME_REGULATION_PATH = str(
+    config.server_read_value('regulations path')) + 'regulations-data/'
 CLIENT_LOG_PATH = str(config.server_read_value('client path')) + 'client-logs/'
 
 

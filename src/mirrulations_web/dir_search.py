@@ -2,7 +2,8 @@ import os.path
 import mirrulations_core.config as config
 import mirrulations_core.documents_core as dc
 
-HOME_REGULATION_PATH = str(config.web_read_value('regulations path')) + 'regulations-data/'
+HOME_REGULATION_PATH = str(
+    config.web_read_value('regulations path')) + 'regulations-data/'
 
 
 def search_for_document_in_directory(document_id,
