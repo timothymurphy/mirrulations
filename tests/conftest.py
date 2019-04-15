@@ -23,6 +23,8 @@ def mock_client_config():
 @pytest.fixture(scope='session', autouse=True)
 def mock_server_config():
     fake_config_dictionary = {
+        'regulations path': 'tests/tests_files',
+        'client_path': 'tests/',
         'api key': ''.join(random.choices(
             string.ascii_letters + string.digits, k=40))
     }
@@ -34,7 +36,9 @@ def mock_server_config():
 
 @pytest.fixture(scope='session', autouse=True)
 def mock_web_config():
-    fake_config_dictionary = {}
+    fake_config_dictionary = {
+        'regulations path': 'tests/test_files/'
+    }
 
     with mock.patch('mirrulations_core.config.web_read_value',
                     side_effect=lambda v: fake_config_dictionary[v]) as f:
