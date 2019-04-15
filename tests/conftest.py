@@ -1,4 +1,4 @@
-from fakeredis import FakeRedis
+from fakeredis import FakeRedis, FakeServer
 import mock
 import pytest
 import random
@@ -46,11 +46,13 @@ def mock_web_config():
         yield f
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(autouse=True)
 def mock_redis_manager():
 
+    fakeredis_server = FakeServer()
+
     def mock_init(self):
-        self.r = FakeRedis()
+        self.r = FakeRedis(server=fakeredis_server)
         reset_lock(self.r)
         self.lock = set_lock(self.r)
 
