@@ -5,12 +5,12 @@ from mirrulations_server.redis_manager import RedisManager
 
 
 def emptydatabase():
-    r = RedisManager(fakeredis.FakeRedis())
+    r = RedisManager()
     return r
 
 
 def make_database():
-    r = RedisManager(fakeredis.FakeRedis())
+    r = RedisManager()
     r.delete_all()
     list = json.dumps({"A": "a", "B": ["b", "c"]})
     list2 = json.dumps({"D": "d", "E": ["e", "f"]})
