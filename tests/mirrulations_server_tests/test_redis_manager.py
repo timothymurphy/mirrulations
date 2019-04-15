@@ -1,4 +1,3 @@
-import fakeredis
 import json
 import mock
 from mirrulations_server.redis_manager import RedisManager

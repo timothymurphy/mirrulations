@@ -1,6 +1,5 @@
 import json
 import os
-import fakeredis
 import mock
 import mirrulations_server.docs_filter as dsf
 from mirrulations_server.redis_manager import RedisManager

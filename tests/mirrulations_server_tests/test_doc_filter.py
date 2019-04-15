@@ -2,7 +2,6 @@ import pytest
 import requests_mock
 import tempfile
 import os
-import fakeredis
 import json
 import mock
 import mirrulations_server.doc_filter as df
