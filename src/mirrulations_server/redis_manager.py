@@ -1,15 +1,16 @@
 from ast import literal_eval
+from redis import Redis
 import redis_lock
 import json
 import time
 
 
 class RedisManager:
-    def __init__(self, database):
+    def __init__(self):
         """
         Initialize the database and create the lock
         """
-        self.r = database
+        self.r = Redis()
         reset_lock(self.r)
         self.lock = set_lock(self.r)
 
