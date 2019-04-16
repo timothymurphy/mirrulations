@@ -25,8 +25,8 @@ class RedisManager:
             if item_from_queue is None:
                 work = {'type': 'none'}
             else:
-                work = literal_eval(item_from_queue.decode('utf-8'))
-                self.r.hset('progress', get_curr_time(), json.dumps(work))
+                work = json.loads(item_from_queue)
+                self.r.hset('progress', get_curr_time(), str(work))
             return work
 
     def add_to_queue(self, work):
