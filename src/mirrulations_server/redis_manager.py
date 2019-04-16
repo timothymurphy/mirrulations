@@ -25,7 +25,7 @@ class RedisManager:
                 work = {'type': 'none'}
             else:
                 work = json.loads(item_from_queue)
-                self.r.hset('progress', get_curr_time(), str(work))
+                self.r.hset('progress', get_curr_time(), item_from_queue)
             return work
 
     def add_to_queue(self, work):
