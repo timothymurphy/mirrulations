@@ -46,4 +46,5 @@ def test_when_two_jobs_in_db_return_one_by_get_work(client):
 
     assert b'{"job_id": "1234", "type": "docs", "data": ["Url1"], "version": "0.5"}' == result.data
     assert rm.does_job_exist_in_progress('1234')
+    assert rm.does_job_exist_in_queue('3456')
     assert rm.does_job_exist_in_progress('3456') is False
