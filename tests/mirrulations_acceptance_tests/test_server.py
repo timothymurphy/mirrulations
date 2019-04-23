@@ -71,3 +71,19 @@ def test_docs_job_in_db_return_doc_place_in_db_queue(client):
                                                           "version": "0.5"})})
     assert len(rm.get_all_items_in_queue()) == 1
     assert rm.does_job_exist_in_progress('1234') is False
+
+
+def test_docs_job_return_multiple_doc_place_in_db_queue(client):
+    rm = RedisManager()
+
+    rm.add_to_queue(b'{"data": ["Url1"], "version": "v0.5", "type": "docs", "job_id": "1234"}')
+    result = client.get('/get_work?client_id=asdf')
+
+    client.post("/return_docs",
+                data={'file': open(PATH, 'rb'),
+                      'json': json.dumps({'job_id': "1234", 'type': 'docs',
+                                          "data": [[{"id": "AHRQ_FRDOC_0001-0036", "count": 1},
+                                                    {"id": "AHRQ_FRDOC_0002-0036", "count": 2}]],
+                                          'client_id': "abcd", "version": "0.5"})})
+    assert len(rm.get_all_items_in_queue()) == 2
+    assert rm.does_job_exist_in_progress('1234') is False
